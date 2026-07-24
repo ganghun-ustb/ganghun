@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>关于 · 钢魂实践团</title>
+    <style>
+        /* ===== 全局重置 & 基础 ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'PingFang SC', Roboto, sans-serif;
+            background: #0b0e14;
+            color: #e8edf3;
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 1.5rem 2rem;
+        }
+
+        /* ===== 导航栏（与其它页面保持一致） ===== */
+        .navbar {
+            background: rgba(20, 26, 36, 0.92);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 0.8rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar .logo {
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #f6d365, #fda085);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+
+        .navbar .nav-links {
+            display: flex;
+            gap: 1.8rem;
+            flex-wrap: wrap;
+            list-style: none;
+        }
+
+        .navbar .nav-links a {
+            color: #a8b2c9;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+            letter-spacing: 0.5px;
+        }
+
+        .navbar .nav-links a:hover {
+            color: #f6d365;
+        }
+
+        .navbar .nav-links a.active {
+            color: #f6d365;
+            border-bottom: 2px solid #f6d365;
+            padding-bottom: 2px;
+        }
+
+        @media (max-width: 640px) {
+            .navbar {
+                flex-direction: column;
+                gap: 0.5rem;
+                align-items: stretch;
+            }
+            .navbar .nav-links {
+                justify-content: center;
+                gap: 1rem;
+            }
+            .navbar .nav-links a {
+                font-size: 0.85rem;
+            }
+        }
+
+        /* ===== 页面头部 ===== */
+        .page-header {
+            text-align: center;
+            padding: 3rem 0 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            margin-bottom: 2.5rem;
+        }
+
+        .page-header h1 {
+            font-size: 2.6rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #f6d365, #fda085);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 4px;
+        }
+
+        .page-header .subtitle {
+            color: #8892a8;
+            margin-top: 0.5rem;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
+
+        /* ===== 卡片通用样式 ===== */
+        .card {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(4px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 2rem 2.2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            transition: border-color 0.3s;
+        }
+
+        .card:hover {
+            border-color: rgba(253, 160, 133, 0.15);
+        }
+
+        .card h2 {
+            color: #f6d365;
+            font-size: 1.3rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .card h2 .emoji {
+            font-size: 1.4rem;
+        }
+
+        .card p,
+        .card li {
+            color: #c8d0e0;
+            line-height: 1.9;
+            font-size: 1rem;
+        }
+
+        .card ul {
+            padding-left: 1.5rem;
+            margin-top: 0.3rem;
+        }
+
+        .card ul li {
+            margin-bottom: 0.3rem;
+        }
+
+        /* ===== 英雄区（简介卡片） ===== */
+        .hero-card .tagline {
+            font-size: 1.15rem;
+            color: #f0f4fa;
+            font-weight: 400;
+            margin-bottom: 0.8rem;
+        }
+
+        .hero-card .highlight {
+            color: #f6d365;
+            font-weight: 500;
+        }
+
+        /* ===== 精神内核（徽章网格） ===== */
+        .spirit-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .spirit-item {
+            background: rgba(246, 211, 101, 0.06);
+            border: 1px solid rgba(246, 211, 101, 0.12);
+            border-radius: 40px;
+            padding: 0.5rem 1rem;
+            text-align: center;
+            font-size: 0.95rem;
+            color: #f6d365;
+            transition: background 0.2s;
+        }
+
+        .spirit-item:hover {
+            background: rgba(246, 211, 101, 0.12);
+        }
+
+        .spirit-item .icon {
+            margin-right: 0.4rem;
+        }
+
+        /* ===== 时间线（历程） ===== */
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            padding-left: 0.3rem;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 1.2rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .timeline-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .timeline-item .year {
+            color: #f6d365;
+            font-weight: 600;
+            white-space: nowrap;
+            min-width: 80px;
+            font-size: 0.95rem;
+        }
+
+        .timeline-item .desc {
+            color: #c8d0e0;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* ===== 行动号召 ===== */
+        .cta-area {
+            text-align: center;
+            padding: 1rem 0 0.5rem;
+        }
+
+        .cta-area .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #f6d365, #fda085);
+            color: #0b0e14;
+            padding: 0.8rem 2.8rem;
+            border-radius: 40px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-size: 1.05rem;
+            letter-spacing: 1px;
+        }
+
+        .cta-area .btn:hover {
+            transform: scale(1.04);
+            box-shadow: 0 8px 30px rgba(253, 160, 133, 0.25);
+        }
+
+        /* ===== 页脚 ===== */
+        .footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+            color: #4a5368;
+            font-size: 0.85rem;
+        }
+
+        /* ===== 响应式 ===== */
+        @media (max-width: 640px) {
+            .page-header h1 {
+                font-size: 1.8rem;
+            }
+            .card {
+                padding: 1.5rem;
+            }
+            .card h2 {
+                font-size: 1.1rem;
+            }
+            .timeline-item {
+                flex-wrap: wrap;
+                gap: 0.3rem;
+            }
+            .timeline-item .year {
+                min-width: 60px;
+            }
+            .hero-card .tagline {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== 导航栏 ===== -->
+    <nav class="navbar">
+        <div class="logo">⚙️ 钢魂实践团</div>
+        <ul class="nav-links">
+            <li><a href="gamehomepage.html">游戏首页</a></li>
+            <li><a href="challengescript.html">闯关剧本</a></li>
+            <li><a href="illustratedhandbook.html">冶金科学家图鉴</a></li>
+            <li><a href="growth.html">我的成长档案</a></li>
+            <li><a href="ganghun" class="active">关于北科大钢魂实践团</a></li>
+        </ul>
+    </nav>
+
+    <!-- ===== 主体 ===== -->
+    <div class="container">
+
+        <!-- 页面头部 -->
+        <header class="page-header">
+            <h1>🏛️ 关于钢魂实践团</h1>
+            <p class="subtitle">传承钢铁精神 · 讲述冶金大先生故事</p>
+        </header>
+
+        <!-- 1. 简介 -->
+        <div class="card hero-card">
+            <h2><span class="emoji">📖</span> 我们是谁</h2>
+            <p class="tagline">
+                北京科技大学 <span class="highlight">“钢魂”青年之声宣讲团</span>
+                与 <span class="highlight">“百炼之钢”实践团</span>，
+                以培育民族复兴栋梁为己任，深耕科学家精神传播新路径。
+            </p>
+            <p>
+                团队创新采用 <span class="highlight">宣讲、情景剧、专访</span> 等多元形式，
+                全方位铺展以 <span class="highlight">魏寿昆院士</span> 为代表的冶金领域
+                “大先生”爱国奋斗、矢志创新、甘为人梯的感人事迹与崇高精神。
+            </p>
+            <p style="margin-top:0.6rem;">
+                实践团聚焦 <span class="highlight">“老中青”三代钢铁人</span> 开展深度访谈，
+                以“一线宣讲+艺术展演+活动展示”的立体化传播矩阵，
+                让老一辈科学家的初心使命在薪火相传中生生不息。
+            </p>
+        </div>
+
+        <!-- 2. 精神内核 -->
+        <div class="card">
+            <h2><span class="emoji">🔥</span> 精神内核</h2>
+            <p style="margin-bottom:0.8rem;">
+                实践团以 <span class="highlight">“铸钢铁之魂，踏强国征程”</span> 为使命，
+                将科学家精神凝练为六个维度：
+            </p>
+            <div class="spirit-grid">
+                <div class="spirit-item"><span class="icon">❤️</span> 爱国</div>
+                <div class="spirit-item"><span class="icon">💡</span> 创新</div>
+                <div class="spirit-item"><span class="icon">🔍</span> 求实</div>
+                <div class="spirit-item"><span class="icon">🤝</span> 奉献</div>
+                <div class="spirit-item"><span class="icon">⚡</span> 协同</div>
+                <div class="spirit-item"><span class="icon">🌱</span> 育人</div>
+            </div>
+            <p style="margin-top:0.8rem;font-size:0.95rem;color:#8892a8;">
+                —— 以 <span class="highlight">魏寿昆</span> 先生百炼成钢的一生，
+                诠释“爱国、创新、求实、奉献、协同、育人”的真谛。
+            </p>
+        </div>
+
+        <!-- 3. 主要活动 -->
+        <div class="card">
+            <h2><span class="emoji">🎭</span> 主要活动</h2>
+            <ul>
+                <li><strong>🎙️ 主题宣讲：</strong>深入校园、社区、企业，面向大中小学生、教师、钢铁冶金企业职工等群体，累计开展 <span class="highlight">30 余场</span> 主题宣讲。</li>
+                <li><strong>🎬 原创话剧：</strong>排演以魏寿昆院士真实人生轨迹为叙事主线的话剧《钢魂》，登上北京市科协“大学生讲大先生”展演舞台。</li>
+                <li><strong>📹 视频传播：</strong>制作《火种》《我爱上一本书》等 <span class="highlight">5 部</span> 精品宣传视频。</li>
+                <li><strong>📝 深度访谈：</strong>聚焦“老中青”三代钢铁人，听退休老工匠讲述坚守高炉的往事，与青年技术骨干探讨智能炼钢时代的精神传承。</li>
+                <li><strong>🏭 企业实践：</strong>深入鞍钢、宝武、首钢等 <span class="highlight">50 余家</span> 国内钢铁企业，开展红色寻访、科技服务与调研。</li>
+            </ul>
+        </div>
+
+        <!-- 4. 发展历程 -->
+        <div class="card">
+            <h2><span class="emoji">📜</span> 发展历程</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <span class="year">2007-2008</span>
+                    <span class="desc">228 名北科大学子组成实践团，围绕古代钢铁文物开展研究调查，获“首都高校大学生社会实践优秀团队”等七项荣誉。</span>
+                </div>
+                <div class="timeline-item">
+                    <span class="year">2024</span>
+                    <span class="desc">新时代高校“钢筋铁骨”育人共同体成立，联合全国近 20 个钢铁行业院校开展“万生进百企、钢铁筑脊梁”主题实践活动。</span>
+                </div>
+                <div class="timeline-item">
+                    <span class="year">2025.07</span>
+                    <span class="desc">“钢魂”青年之声宣讲团与“百炼之钢”实践团联合开展暑期实践，以宣讲、情景剧等形式讲述魏寿昆院士的钢铁人生。</span>
+                </div>
+                <div class="timeline-item">
+                    <span class="year">2025.08</span>
+                    <span class="desc">实践团走进重庆秀山、河北保定、甘肃秦安等地，面向中学生开展科学家精神宣讲。</span>
+                </div>
+                <div class="timeline-item">
+                    <span class="year">2025.12</span>
+                    <span class="desc">原创话剧《钢魂》在北京市科协“大学生讲大先生”展演舞台成功首演。</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. 行动号召 -->
+        <div class="card" style="border-color:rgba(246,211,101,0.15);">
+            <h2><span class="emoji">🚀</span> 加入我们</h2>
+            <p style="margin-bottom:1.2rem;">
+                传承钢铁精神，讲述冶金故事。<br>
+                无论你是想了解冶金科学家的传奇人生，还是希望亲身参与实践，
+                钢魂实践团都欢迎你的加入。
+            </p>
+            <div class="cta-area">
+                <a href="illustratedhandbook.html" class="btn">🔬 查看冶金科学家图鉴</a>
+            </div>
+        </div>
+
+        <div class="footer">❖ 传承钢铁精神 · 探索未至之境 ❖</div>
+    </div>
+
+</body>
+</html>

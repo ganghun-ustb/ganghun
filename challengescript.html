@@ -1,0 +1,993 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>闯关剧本 · 冶金少年</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+    <style>
+        /* 右上角勋章徽章 */
+        #badge {   
+    position: fixed;
+    top: 80px;           /* 原来是20px，改成80px */
+    right: 20px;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    border: 1px solid #f1c40f;
+    border-radius: 40px;
+    padding: 0.5rem 1.2rem;
+    color: #fff;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    z-index: 999;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    pointer-events: none;
+        }
+        #badge .icon {
+            font-size: 1.5rem;
+        }
+        #badge .count {
+            font-weight: bold;
+            color: #f1c40f;
+            font-size: 1.4rem;
+        }
+#wrapper {
+    padding-top: 80px;
+}
+        /* 页面标题 */
+        #wrapper > header {
+            background: rgba(0,0,0,0.3);
+            padding: 2rem 0;
+            text-align: center;
+        }
+        #wrapper > header h2 {
+            font-size: 2.2rem;
+            margin-bottom: 0.2rem;
+            background: linear-gradient(135deg, #f1c40f, #e67e22);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        #wrapper > header p {
+            color: #aaa;
+            font-size: 1.1rem;
+        }
+
+        /* 分支图容器 */
+        #graph-container {
+            background: rgba(255,255,255,0.03);
+            border-radius: 16px;
+            padding: 1rem;
+            border: 1px solid rgba(255,255,255,0.06);
+            overflow: auto;
+        }
+        #graph-svg {
+            width: 100%;
+            height: auto;
+            display: block;
+            min-height: 500px;
+        }
+
+        /* 图例 */
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+            color: #ccc;
+            font-size: 0.9rem;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .legend-item .dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid #555;
+        }
+        .legend-item .dot.incomplete { background: #444; border-color: #555; }
+        .legend-item .dot.completed { background: #f1c40f; border-color: #e67e22; }
+
+        /* 节点样式 */
+        .graph-node {
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .graph-node:hover circle {
+            filter: brightness(1.3);
+        }
+        .graph-node text {
+            font-size: 9px;
+            fill: #fff;
+            text-anchor: middle;
+            dominant-baseline: central;
+            pointer-events: none;
+            font-weight: 600;
+            user-select: none;
+        }
+        .graph-node.incomplete circle {
+            fill: #444;
+            stroke: #555;
+        }
+        .graph-node.completed circle {
+            fill: #f1c40f;
+            stroke: #e67e22;
+            filter: drop-shadow(0 0 6px #f1c40f);
+        }
+        .graph-link {
+            stroke: #555;
+            stroke-width: 1.5;
+            fill: none;
+        }
+        .graph-link.completed {
+            stroke: #f1c40f;
+        }
+
+        /* 弹窗 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(6px);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-box {
+            background: #1a1a2e;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 2rem 2.5rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+        }
+        .modal-box h3 {
+            color: #f1c40f;
+            font-size: 1.5rem;
+            margin: 0 0 0.3rem;
+        }
+        .modal-box .sub {
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        .modal-box .section-title {
+            color: #5dade2;
+            font-weight: bold;
+            margin: 1rem 0 0.3rem;
+            font-size: 1.05rem;
+        }
+        .modal-box .task-content, .modal-box .knowledge-content {
+            background: rgba(0,0,0,0.2);
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            color: #ddd;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+        .modal-box .status-badge {
+            display: inline-block;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin: 0.5rem 0 1rem;
+        }
+        .status-badge.incomplete { background: #444; color: #aaa; }
+        .status-badge.completed { background: #f1c40f; color: #1a1a2e; }
+
+        .modal-box .action-btn {
+            background: linear-gradient(135deg, #f1c40f, #e67e22);
+            border: none;
+            color: #1a1a2e;
+            padding: 0.7rem 2rem;
+            border-radius: 40px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-right: 0.8rem;
+        }
+        .modal-box .action-btn:hover {
+            transform: scale(1.04);
+        }
+        .modal-box .action-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .modal-box .close-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #ccc;
+            padding: 0.7rem 2rem;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .modal-box .close-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* 重置 */
+        .reset-area {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+        .reset-area button {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #ccc;
+            padding: 0.6rem 2rem;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .reset-area button:hover {
+            background: rgba(255,255,255,0.15);
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            #wrapper > header h2 { font-size: 1.6rem; }
+            .modal-box { padding: 1.5rem; }
+            .modal-box .task-content, .modal-box .knowledge-content { font-size: 0.9rem; }
+            #badge { font-size: 1rem; padding: 0.3rem 0.8rem; }
+            #badge .icon { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body class="is-preload">
+
+    <!-- 右上角勋章计数 -->
+    <div id="badge">
+        <span class="icon">🏅</span>
+        <span>勋章</span>
+        <span class="count" id="medalCount">0</span>
+    </div>
+
+    <div id="page-wrapper">
+
+        <!-- Header -->
+        <header id="header">
+            <h1><a href="gamehomepage.html">钢魂实践团</a></h1>
+            <nav><a href="#menu">导航栏</a></nav>
+        </header>
+
+        <!-- Menu -->
+        <nav id="menu">
+            <div class="inner">
+                <h2>导航栏</h2>
+                <ul class="links">
+                    <li><a href="gamehomepage.html">🏠 游戏首页</a></li>
+                    <li><a href="challengescript.html">📖 闯关剧本</a></li>
+                    <li><a href="illustratedhandbook.html">🔬 冶金科学家图鉴</a></li>
+                    <li><a href="growth.html">📁 我的成长档案</a></li>
+                    <li><a href="ganghun.html">📌 关于北科大钢魂实践团</a></li>
+                </ul>
+                <a href="#" class="close">Close</a>
+            </div>
+        </nav>
+
+        <!-- Wrapper -->
+        <section id="wrapper">
+            <header>
+                <div class="inner">
+                    <h2>🗺️ 闯关剧本 · 任务地图</h2>
+                    <p>点击每个节点查看任务与知识储备 · 完成任务可领取冶金勋章</p>
+                </div>
+            </header>
+
+            <div class="wrapper">
+                <div class="inner">
+                    <div id="graph-container">
+                        <svg id="graph-svg" viewBox="0 0 900 700" preserveAspectRatio="xMidYMid meet"></svg>
+                    </div>
+
+                    <div class="legend">
+                        <span class="legend-item"><span class="dot incomplete"></span> 未完成</span>
+                        <span class="legend-item"><span class="dot completed"></span> 已完成（获得勋章）</span>
+                    </div>
+
+                    <div class="reset-area">
+                        <button onclick="resetAll()">🔄 重置所有进度</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <section id="footer">
+            <div class="inner">
+                <h2 class="major">📬 联系我们</h2>
+                <p>北京科技大学钢魂实践团 · 传承钢铁精神 · 探索冶金未来</p>
+                <form method="post" action="#">
+                    <div class="fields">
+                        <div class="field"><label for="name">姓名</label><input type="text" name="name" id="name" /></div>
+                        <div class="field"><label for="email">邮箱</label><input type="email" name="email" id="email" /></div>
+                        <div class="field"><label for="message">留言</label><textarea name="message" id="message" rows="3"></textarea></div>
+                    </div>
+                    <ul class="actions"><li><input type="submit" value="发送留言" /></li></ul>
+                </form>
+                <ul class="copyright">
+                    <li>&copy; 北京科技大学钢魂实践团</li>
+                    <li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+                </ul>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- 弹窗 -->
+    <div class="modal-overlay" id="nodeModal">
+        <div class="modal-box">
+            <h3 id="modalTitle">节点名称</h3>
+            <div class="sub" id="modalId">ID: xxx</div>
+            <div><span class="status-badge" id="modalStatus">未完成</span></div>
+            <div class="section-title">📋 任务</div>
+            <div class="task-content" id="modalTask">任务描述</div>
+            <div class="section-title">📚 知识储备</div>
+            <div class="knowledge-content" id="modalKnowledge">需要了解的知识</div>
+            <div style="margin-top: 1.5rem;">
+                <button class="action-btn" id="claimBtn">🏅 领取勋章</button>
+                <button class="close-btn" onclick="closeModal()">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/jquery.scrollex.min.js"></script>
+    <script src="assets/js/browser.min.js"></script>
+    <script src="assets/js/breakpoints.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/main.js"></script>
+
+    <!-- ====== 核心脚本 ====== -->
+    <script>
+        // ============================================================
+        // 1. 故事数据（每个节点包含任务和知识储备）
+        // ============================================================
+        const storyData = {
+            start: {
+                id: 'start',
+                text: '🎓 欢迎来到冶金世界！\n这是你的起点，也是钢铁精神的发源地。',
+                task: '1. 阅读《钢铁是怎样炼成的》第一章\n2. 观看纪录片《大国钢铁》第一集\n3. 写下你对“冶金”的第一印象（不少于100字）',
+                knowledge: '· 冶金的定义与历史\n· 钢铁在国民经济中的地位\n· 北京科技大学冶金学院简介',
+                options: [
+                    { text: '了解冶金专业', nextId: 'learn_metallurgy' },
+                    { text: '考虑转专业', nextId: 'consider_transfer' }
+                ]
+            },
+            learn_metallurgy: {
+                id: 'learn_metallurgy',
+                text: '📚 你深入了解了冶金专业的内涵与前景。',
+                task: '1. 完成冶金导论课课后习题\n2. 采访一位冶金专业的学长/学姐\n3. 写一篇800字以上的专业认知报告',
+                knowledge: '· 冶金学科的分支（钢铁冶金、有色冶金、物理化学等）\n· 冶金行业的发展趋势（绿色、智能）\n· 知名冶金院校与科研机构',
+                options: [
+                    { text: '选择核心课程', nextId: 'course_choice' }
+                ]
+            },
+            consider_transfer: {
+                id: 'consider_transfer',
+                text: '💭 你曾考虑过转专业，但最终选择坚守。',
+                task: '1. 列出冶金专业的10个优势\n2. 对比冶金与计算机的异同\n3. 撰写一篇《我为什么选择冶金》的短文',
+                knowledge: '· 冶金与信息技术的交叉领域\n· 冶金行业的职业发展路径\n· 冶金对国家战略的重要性',
+                options: [
+                    { text: '撤回申请，留在冶金', nextId: 'learn_metallurgy' }
+                ]
+            },
+            course_choice: {
+                id: 'course_choice',
+                text: '📖 大一结束，你面临专业方向的分流选择。',
+                task: '1. 查阅冶金学院三个方向（物理化学、材料科学、冶金原理）的培养方案\n2. 与导师进行一次深入交流\n3. 制定你的个人学习计划',
+                knowledge: '· 各方向的课程设置与研究重点\n· 不同方向的就业前景\n· 如何根据兴趣选择方向',
+                options: [
+                    { text: '物理化学方向', nextId: 'course_physchem' },
+                    { text: '材料科学方向', nextId: 'course_materials' },
+                    { text: '冶金原理方向', nextId: 'course_metallurgy' }
+                ]
+            },
+            course_physchem: {
+                id: 'course_physchem',
+                text: '🧪 你选择了物理化学方向，深入探索冶金的本质。',
+                task: '1. 掌握热力学三大定律在冶金中的应用\n2. 完成一个冶金热力学计算案例\n3. 阅读魏寿昆院士的著作《冶金物理化学》',
+                knowledge: '· 吉布斯自由能与反应方向\n· 相图与相变\n· 冶金动力学基础',
+                options: [
+                    { text: '进入实验室', nextId: 'lab_experience' }
+                ]
+            },
+            course_materials: {
+                id: 'course_materials',
+                text: '🧱 你选择了材料科学方向，研究金属材料的微观世界。',
+                task: '1. 学习晶体学基础知识\n2. 观察金相组织并识别不同组织\n3. 分析一种合金的强化机制',
+                knowledge: '· 晶体结构与缺陷\n· 固溶强化、沉淀强化\n· 材料表征方法（XRD、SEM）',
+                options: [
+                    { text: '先进结构材料', nextId: 'advanced_materials' },
+                    { text: '纳米功能材料', nextId: 'nanomaterials' }
+                ]
+            },
+            course_metallurgy: {
+                id: 'course_metallurgy',
+                text: '🔥 你选择了冶金原理方向，聚焦于冶炼工艺的优化。',
+                task: '1. 绘制高炉炼铁流程图\n2. 分析影响高炉焦比的因素\n3. 提出一项节能降耗的改进方案',
+                knowledge: '· 高炉内温度场与气流分布\n· 造渣与脱硫原理\n· 铁水预处理与精炼',
+                options: [
+                    { text: '工艺优化', nextId: 'process_optimization' },
+                    { text: '数值模拟', nextId: 'numerical_simulation' }
+                ]
+            },
+            lab_experience: {
+                id: 'lab_experience',
+                text: '🔬 你进入了实验室，亲身体验科研的魅力。',
+                task: '1. 完成一项冶金物理化学实验\n2. 撰写实验报告并分析数据\n3. 参加一次组会并汇报进展',
+                knowledge: '· 实验操作规范与安全\n· 数据采集与处理\n· 科学论文的写作规范',
+                options: [
+                    { text: '科研项目', nextId: 'research_project' }
+                ]
+            },
+            research_project: {
+                id: 'research_project',
+                text: '📝 你全身心投入科研项目，准备产出成果。',
+                task: '1. 确定研究课题并制定方案\n2. 完成实验并整理数据\n3. 撰写一篇学术论文（或申请专利）',
+                knowledge: '· 科研选题与创新思维\n· 实验设计与控制变量\n· 学术论文结构与投稿流程',
+                options: [
+                    { text: '发表论文', nextId: 'publish_paper' },
+                    { text: '申请专利', nextId: 'apply_patent' }
+                ]
+            },
+            publish_paper: {
+                id: 'publish_paper',
+                text: '📄 你的论文成功发表，学术之路开启。',
+                task: '1. 将论文投稿至核心期刊\n2. 参加一次学术会议并做报告\n3. 拓展研究至相关领域',
+                knowledge: '· 学术期刊分类与投稿要求\n· 同行评审流程\n· 学术交流与展示技巧',
+                options: [
+                    { text: '读研深造', nextId: 'grad_school_choice' },
+                    { text: '直接工作', nextId: 'work_choice' }
+                ]
+            },
+            apply_patent: {
+                id: 'apply_patent',
+                text: '📜 你申请了发明专利，技术转化迈出第一步。',
+                task: '1. 撰写专利申请书\n2. 与专利代理机构沟通\n3. 寻找技术应用场景或企业合作',
+                knowledge: '· 专利类型与申请流程\n· 技术交底书的撰写\n· 知识产权保护的基本法律',
+                options: [
+                    { text: '创业', nextId: 'entrepreneur_ending' },
+                    { text: '进入大企业', nextId: 'big_company_ending' }
+                ]
+            },
+            grad_school_choice: {
+                id: 'grad_school_choice',
+                text: '🎓 你面临读研深造的选择。',
+                task: '1. 确定攻读硕士或博士\n2. 选择目标院校与导师\n3. 准备考研或申请材料',
+                knowledge: '· 国内冶金强校与研究方向\n· 导师选择与沟通技巧\n· 研究生生涯规划',
+                options: [
+                    { text: '攻读博士', nextId: 'phd_path' },
+                    { text: '攻读硕士', nextId: 'master_path' }
+                ]
+            },
+            phd_path: {
+                id: 'phd_path',
+                text: '🎓 你选择了直博，深耕冶金学术。',
+                task: '1. 完成博士课程学习\n2. 开展原创性研究\n3. 发表高水平论文并完成博士论文',
+                knowledge: '· 博士培养流程与要求\n· 科研方法论\n· 学术诚信与伦理',
+                options: [
+                    { text: '留在高校', nextId: 'academia_ending' },
+                    { text: '进入科研院所', nextId: 'research_inst_ending' }
+                ]
+            },
+            master_path: {
+                id: 'master_path',
+                text: '🎓 你选择了攻读硕士，准备进入业界。',
+                task: '1. 完成硕士课程\n2. 参与企业合作项目\n3. 完成硕士学位论文',
+                knowledge: '· 工程硕士与学术硕士的区别\n· 企业研发流程\n· 职业规划与求职技巧',
+                options: [
+                    { text: '技术工程师', nextId: 'engineer_ending' },
+                    { text: '管理岗位', nextId: 'manager_ending' }
+                ]
+            },
+            work_choice: {
+                id: 'work_choice',
+                text: '💼 你决定本科毕业后直接工作。',
+                task: '1. 制作简历并投递\n2. 参加面试\n3. 选择最适合的offer',
+                knowledge: '· 冶金行业企业概览\n· 岗位要求与职业发展\n· 职场素养与沟通技能',
+                options: [
+                    { text: '技术岗', nextId: 'technical_route' },
+                    { text: '销售岗', nextId: 'sales_route' }
+                ]
+            },
+            advanced_materials: {
+                id: 'advanced_materials',
+                text: '🛰️ 你专注于先进结构材料的研究。',
+                task: '1. 学习高温合金或钛合金的知识\n2. 分析一种航空材料的性能要求\n3. 提出改进材料性能的方案',
+                knowledge: '· 航空材料的分类与特性\n· 材料选型与失效分析\n· 先进制造技术（增材制造等）',
+                options: [
+                    { text: '航空航天', nextId: 'aerospace_ending' },
+                    { text: '汽车轻量化', nextId: 'automotive_ending' }
+                ]
+            },
+            nanomaterials: {
+                id: 'nanomaterials',
+                text: '🧬 你探索纳米功能材料的无限可能。',
+                task: '1. 学习纳米材料制备方法\n2. 研究纳米金属的催化性能\n3. 设计一种纳米材料应用场景',
+                knowledge: '· 纳米效应与尺寸效应\n· 纳米材料的表征技术\n· 纳米材料在能源、环保等领域的应用',
+                options: [
+                    { text: '生物医学', nextId: 'biomedical_ending' },
+                    { text: '电子器件', nextId: 'electronics_ending' }
+                ]
+            },
+            process_optimization: {
+                id: 'process_optimization',
+                text: '⚡ 你致力于工艺优化，提升生产效能。',
+                task: '1. 分析现有工艺的瓶颈\n2. 提出一项改进措施\n3. 评估改进效果（能耗、质量等）',
+                knowledge: '· 冶金流程工程\n· 节能降耗技术\n· 质量与成本控制',
+                options: [
+                    { text: '节能减排', nextId: 'energy_saving_ending' },
+                    { text: '质量控制', nextId: 'quality_control_ending' }
+                ]
+            },
+            numerical_simulation: {
+                id: 'numerical_simulation',
+                text: '📊 你利用数值模拟技术优化工艺。',
+                task: '1. 学习一款CFD或有限元软件\n2. 建立高炉或连铸过程的模型\n3. 模拟并优化一个参数',
+                knowledge: '· 计算流体力学基础\n· 有限元方法\n· 数字孪生技术概念',
+                options: [
+                    { text: '数字孪生', nextId: 'digital_twin_ending' },
+                    { text: 'AI控制', nextId: 'ai_control_ending' }
+                ]
+            },
+
+            // ---------- 结局节点（含任务和知识） ----------
+            academia_ending: {
+                id: 'academia_ending',
+                text: '🏫 你成为了一名大学教授，传承冶金火种。',
+                task: '1. 完成博士后研究\n2. 申请教职并成功入职\n3. 开设一门冶金专业课程',
+                knowledge: '· 高校教师职业路径\n· 教学法与课程设计\n· 科研项目申请与管理',
+                options: []
+            },
+            research_inst_ending: {
+                id: 'research_inst_ending',
+                text: '🔬 你进入了国家级科研院所，攻关核心技术。',
+                task: '1. 参与国家重大专项\n2. 攻克一项“卡脖子”技术\n3. 培养青年科研人才',
+                knowledge: '· 科研院所的组织架构\n· 项目管理与团队协作\n· 科技成果转化',
+                options: []
+            },
+            engineer_ending: {
+                id: 'engineer_ending',
+                text: '🏭 你成为了一名冶金工程师，扎根生产一线。',
+                task: '1. 熟悉生产全流程\n2. 解决现场技术难题\n3. 持续改进工艺',
+                knowledge: '· 生产工艺与设备\n· 故障诊断与处理\n· 安全生产与环保法规',
+                options: []
+            },
+            manager_ending: {
+                id: 'manager_ending',
+                text: '📈 你走上了管理岗位，引领企业发展。',
+                task: '1. 学习管理学知识\n2. 领导一个团队完成项目\n3. 制定企业发展战略',
+                knowledge: '· 企业管理与领导力\n· 冶金市场与经济分析\n· 创新与变革管理',
+                options: []
+            },
+            entrepreneur_ending: {
+                id: 'entrepreneur_ending',
+                text: '🚀 你创办了公司，将技术转化为产品。',
+                task: '1. 撰写商业计划书\n2. 组建团队并融资\n3. 推出首款产品并开拓市场',
+                knowledge: '· 创业方法论\n· 知识产权与商业机密\n· 市场营销与客户关系',
+                options: []
+            },
+            big_company_ending: {
+                id: 'big_company_ending',
+                text: '🏢 你进入大型冶金集团，成为技术中坚。',
+                task: '1. 参与集团级研发项目\n2. 推动技术标准化\n3. 培养团队技术能力',
+                knowledge: '· 大型企业研发体系\n· 标准化与知识产权\n· 技术领导力',
+                options: []
+            },
+            technical_route: {
+                id: 'technical_route',
+                text: '🔧 你成为技术骨干，专注解决实际问题。',
+                task: '1. 掌握核心工艺参数控制\n2. 优化一个关键工序\n3. 撰写技术总结报告',
+                knowledge: '· 工艺参数对质量的影响\n· 数据分析与决策\n· 技术文档撰写',
+                options: []
+            },
+            sales_route: {
+                id: 'sales_route',
+                text: '📞 你成为销售精英，用技术打动客户。',
+                task: '1. 学习产品技术特点\n2. 拜访客户并挖掘需求\n3. 完成一笔大额订单',
+                knowledge: '· 产品知识与竞争分析\n· 客户关系管理\n· 谈判技巧与合同条款',
+                options: []
+            },
+            aerospace_ending: {
+                id: 'aerospace_ending',
+                text: '✈️ 你投身航空航天材料事业。',
+                task: '1. 了解航空发动机材料要求\n2. 参与一种叶片材料的研制\n3. 通过适航认证测试',
+                knowledge: '· 航空材料标准与规范\n· 高温合金的疲劳与蠕变\n· 适航认证流程',
+                options: []
+            },
+            automotive_ending: {
+                id: 'automotive_ending',
+                text: '🚗 你推动汽车轻量化材料的应用。',
+                task: '1. 研究超高强度钢的性能\n2. 设计一种轻量化车身结构\n3. 与主机厂合作完成试制',
+                knowledge: '· 汽车用钢的等级与性能\n· 轻量化技术路线\n· 整车制造流程',
+                options: []
+            },
+            biomedical_ending: {
+                id: 'biomedical_ending',
+                text: '🧬 你将纳米材料用于生物医学创新。',
+                task: '1. 研究纳米载药系统\n2. 进行细胞实验\n3. 撰写科研论文并申请基金',
+                knowledge: '· 纳米生物效应\n· 靶向治疗原理\n· 生物安全性评价',
+                options: []
+            },
+            electronics_ending: {
+                id: 'electronics_ending',
+                text: '📱 你开发了高性能电子器件用材料。',
+                task: '1. 研究纳米传感器的原理\n2. 制备样品并测试性能\n3. 寻找应用客户',
+                knowledge: '· 传感原理与信号处理\n· 微纳加工技术\n· 电子产品可靠性',
+                options: []
+            },
+            energy_saving_ending: {
+                id: 'energy_saving_ending',
+                text: '🌱 你成为了节能减排的先锋。',
+                task: '1. 计算吨钢能耗并找出改进点\n2. 实施一项节能改造\n3. 推广节能技术',
+                knowledge: '· 能源审计方法\n· 节能技术（余热回收、富氧燃烧等）\n· 碳排放核算与碳交易',
+                options: []
+            },
+            quality_control_ending: {
+                id: 'quality_control_ending',
+                text: '📈 你致力于产品质量的极致追求。',
+                task: '1. 建立质量管理体系\n2. 解决一个长期质量缺陷\n3. 推行六西格玛或精益生产',
+                knowledge: '· 质量管理工具（SPC、FMEA）\n· 过程能力分析\n· 客户满意度提升',
+                options: []
+            },
+            digital_twin_ending: {
+                id: 'digital_twin_ending',
+                text: '🖥️ 你构建了冶金的数字孪生世界。',
+                task: '1. 建立关键设备的三维模型\n2. 集成实时数据流\n3. 实现虚拟仿真与预测',
+                knowledge: '· 数字孪生技术栈\n· 数据采集与物联网\n· 仿真建模与优化算法',
+                options: []
+            },
+            ai_control_ending: {
+                id: 'ai_control_ending',
+                text: '🤖 你利用AI实现了冶金的智能控制。',
+                task: '1. 收集并清洗生产数据\n2. 训练一个预测模型\n3. 部署模型到现场并验证效果',
+                knowledge: '· 机器学习基础\n· 工业大数据分析\n· 自动化控制系统',
+                options: []
+            }
+        };
+
+        // ============================================================
+        // 2. 中文标签（用于节点显示）
+        // ============================================================
+        const nodeLabels = {
+            start: '起始',
+            learn_metallurgy: '了解冶金',
+            consider_transfer: '转专业',
+            course_choice: '课程选择',
+            course_physchem: '物理化学',
+            course_materials: '材料科学',
+            course_metallurgy: '冶金原理',
+            lab_experience: '实验室',
+            research_project: '科研项目',
+            publish_paper: '发表论文',
+            apply_patent: '申请专利',
+            grad_school_choice: '深造选择',
+            phd_path: '读博',
+            master_path: '读硕',
+            work_choice: '就业选择',
+            advanced_materials: '先进材料',
+            nanomaterials: '纳米材料',
+            process_optimization: '工艺优化',
+            numerical_simulation: '数值模拟',
+            academia_ending: '教授',
+            research_inst_ending: '研究院',
+            engineer_ending: '工程师',
+            manager_ending: '管理岗',
+            entrepreneur_ending: '创业',
+            big_company_ending: '大企业',
+            technical_route: '技术岗',
+            sales_route: '销售岗',
+            aerospace_ending: '航空航天',
+            automotive_ending: '汽车轻量化',
+            biomedical_ending: '生物医学',
+            electronics_ending: '电子器件',
+            energy_saving_ending: '节能减排',
+            quality_control_ending: '质量控制',
+            digital_twin_ending: '数字孪生',
+            ai_control_ending: 'AI控制'
+        };
+
+        // ============================================================
+        // 3. 状态管理（localStorage独立存储）
+        // ============================================================
+        const STORAGE_KEY = 'metallurgy_task_progress';
+
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    return {
+                        completed: new Set(data.completed || []),
+                        medalCount: data.medalCount || 0
+                    };
+                } catch (e) {
+                    return { completed: new Set(), medalCount: 0 };
+                }
+            }
+            return { completed: new Set(), medalCount: 0 };
+        }
+
+        function saveProgress(completedSet, medalCount) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                completed: Array.from(completedSet),
+                medalCount: medalCount
+            }));
+        }
+
+        let completedNodes = new Set();
+        let medalCount = 0;
+
+        function initState() {
+            const state = loadProgress();
+            completedNodes = state.completed;
+            medalCount = state.medalCount;
+            updateBadge();
+        }
+
+        function updateBadge() {
+            document.getElementById('medalCount').textContent = medalCount;
+        }
+
+        function saveState() {
+            saveProgress(completedNodes, medalCount);
+        }
+
+        // ============================================================
+        // 4. 分支图布局与绘制
+        // ============================================================
+        function buildGraphData() {
+            const edges = [];
+            const nodeIds = Object.keys(storyData);
+            nodeIds.forEach(id => {
+                const node = storyData[id];
+                if (node && node.options) {
+                    node.options.forEach(opt => {
+                        if (opt.nextId) edges.push({ from: id, to: opt.nextId });
+                    });
+                }
+            });
+            return { nodes: nodeIds, edges };
+        }
+
+        function layoutGraph() {
+            const { nodes, edges } = buildGraphData();
+            const depths = {};
+            const visited = new Set();
+            const queue = ['start'];
+            depths['start'] = 0;
+            visited.add('start');
+            while (queue.length) {
+                const id = queue.shift();
+                const node = storyData[id];
+                if (node && node.options) {
+                    node.options.forEach(opt => {
+                        const next = opt.nextId;
+                        if (next && !visited.has(next) && storyData[next]) {
+                            visited.add(next);
+                            depths[next] = (depths[id] || 0) + 1;
+                            queue.push(next);
+                        }
+                    });
+                }
+            }
+            const groups = {};
+            nodes.forEach(id => {
+                const d = depths[id] !== undefined ? depths[id] : 99;
+                if (!groups[d]) groups[d] = [];
+                groups[d].push(id);
+            });
+            const positions = {};
+            const maxDepth = Math.max(...Object.keys(groups).map(Number));
+            const width = 880, height = 680;
+            const hMargin = 50, vMargin = 50;
+            Object.keys(groups).forEach(depth => {
+                const ids = groups[depth];
+                const count = ids.length;
+                const spacing = (width - 2 * hMargin) / (count + 1);
+                ids.forEach((id, idx) => {
+                    const x = hMargin + (idx + 1) * spacing;
+                    const y = vMargin + (parseInt(depth) / (maxDepth || 1)) * (height - 2 * vMargin);
+                    positions[id] = { x, y };
+                });
+            });
+            return positions;
+        }
+
+        function renderGraph() {
+            const svg = document.getElementById('graph-svg');
+            if (!svg) return;
+            const positions = layoutGraph();
+
+            const edges = [];
+            Object.keys(storyData).forEach(id => {
+                const node = storyData[id];
+                if (node && node.options) {
+                    node.options.forEach(opt => {
+                        if (opt.nextId) edges.push({ from: id, to: opt.nextId });
+                    });
+                }
+            });
+
+            svg.innerHTML = '';
+
+            // 连线
+            edges.forEach(edge => {
+                const fromPos = positions[edge.from];
+                const toPos = positions[edge.to];
+                if (!fromPos || !toPos) return;
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                const dx = toPos.x - fromPos.x;
+                const dy = toPos.y - fromPos.y;
+                const cp1x = fromPos.x + dx * 0.5;
+                const cp1y = fromPos.y;
+                const cp2x = toPos.x - dx * 0.5;
+                const cp2y = toPos.y;
+                path.setAttribute('d', `M ${fromPos.x} ${fromPos.y} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${toPos.x} ${toPos.y}`);
+                path.setAttribute('class', 'graph-link');
+                if (completedNodes.has(edge.from) && completedNodes.has(edge.to)) {
+                    path.classList.add('completed');
+                }
+                svg.appendChild(path);
+            });
+
+            // 节点
+            Object.keys(positions).forEach(id => {
+                const pos = positions[id];
+                const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                group.setAttribute('class', 'graph-node');
+                group.dataset.id = id;
+
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('cx', pos.x);
+                circle.setAttribute('cy', pos.y);
+                circle.setAttribute('r', 20);
+
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', pos.x);
+                text.setAttribute('y', pos.y);
+                text.setAttribute('font-size', '9');
+                const label = nodeLabels[id] || id.substring(0, 4);
+                text.textContent = label;
+
+                if (completedNodes.has(id)) {
+                    group.classList.add('completed');
+                } else {
+                    group.classList.add('incomplete');
+                }
+
+                group.appendChild(circle);
+                group.appendChild(text);
+
+                // 点击事件：弹窗
+                group.addEventListener('click', function(e) {
+                    const nodeId = this.dataset.id;
+                    showNodeDetail(nodeId);
+                });
+
+                svg.appendChild(group);
+            });
+        }
+
+        // ============================================================
+        // 5. 弹窗逻辑
+        // ============================================================
+        let currentModalNodeId = null;
+
+        function showNodeDetail(nodeId) {
+            const node = storyData[nodeId];
+            if (!node) return;
+
+            currentModalNodeId = nodeId;
+            const modal = document.getElementById('nodeModal');
+
+            document.getElementById('modalTitle').textContent = nodeLabels[nodeId] || nodeId;
+            document.getElementById('modalId').textContent = `ID: ${nodeId}`;
+
+            // 状态
+            const statusEl = document.getElementById('modalStatus');
+            const isCompleted = completedNodes.has(nodeId);
+            if (isCompleted) {
+                statusEl.textContent = '✅ 已完成（已获得勋章）';
+                statusEl.className = 'status-badge completed';
+            } else {
+                statusEl.textContent = '🔒 未完成';
+                statusEl.className = 'status-badge incomplete';
+            }
+
+            // 任务和知识
+            document.getElementById('modalTask').textContent = node.task || '（暂无任务）';
+            document.getElementById('modalKnowledge').textContent = node.knowledge || '（暂无知识储备）';
+
+            // 领取按钮
+            const claimBtn = document.getElementById('claimBtn');
+            if (isCompleted) {
+                claimBtn.disabled = true;
+                claimBtn.textContent = '🏅 已领取';
+            } else {
+                claimBtn.disabled = false;
+                claimBtn.textContent = '🏅 领取勋章';
+                // 移除旧监听，避免重复绑定
+                claimBtn.onclick = null;
+                claimBtn.onclick = function() {
+                    claimMedal(nodeId);
+                };
+            }
+
+            modal.classList.add('active');
+        }
+
+        function claimMedal(nodeId) {
+            if (completedNodes.has(nodeId)) return;
+
+            // 标记完成
+            completedNodes.add(nodeId);
+            medalCount += 1;
+            updateBadge();
+            saveState();
+            renderGraph();
+
+            // 更新弹窗状态
+            const statusEl = document.getElementById('modalStatus');
+            statusEl.textContent = '✅ 已完成（已获得勋章）';
+            statusEl.className = 'status-badge completed';
+            document.getElementById('claimBtn').disabled = true;
+            document.getElementById('claimBtn').textContent = '🏅 已领取';
+
+            // 可选：短暂的庆祝提示
+            alert('🎉 恭喜你获得一枚冶金勋章！');
+        }
+
+        function closeModal() {
+            document.getElementById('nodeModal').classList.remove('active');
+        }
+        // 点击背景关闭
+        document.getElementById('nodeModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        // ============================================================
+        // 6. 重置
+        // ============================================================
+        function resetAll() {
+            if (confirm('确定要重置所有进度吗？')) {
+                completedNodes.clear();
+                medalCount = 0;
+                updateBadge();
+                saveState();
+                renderGraph();
+                closeModal();
+            }
+        }
+
+        // ============================================================
+        // 7. 初始化
+        // ============================================================
+        initState();
+        renderGraph();
+    </script>
+
+</body>
+</html>F

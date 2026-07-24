@@ -1,0 +1,1254 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>钢魂实践团 · 冶金少年闯关录</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+    <style>
+        /* ===== 全局自定义样式 ===== */
+const nodeLabels = {
+    start: '起始',
+    learn_metallurgy: '了解冶金',
+    consider_transfer: '转专业',
+    cs_ending: '转行',
+    course_choice: '课程选择',
+    course_physchem: '物理化学',
+    course_materials: '材料科学',
+    course_metallurgy: '冶金原理',
+    lab_experience: '实验室',
+    research_project: '科研项目',
+    publish_paper: '发表论文',
+    apply_patent: '申请专利',
+    grad_school_choice: '深造选择',
+    phd_path: '读博',
+    master_path: '读硕',
+    academia_ending: '教授',
+    research_inst_ending: '研究院',
+    engineer_ending: '工程师',
+    manager_ending: '管理岗',
+    work_choice: '就业选择',
+    technical_route: '技术岗',
+    sales_route: '销售岗',
+    entrepreneur_ending: '创业',
+    big_company_ending: '大企业',
+    industry_visit: '企业参观',
+    internship_choice: '实习',
+    exchange_choice: '交换生',
+    return_home_ending: '回国',
+    international_ending: '国际组织',
+    advanced_materials: '先进材料',
+    nanomaterials: '纳米材料',
+    aerospace_ending: '航空航天',
+    automotive_ending: '汽车轻量化',
+    biomedical_ending: '生物医学',
+    electronics_ending: '电子器件',
+    process_optimization: '工艺优化',
+    numerical_simulation: '数值模拟',
+    energy_saving_ending: '节能减排',
+    quality_control_ending: '质量控制',
+    digital_twin_ending: '数字孪生',
+    ai_control_ending: 'AI控制'
+};
+        #game-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            align-items: flex-start;
+        }
+        #game-container {
+            flex: 2;
+            min-width: 300px;
+        }
+        #graph-container {
+            flex: 1;
+            min-width: 250px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 16px;
+            padding: 1rem;
+            border: 1px solid rgba(255,255,255,0.06);
+            position: sticky;
+            top: 20px;
+            max-height: 600px;
+            overflow: auto;
+        }
+        #graph-container h3 {
+            text-align: center;
+            margin: 0 0 0.5rem;
+            font-size: 1rem;
+            color: #aaa;
+            letter-spacing: 2px;
+        }
+        #graph-svg {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .graph-node {
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .graph-node circle {
+            stroke-width: 2;
+            transition: fill 0.3s, stroke 0.3s;
+        }
+        .graph-node text {
+            font-size: 8px;
+            fill: #fff;
+            text-anchor: middle;
+            dominant-baseline: central;
+            pointer-events: none;
+            font-weight: 600;
+            user-select: none;
+        }
+        .graph-node.unvisited circle {
+            fill: #444;
+            stroke: #555;
+        }
+        .graph-node.visited circle {
+            fill: #f1c40f;
+            stroke: #e67e22;
+        }
+        .graph-node.current circle {
+            fill: #3498db;
+            stroke: #2ecc71;
+            stroke-width: 3;
+            filter: drop-shadow(0 0 8px #3498db);
+        }
+        .graph-link {
+            stroke: #555;
+            stroke-width: 1.5;
+            fill: none;
+        }
+        .graph-link.visited {
+            stroke: #f1c40f;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            #game-wrapper { flex-direction: column; }
+            #graph-container {
+                position: static;
+                max-height: 300px;
+                width: 100%;
+            }
+        }
+
+        /* 其余已有样式保持不变 */
+        #game-container {
+            max-width: 820px;
+            margin: 0 auto;
+            padding: 0.5rem 1rem 2rem;
+        }
+        .game-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            background: rgba(255,255,255,0.06);
+            border-radius: 12px;
+            padding: 0.8rem 1.5rem;
+            margin-bottom: 1.8rem;
+            border-left: 4px solid #f39c12;
+            font-size: 0.95rem;
+            color: #ccc;
+        }
+        .game-status .badge {
+            background: #f39c12;
+            color: #1a1a2e;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+        .game-status .achievement-list {
+            display: flex;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+        }
+        .game-status .achievement-list span {
+            background: rgba(243, 156, 18, 0.2);
+            border: 1px solid #f39c12;
+            border-radius: 20px;
+            padding: 0.1rem 0.8rem;
+            font-size: 0.8rem;
+            color: #f1c40f;
+        }
+        .story-scene {
+            background: rgba(255,255,255,0.04);
+            backdrop-filter: blur(4px);
+            border-radius: 20px;
+            padding: 2rem 2.2rem;
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            min-height: 280px;
+        }
+        .story-scene .story-text {
+            font-size: 1.25rem;
+            line-height: 1.9;
+            color: #e8e8e8;
+            white-space: pre-wrap;
+            margin-bottom: 2rem;
+            font-weight: 300;
+            letter-spacing: 0.3px;
+        }
+        .story-scene .story-text .highlight {
+            color: #f1c40f;
+            font-weight: 500;
+        }
+        .story-scene .story-text .scientist {
+            color: #5dade2;
+            font-weight: 600;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+        .option-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #f0f0f0;
+            padding: 0.9rem 1.8rem;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-align: left;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        .option-btn:hover {
+            background: rgba(52, 152, 219, 0.2);
+            border-color: #3498db;
+            transform: translateX(6px);
+            box-shadow: 0 0 20px rgba(52, 152, 219, 0.1);
+        }
+        .option-btn .icon {
+            font-size: 1.2rem;
+            opacity: 0.7;
+        }
+        .ending {
+            text-align: center;
+            padding: 1.5rem 0 0.5rem;
+        }
+        .ending .big-icon {
+            font-size: 4rem;
+            margin-bottom: 0.5rem;
+        }
+        .ending .ending-title {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #f1c40f, #e67e22);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .ending .ending-desc {
+            font-size: 1.1rem;
+            color: #bbb;
+            margin: 1rem 0 1.5rem;
+        }
+        .ending .restart-btn {
+            background: linear-gradient(135deg, #3498db, #2ecc71);
+            border: none;
+            color: #fff;
+            padding: 0.8rem 2.5rem;
+            border-radius: 40px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 20px rgba(52, 152, 219, 0.3);
+        }
+        .ending .restart-btn:hover {
+            transform: scale(1.04);
+            box-shadow: 0 6px 30px rgba(52, 152, 219, 0.5);
+        }
+    </style>
+</head>
+<body class="is-preload">
+
+    <div id="page-wrapper">
+
+        <!-- Header -->
+        <header id="header" class="alt">
+            <h1><a href="index.html">钢魂实践团</a></h1>
+            <nav><a href="#menu">导航栏</a></nav>
+        </header>
+
+        <!-- Menu -->
+        <nav id="menu">
+            <div class="inner">
+                <h2>导航栏</h2>
+                <ul class="links">
+                    <li><a href="gamehomepage.html">🏠 游戏首页</a></li>
+                    <li><a href="challengescript.html">📖 闯关剧本</a></li>
+                    <li><a href="illustratedhandbook.html">🔬 冶金科学家图鉴</a></li>
+                    <li><a href="growth.html">📁 我的成长档案</a></li>
+                    <li><a href="ganghun.html">📌 关于北科大钢魂实践团</a></li>
+                </ul>
+                <a href="#" class="close">Close</a>
+            </div>
+        </nav>
+
+        <!-- Banner -->
+        <section id="banner">
+            <div class="inner">
+                <div class="logo"><span class="icon fa-gem"></span></div>
+                <h2>🔥 冶金少年成长闯关录</h2>
+                <p>以北科大冶金学子视角 · 开启成长闯关 · 解锁冶金院士专属人生剧本</p>
+            </div>
+        </section>
+
+        <!-- ========== 游戏主体（含分支图） ========== -->
+        <section id="wrapper">
+            <div class="inner" id="game-wrapper">
+                <!-- 左侧：游戏剧情 -->
+                <div id="game-container">
+                    <!-- 由 JavaScript 动态渲染 -->
+                </div>
+                <!-- 右侧：分支图 -->
+                <div id="graph-container">
+                    <h3>🗺️ 分支图</h3>
+                    <svg id="graph-svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid meet"></svg>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <section id="footer">
+            <div class="inner">
+                <h2 class="major">📬 联系我们</h2>
+                <p>北京科技大学钢魂实践团 · 传承钢铁精神 · 探索冶金未来</p>
+                <form method="post" action="#">
+                    <div class="fields">
+                        <div class="field"><label for="name">姓名</label><input type="text" name="name" id="name" /></div>
+                        <div class="field"><label for="email">邮箱</label><input type="email" name="email" id="email" /></div>
+                        <div class="field"><label for="message">留言</label><textarea name="message" id="message" rows="3"></textarea></div>
+                    </div>
+                    <ul class="actions"><li><input type="submit" value="发送留言" /></li></ul>
+                </form>
+                <ul class="copyright">
+                    <li>&copy; 北京科技大学钢魂实践团</li>
+                    <li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+                </ul>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/jquery.scrollex.min.js"></script>
+    <script src="assets/js/browser.min.js"></script>
+    <script src="assets/js/breakpoints.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/main.js"></script>
+
+    <!-- ====== 游戏主脚本（含分支图逻辑） ====== -->
+    <script>
+    // ============================================================
+    // 1. 故事数据（与之前相同，为节省篇幅这里仅展示部分，实际使用完整版）
+    // 注意：由于篇幅限制，此处只保留核心结构，实际使用时请将完整 storyData 粘贴在此。
+    // 为方便演示，我使用完整版（已在前面提供），但在回答中我会把完整数据压缩进代码块。
+    // 在最终答案中，我会提供完整数据。
+    // ============================================================
+
+    // -------- 为了回答简洁，此处省略完整 storyData，实际最终答案会包含完整数据 --------
+    // 我将把完整 storyData 放在答案末尾的完整代码中，这里只写结构示意。
+    const storyData = {
+    // ==================== 起点 ====================
+    start: {
+        id: 'start',
+        text: `🎓 你手握北京科技大学冶金学院的录取通知书，站在校门口。
+
+        梧桐叶沙沙作响，你深吸一口气，迈进了这所“钢铁摇篮”。
+
+        “冶金”两个字对你来说既熟悉又陌生——你只知道它和钢铁有关，但具体学什么、未来做什么，心里完全没底。
+
+        今天，是你大学的第一天，也是你人生岔路口的起点。`,
+        options: [
+            { text: '🔍 深入了解冶金专业', nextId: 'learn_metallurgy' },
+            { text: '💭 考虑转专业到计算机', nextId: 'consider_transfer' }
+        ]
+    },
+
+    // ==================== 转专业分支 ====================
+    consider_transfer: {
+        id: 'consider_transfer',
+        text: `💻 你听说计算机专业就业好、薪资高，心里有些动摇。
+
+        你打开转专业申请表，却迟迟下不了笔。
+
+        你想起高中时曾读过一篇关于 <span class="scientist">魏寿昆</span> 院士的文章，他说：“<span class="highlight">冶金是化腐朽为神奇的科学。</span>”
+
+        你开始犹豫：真的要放弃这个可能改变物质世界的专业吗？`,
+        options: [
+            { text: '❤️ 撤回申请，留在冶金', nextId: 'learn_metallurgy' },
+            { text: '🚀 坚持转专业', nextId: 'cs_ending' }
+        ]
+    },
+
+    cs_ending: {
+        id: 'cs_ending',
+        text: `💻 你转到了计算机专业，成为一名优秀的软件工程师。
+
+        你进入互联网大厂，薪资优厚，生活安稳。
+
+        但每当看到关于钢铁、新材料、新能源的新闻，你心中总会泛起一丝波澜。
+
+        你曾梦到高炉中熊熊燃烧的火焰，醒来时默默关掉了电脑。
+
+        <span class="highlight">成就解锁：【另辟蹊径 · 跨界人生】</span>`,
+        options: [],
+        ending: true,
+        endingIcon: '💻',
+        endingTitle: '🔄 另辟蹊径 · 跨界人生',
+        endingDesc: '你走出了另一条路，但冶金精神始终在你心中闪耀。'
+    },
+
+    // ==================== 深入了解冶金 ====================
+    learn_metallurgy: {
+        id: 'learn_metallurgy',
+        text: `📚 你参加了冶金学院的“新生专业导论课”。
+
+        教授在台上娓娓道来：“从青铜器到高铁，从航天合金到芯片材料，冶金贯穿了整个人类文明史。”
+
+        你第一次听到 <span class="scientist">柯俊</span> 院士的名言：“<span class="highlight">冶金工业是现代化国家的基石。</span>”
+
+        你感到胸膛里有什么东西被点燃了。`,
+        options: [
+            { text: '📖 选择专业核心课程', nextId: 'course_choice' }
+        ]
+    },
+
+    // ==================== 课程选择 ====================
+    course_choice: {
+        id: 'course_choice',
+        text: `📖 大一结束，你面临专业方向的分流选择。
+
+        冶金学院提供了三条主修路径，每一条都将通向不同的未来。
+
+        你仔细阅读了培养方案，陷入沉思……`,
+        options: [
+            { text: '🧪 物理化学方向（侧重理论）', nextId: 'course_physchem' },
+            { text: '🧱 材料科学方向（侧重结构）', nextId: 'course_materials' },
+            { text: '🔥 冶金原理方向（侧重工艺）', nextId: 'course_metallurgy' }
+        ]
+    },
+
+    // ==================== 物理化学方向 ====================
+    course_physchem: {
+        id: 'course_physchem',
+        text: `🧪 你选择了物理化学方向，整天与热力学、动力学公式打交道。
+
+        你发现，冶金过程中的温度、压力、浓度变化，都遵循着优美的数学规律。
+
+        你逐渐领悟到 <span class="scientist">魏寿昆</span> 院士所说的“<span class="highlight">冶金物理化学是冶金学的灵魂</span>”。
+
+        你开始思考：是深入实验室做研究，还是去企业看看实际应用？`,
+        options: [
+            { text: '🔬 进入实验室，参与科研项目', nextId: 'lab_experience' },
+            { text: '🏭 去企业参观实习，了解生产一线', nextId: 'industry_visit' }
+        ]
+    },
+
+    // -------- 实验室路线 --------
+    lab_experience: {
+        id: 'lab_experience',
+        text: `🔬 你进入了冶金物理化学实验室，跟着导师做课题。
+
+        你第一次亲手操作高温炉、气相色谱仪、电化学工作站。
+
+        导师对你说：“科研就是要耐得住寂寞，坐得住冷板凳。”
+
+        你面对两个选择：深入一个课题做出成果，还是拓宽视野接触更多领域？`,
+        options: [
+            { text: '📝 专注一个课题，争取发表论文', nextId: 'research_project' },
+            { text: '📊 广泛参与多个项目，积累经验', nextId: 'research_project' } // 合并为一个
+        ]
+    },
+
+    // 重新将lab_experience直接引到research_project，但为了丰富，我们增加一个中间节点
+    // 我们改为lab_experience -> research_project / broaden_experience，但我们可以简化，直接到research_project然后分发表论文和专利
+
+    // 我们修正：lab_experience 直接到 research_project 或 industry_visit？但industry_visit已经有过，所以重新规划。
+
+    // 调整：lab_experience -> research_project / theory_deep (理论深造)
+    // 但之前已经考虑了，现在我们按原有逻辑继续：lab_experience -> research_project 或 industry_visit？但industry_visit已存在，我们让lab_experience只通向research_project，然后在research_project分叉。
+
+    // 重新编写：
+
+    research_project: {
+        id: 'research_project',
+        text: `📝 你全身心投入了一个关于“冶金熔体结构”的研究课题。
+
+        经过数百次实验，你终于发现了一种新的短程有序结构。
+
+        导师拍着你的肩膀说：“这个发现可以发一篇不错的论文。”
+
+        你面临抉择：将成果写成论文发表，还是申请专利保护技术？`,
+        options: [
+            { text: '📄 撰写论文，投稿学术期刊', nextId: 'publish_paper' },
+            { text: '📜 申请发明专利，保护技术', nextId: 'apply_patent' }
+        ]
+    },
+
+    publish_paper: {
+        id: 'publish_paper',
+        text: `📄 你的论文发表在《冶金学报》上，引起了学术界的关注。
+
+        你受邀参加全国冶金物理化学学术会议，在会上做了报告。
+
+        一位老教授对你说：“年轻人，科研之路很漫长，但每一步都算数。”
+
+        你开始思考未来的道路：是继续读研深造，还是直接进入职场？`,
+        options: [
+            { text: '🎓 读研深造，攻读硕士或博士', nextId: 'grad_school_choice' },
+            { text: '💼 直接工作，进入冶金企业', nextId: 'work_choice' }
+        ]
+    },
+
+    grad_school_choice: {
+        id: 'grad_school_choice',
+        text: `🎓 你拿到了保研资格，可以选择攻读硕士或直接攻读博士。
+
+        硕士只需2-3年，可以较早进入业界；博士需要5年，但能深入前沿。
+
+        你想起 <span class="scientist">柯俊</span> 院士说过：“<span class="highlight">冶金科研需要十年磨一剑的毅力。</span>”`,
+        options: [
+            { text: '🎓 攻读博士，走学术路线', nextId: 'phd_path' },
+            { text: '🎓 攻读硕士，准备进入业界', nextId: 'master_path' }
+        ]
+    },
+
+    phd_path: {
+        id: 'phd_path',
+        text: `🎓 你选择了直博，在冶金物理化学领域深耕。
+
+        博士期间，你在国际顶刊发表了多篇论文，成为该领域的青年新星。
+
+        毕业时，你面前有两条路：留在高校教书育人，或进入国家级科研院所攻关。`,
+        options: [
+            { text: '🏫 留在高校，当一名教授', nextId: 'academia_ending' },
+            { text: '🔬 进入科研院所，专注技术研发', nextId: 'research_inst_ending' }
+        ]
+    },
+
+    academia_ending: {
+        id: 'academia_ending',
+        text: `🏫 你成为北京科技大学冶金学院的教授，传承着魏寿昆、柯俊等前辈的精神。
+
+        你开设的“冶金物理化学前沿”课程座无虚席，学生评价你是“最会讲故事的教授”。
+
+        你培养的博士生多次获得国家奖学金，你在学术界的声誉与日俱增。
+
+        <span class="highlight">成就解锁：【薪火相传 · 育人铸魂】</span>`,
+        options: [],
+        ending: true,
+        endingIcon: '📖',
+        endingTitle: '🎓 薪火相传 · 育人铸魂',
+        endingDesc: '你用知识照亮了一代又一代冶金学子的前行之路。'
+    },
+
+    research_inst_ending: {
+        id: 'research_inst_ending',
+        text: `🔬 你进入中国有研科技集团，成为国家级科研团队的核心成员。
+
+        你主持了国家重大专项，攻克了“卡脖子”材料的关键技术。
+
+        你的研究成果被应用于航空航天、国防军工等领域，为国家战略安全做出了重要贡献。
+
+        <span class="highlight">成就解锁：【国家脊梁 · 科研报国】</span>`,
+        options: [],
+        ending: true,
+        endingIcon: '🏆',
+        endingTitle: '🏅 国家脊梁 · 科研报国',
+        endingDesc: '你用科研之力，铸就了国家战略金属的坚实后盾。'
+    },
+
+    master_path: {
+        id: 'master_path',
+        text: `🎓 你选择了攻读硕士学位，同时积极参与企业合作项目。
+
+        你研发的一种新型耐热钢，被多家企业采用，产生了显著的经济效益。
+
+        毕业时，你收到了多家大型企业的橄榄枝。`,
+        options: [
+            { text: '🏭 去大型钢铁集团做技术工程师', nextId: 'engineer_ending' },
+            { text: '📈 去冶金相关企业做管理岗位', nextId: 'manager_ending' }
+        ]
+    },
+
+    engineer_ending: {
+        id: 'engineer_ending',
+        text: `🏭 你加入了一家大型钢铁集团，从基层技术员做起。
+
+        你参与改造了多条生产线，使能耗降低15%，质量稳定性大幅提升。
+
+        十年后，你成为集团首席技术官，被誉为“钢铁行业的技术标杆”。
+
+        <span class="highlight">成就解锁：【钢铁脊梁 · 技术报国】</span>`,
+        options: [],
+        ending: true,
+        endingIcon: '⚙️',
+        endingTitle: '🔧 技术报国 · 产业基石',
+        endingDesc: '你用扎实的技术，托起了中国钢铁工业的脊梁。'
+    },
+
+    manager_ending: {
+        id: 'manager_ending',
+        text: `📈 你走上了管理岗位，从项目经理逐步成长为分公司总经理。
+
+        你善于将技术优势转化为市场竞争力，带领团队开拓了海外市场。
+
+        你的管理哲学是：“冶金企业不仅要炼好钢，更要炼好人。”
+
+        <span class="highlight">成就解锁：【经营之道 · 管理英才】</span>`,
+        options: [],
+        ending: true,
+        endingIcon: '🏢',
+        endingTitle: '📊 管理英才 · 经营之道',
+        endingDesc: '你用智慧和魄力，引领冶金企业走向更广阔的天地。'
+    },
+
+    work_choice: {
+        id: 'work_choice',
+        text: `💼 你决定本科毕业后直接工作。
+
+        你手握多个offer，有技术岗也有销售岗。
+
+        你想起导师的话：“冶金行业既需要科学家，也需要工程师，还需要能把产品卖出去的人。”`,
+        options: [
+            { text: '🔧 选择技术岗，做研发工程师', nextId: 'technical_route' },
+            { text: '📞 选择销售岗，做市场开拓', nextId: 'sales_route' }
+        ]
+    },
+
+    technical_route: {
+        id: 'technical_route',
+        text: `🔧 你成为一名冶金工艺工程师，专注于优化高炉操作。
+
+        你引入了一套智能控制系统，使铁水合格率从92%提升到98%。
+
+        你的名字出现在公司“十佳青年”名单上，职业前景一片光明。
+
+        <span class="highlight">成就解锁：【精益求精 · 工匠精神】</span>`,
+        options: [],
+        ending: true,
+        endingIcon: '🛠️',
+        endingTitle: '🏅 精益求精 · 工匠精神',
+        endingDesc: '你用专注和执着，诠释了冶金工匠的真正内涵。'
+    },
+
+    sales_route: {
+        id: 'sales_route',
+        text: `📞 你成为一名冶金产品营销经理，负责推广特种钢材。
+
+        你凭借扎实的技术背景，成功拿下多个大客户，年销售额破亿。
+
+        你常说：“卖钢不是卖铁，是卖解决方案。”
+
+        <span class="highlight">成就解锁：【市场先锋 · 营销精英】</span>`,
+        options: [],
+        ending: true,
+        endingIcon: '📊',
+        endingTitle: '💼 市场先锋 · 营销精英',
+        endingDesc: '你用专业和热情，将中国冶金产品推向了世界。'
+    },
+
+    apply_patent: {
+        id: 'apply_patent',
+        text: `📜 你申请了一项关于“低能耗炼钢”的发明专利。
+
+        这项技术被多家企业购买，你获得了丰厚的专利许可费。
+
+        你站在了人生的十字路口：是继续搞技术研发，还是自己创业？`,
+        options: [
+            { text: '🚀 利用专利创业，成立科技公司', nextId: 'entrepreneur_ending' },
+            { text: '🏢 进入大型企业，做技术总监', nextId: 'big_company_ending' }
+        ]
+    },
+
+    entrepreneur_ending: {
+        id: 'entrepreneur_ending',
+        text: `🚀 你创立了一家冶金科技公司，专注于绿色冶金技术推广。
+
+        三年后，公司估值过亿，成为行业黑马。
+
+        你登上行业峰会，引用 <span class="scientist">张寿荣</span> 院士的话：“<span class="highlight">冶金创新永无止境。</span>”
+
+        <span class="highlight">成就解锁：【创业先锋 · 敢为人先】</span>`,
+        options: [],
+        ending: true,
+        endingIcon: '🚀',
+        endingTitle: '💡 创业先锋 · 敢为人先',
+        endingDesc: '你用勇气和远见，开创了冶金技术商业化的新路径。'
+    },
+
+    big_company_ending: {
+        id: 'big_company_ending',
+        text: `🏢 你进入一家大型冶金集团，担任技术研发中心副主任。
+
+        你推动了一系列工艺改进，使企业利润大幅增长。
+
+        你的管理风格被同事称为“技术派的务实主义”。
+
+        <span class="highlight">成就解锁：【企业栋梁 · 技术引领】</span>`,
+        options: [],
+        ending: true,
+        endingIcon: '🏢',
+        endingTitle: '🏛️ 企业栋梁 · 技术引领',
+        endingDesc: '你在巨人的肩膀上，用技术为冶金工业开拓新高度。'
+    },
+
+    // -------- 企业参观路线 --------
+    industry_visit: {
+        id: 'industry_visit',
+        text: `🏭 你参加了学院组织的企业参观活动，走进了现代化钢铁厂。
+
+        你看到了智能化的无人车间、巨大的高炉、火红的钢坯。
+
+        一位老工长对你说：“冶金这行，既要有理论，更要有情怀。”
+
+        你开始思考：是去企业实习积累经验，还是争取国际交流机会？`,
+        options: [
+            { text: '🧑‍💻 申请企业暑期实习', nextId: 'internship_choice' },
+            { text: '🌍 申请国际交换项目', nextId: 'exchange_choice' }
+        ]
+    },
+
+    internship_choice: {
+        id: 'internship_choice',
+        text: `🧑‍💻 你进入一家钢铁企业实习，亲身体验了从矿石到钢材的全过程。
+
+        你发现现场有很多可以改进的地方，你提出的一个节电方案被采纳了。
+
+        实习结束时，企业给你发了录用意向书。`,
+        options: [
+            { text: '🚀 毕业直接入职这家企业', nextId: 'big_company_ending' },
+            { text: '💡 自己创业，做技术转化', nextId: 'entrepreneur_ending' }
+        ]
+    },
+
+    exchange_choice: {
+        id: 'exchange_choice',
+        text: `🌍 你获得了赴德国亚琛工业大学交换一年的机会。
+
+        你接触到了欧洲最先进的冶金技术，眼界大开。
+
+        你发现欧洲在低碳冶金方面走得很前，你开始思考自己的定位。`,
+        options: [
+            { text: '🌱 回国推动绿色冶金转型', nextId: 'return_home_ending' },
+            { text: '🌎 留在国际组织，做全球环保', nextId: 'international_ending' }
+        ]
+    },
+
+    return_home_ending: {
+        id: 'return_home_ending',
+        text: `🌱 你带着欧洲的先进理念回国，加入了一家环保科技公司。
+
+        你主导了多个钢铁企业超低排放改造项目，助力中国实现“双碳”目标。
+
+        你时常引用 <span class="scientist">魏寿昆</span> 院士的远见：“<span class="highlight">冶金必须与环境和谐共生。</span>”
+
+        <span class="highlight">成就解锁：【绿色先锋 · 低碳冶金】</span>`,
+        options: [],
+        ending: true,
+        endingIcon: '🌿',
+        endingTitle: '💚 绿色先锋 · 低碳冶金',
+        endingDesc: '你用行动证明，冶金可以是绿色的。'
+    },
+
+    international_ending: {
+        id: 'international_ending',
+        text: `🌎 你加入联合国工业发展组织，负责全球冶金行业的可持续发展项目。
+
+        你推动的“全球绿色冶金倡议”被50多个国家采纳。
+
+        你在联合国讲台上说：“冶金的未来在于清洁和循环。”
+
+        <span class="highlight">成就解锁：【地球卫士 · 全球视野】</span>`,
+        options: [],
+        ending: true,
+        endingIcon: '🌍',
+        endingTitle: '🌱 地球卫士 · 全球视野',
+        endingDesc: '你让中国冶金智慧惠及世界。'
+    },
+
+    // ==================== 材料科学方向 ====================
+    course_materials: {
+        id: 'course_materials',
+        text: `🧱 你选择了材料科学方向，研究金属材料的微观结构与性能。
+
+        你学习了晶体学、相变理论、强化机制等知识。
+
+        你发现，改变材料成分和热处理工艺，就能创造出全新的材料。
+
+        你开始思考：是研究先进结构材料，还是探索纳米功能材料？`,
+        options: [
+            { text: '🛰️ 先进结构材料（航空航天、汽车）', nextId: 'advanced_materials' },
+            { text: '🧬 纳米功能材料（生物、电子）', nextId: 'nanomaterials' }
+        ]
+    },
+
+    advanced_materials: {
+        id: 'advanced_materials',
+        text: `🛰️ 你专注于先进结构材料，研究高温合金和钛合金。
+
+        你的论文发表在《金属学报》上，引起了某航空发动机公司的兴趣。
+
+        你面临选择：去航空航天领域，还是进入汽车轻量化领域？`,
+        options: [
+            { text: '✈️ 进入航空航天材料领域', nextId: 'aerospace_ending' },
+            { text: '🚗 进入汽车轻量化领域', nextId: 'automotive_ending' }
+        ]
+    },
+
+    aerospace_ending: {
+        id: 'aerospace_ending',
+        text: `✈️ 你加入了中国航发集团，负责航空发动机涡轮叶片的材料研发。
+
+        你团队开发的新一代单晶高温合金，使发动机推力提升12%。
+
+        你站在国产大飞机的总装线上，热泪盈眶。
+
+        <span class="highlight">成就解锁：【逐梦蓝天 · 材料报国】</span>`,
+        options: [],
+        ending: true,
+        endingIcon: '✈️',
+        endingTitle: '🛫 逐梦蓝天 · 材料报国',
+        endingDesc: '你用材料的力量，托起了中国航空的梦想。'
+    },
+
+    automotive_ending: {
+        id: 'automotive_ending',
+        text: `🚗 你进入一家新能源汽车企业，负责轻量化车身材料研发。
+
+        你开发的超高强度钢，使车身减重20%且安全性提升。
+
+        你的技术被应用于多款畅销车型，推动了汽车行业的绿色转型。
+
+        <span class="highlight">成就解锁：【低碳出行 · 材料革新】</span>`,
+        options: [],
+        ending: true,
+        endingIcon: '🚗',
+        endingTitle: '🌿 低碳出行 · 材料革新',
+        endingDesc: '你用新材料让汽车跑得更轻、更远、更环保。'
+    },
+
+    nanomaterials: {
+        id: 'nanomaterials',
+        text: `🧬 你探索纳米功能材料，研究纳米金属颗粒的催化性能。
+
+        你发现了一种高效的纳米催化剂，可用于燃料电池和环境保护。
+
+        你开始思考应用方向：是生物医学，还是电子器件？`,
+        options: [
+            { text: '🧬 生物医学应用（靶向给药、诊断）', nextId: 'biomedical_ending' },
+            { text: '📱 电子器件应用（传感器、存储）', nextId: 'electronics_ending' }
+        ]
+    },
+
+    biomedical_ending: {
+        id: 'biomedical_ending',
+        text: `🧬 你将纳米材料应用于生物医学，研发出一种靶向送药系统。
+
+        这种系统可以精准杀死癌细胞，而不伤害正常组织。
+
+        你的研究被《自然·材料》报道，被誉为“冶金与医学的跨界奇迹”。
+
+        <span class="highlight">成就解锁：【跨界医学 · 造福人类】</span>`,
+        options: [],
+        ending: true,
+        endingIcon: '🧬',
+        endingTitle: '🏥 跨界医学 · 造福人类',
+        endingDesc: '你用冶金技术，为人类健康开辟了新途径。'
+    },
+
+    electronics_ending: {
+        id: 'electronics_ending',
+        text: `📱 你将纳米材料应用于电子器件，开发出一种超高灵敏度的气体传感器。
+
+        这种传感器可检测ppb级的有害气体，在环境监测和工业安全领域大有用处。
+
+        你创办了一家传感器公司，年产值迅速突破千万。
+
+        <span class="highlight">成就解锁：【智能传感 · 产业新星】</span>`,
+        options: [],
+        ending: true,
+        endingIcon: '📱',
+        endingTitle: '🔬 智能传感 · 产业新星',
+        endingDesc: '你用纳米材料，为物联网时代插上了“嗅觉”的翅膀。'
+    },
+
+    // ==================== 冶金原理方向 ====================
+    course_metallurgy: {
+        id: 'course_metallurgy',
+        text: `🔥 你选择了冶金原理方向，深入学习高炉炼铁、转炉炼钢、精炼等工艺。
+
+        你感受到每一个工序都是物理化学原理的完美应用。
+
+        你开始思考如何提升现有工艺：是优化流程节能减排，还是用数字技术精确控制？`,
+        options: [
+            { text: '⚡ 工艺优化（节能降耗、提高质量）', nextId: 'process_optimization' },
+            { text: '📊 数值模拟与数字孪生', nextId: 'numerical_simulation' }
+        ]
+    },
+
+    process_optimization: {
+        id: 'process_optimization',
+        text: `⚡ 你致力于优化高炉操作，通过调整布料和风温来降低焦比。
+
+        你引入了一套热态诊断系统，使高炉能耗降低5%。
+
+        你现在面临两个改进方向：进一步节能减排，还是提升产品质量？`,
+        options: [
+            { text: '🌱 专注于节能减排，降低碳排放', nextId: 'energy_saving_ending' },
+            { text: '📈 专注于提升产品质量，开发高端钢种', nextId: 'quality_control_ending' }
+        ]
+    },
+
+    energy_saving_ending: {
+        id: 'energy_saving_ending',
+        text: `🌱 你成功开发了多项节能技术，使吨钢综合能耗降至国际领先水平。
+
+        你因此获得国家科技进步二等奖，并被授予“全国节能先进个人”称号。
+
+        你的经验在全国钢铁行业推广，为“双碳”目标做出了重要贡献。
+
+        <span class="highlight">成就解锁：【低碳先锋 · 绿色钢铁】</span>`,
+        options: [],
+        ending: true,
+        endingIcon: '🌱',
+        endingTitle: '🌍 低碳先锋 · 绿色钢铁',
+        endingDesc: '你用行动证明，钢铁可以是绿色的。'
+    },
+
+    quality_control_ending: {
+        id: 'quality_control_ending',
+        text: `📈 你专注于高端钢种的质量控制，成功开发了高铁车轮钢、核电站用钢等产品。
+
+        这些产品打破了国外垄断，使中国钢铁从“大”走向“强”。
+
+        你受邀在《冶金报》上发表署名文章，标题是：“<span class="highlight">质量是冶金的生命线。</span>”
+
+        <span class="highlight">成就解锁：【品质筑梦 · 中国制造】</span>`,
+        options: [],
+        ending: true,
+        endingIcon: '🏅',
+        endingTitle: '🏆 品质筑梦 · 中国制造',
+        endingDesc: '你用卓越品质，擦亮了中国冶金的金字招牌。'
+    },
+
+    numerical_simulation: {
+        id: 'numerical_simulation',
+        text: `📊 你利用计算流体力学和有限元方法，建立了高炉全流程数字孪生模型。
+
+        你的模型可以实时预测炉况，指导操作优化。
+
+        你站在了数字化浪潮的前沿，接下来你想进一步推进哪个方向？`,
+        options: [
+            { text: '🖥️ 深化数字孪生，打造智慧工厂', nextId: 'digital_twin_ending' },
+            { text: '🤖 结合AI，实现自主控制', nextId: 'ai_control_ending' }
+        ]
+    },
+
+    digital_twin_ending: {
+        id: 'digital_twin_ending',
+        text: `🖥️ 你将数字孪生技术推广到多家钢厂，实现了虚拟与现实的深度融合。
+
+        你的系统帮助工厂提前发现故障隐患，减少非计划停机40%。
+
+        你被《福布斯》评为“中国智能制造30位30岁以下精英”。
+
+        <span class="highlight">成就解锁：【智慧冶金 · 数字先锋】</span>`,
+        options: [],
+        ending: true,
+        endingIcon: '💻',
+        endingTitle: '🧠 智慧冶金 · 数字先锋',
+        endingDesc: '你用数字技术，重塑了冶金工业的未来图景。'
+    },
+
+    ai_control_ending: {
+        id: 'ai_control_ending',
+        text: `🤖 你开发了一套基于深度强化学习的智能控制系统，能自主调整冶炼参数。
+
+        该系统在某钢厂上线后，产品合格率提升5%，能耗降低8%。
+
+        你受邀在世界人工智能大会上做主题演讲，分享“AI+冶金”的实践。
+
+        <span class="highlight">成就解锁：【智造未来 · AI冶金】</span>`,
+        options: [],
+        ending: true,
+        endingIcon: '🧠',
+        endingTitle: '🤖 智造未来 · AI冶金',
+        endingDesc: '你用人工智能，让冶金炉拥有了“大脑”。'
+    }
+};
+    // 注意：最终回答的代码块中会包含完整的 29 个节点。
+
+    // ============================================================
+    // 2. 游戏状态
+    // ============================================================
+    let currentId = 'start';
+    let achievements = [];
+    let visitedNodes = new Set(); // 记录已访问的节点ID
+    let nodePositions = {}; // 存储每个节点的坐标 {x, y}
+
+    // ============================================================
+    // 3. 分支图布局与绘制
+    // ============================================================
+    function buildGraphData() {
+        // 构建邻接表
+        const edges = [];
+        const nodeIds = Object.keys(storyData);
+        nodeIds.forEach(id => {
+            const node = storyData[id];
+            if (node.options) {
+                node.options.forEach(opt => {
+                    if (opt.nextId) edges.push({ from: id, to: opt.nextId });
+                });
+            }
+        });
+        return { nodes: nodeIds, edges };
+    }
+
+    function layoutGraph() {
+        const { nodes, edges } = buildGraphData();
+        // BFS 计算深度
+        const depths = {};
+        const visited = new Set();
+        const queue = ['start'];
+        depths['start'] = 0;
+        visited.add('start');
+        while (queue.length) {
+            const id = queue.shift();
+            const node = storyData[id];
+            if (node && node.options) {
+                node.options.forEach(opt => {
+                    const next = opt.nextId;
+                    if (next && !visited.has(next)) {
+                        visited.add(next);
+                        depths[next] = (depths[id] || 0) + 1;
+                        queue.push(next);
+                    }
+                });
+            }
+        }
+        // 按深度分组
+        const groups = {};
+        nodes.forEach(id => {
+            const d = depths[id] !== undefined ? depths[id] : 99;
+            if (!groups[d]) groups[d] = [];
+            groups[d].push(id);
+        });
+        // 分配坐标
+        const positions = {};
+        const maxDepth = Math.max(...Object.keys(groups).map(Number));
+        const nodeRadius = 20;
+        const width = 780, height = 580;
+        const hMargin = 40, vMargin = 40;
+        Object.keys(groups).forEach(depth => {
+            const ids = groups[depth];
+            const count = ids.length;
+            const spacing = (width - 2 * hMargin) / (count + 1);
+            ids.forEach((id, idx) => {
+                const x = hMargin + (idx + 1) * spacing;
+                const y = vMargin + (parseInt(depth) / (maxDepth || 1)) * (height - 2 * vMargin);
+                positions[id] = { x, y };
+            });
+        });
+        return positions;
+    }
+
+    function renderGraph() {
+        const svg = document.getElementById('graph-svg');
+        if (!svg) return;
+        const positions = layoutGraph();
+        nodePositions = positions;
+
+        // 构建边数据
+        const edges = [];
+        Object.keys(storyData).forEach(id => {
+            const node = storyData[id];
+            if (node.options) {
+                node.options.forEach(opt => {
+                    if (opt.nextId) edges.push({ from: id, to: opt.nextId });
+                });
+            }
+        });
+
+        // 清除旧内容
+        svg.innerHTML = '';
+
+        // 1. 绘制连线
+        edges.forEach(edge => {
+            const fromPos = positions[edge.from];
+            const toPos = positions[edge.to];
+            if (!fromPos || !toPos) return;
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            const dx = toPos.x - fromPos.x;
+            const dy = toPos.y - fromPos.y;
+            const cp1x = fromPos.x + dx * 0.5;
+            const cp1y = fromPos.y;
+            const cp2x = toPos.x - dx * 0.5;
+            const cp2y = toPos.y;
+            const d = `M ${fromPos.x} ${fromPos.y} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${toPos.x} ${toPos.y}`;
+            path.setAttribute('d', d);
+            path.setAttribute('class', 'graph-link');
+            // 判断是否已访问（两端都访问才亮）
+            if (visitedNodes.has(edge.from) && visitedNodes.has(edge.to)) {
+                path.classList.add('visited');
+            }
+            svg.appendChild(path);
+        });
+
+        // 2. 绘制节点
+        Object.keys(positions).forEach(id => {
+            const pos = positions[id];
+            const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            group.setAttribute('class', 'graph-node');
+            group.dataset.id = id;
+
+            const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            circle.setAttribute('cx', pos.x);
+            circle.setAttribute('cy', pos.y);
+            circle.setAttribute('r', 18);
+            circle.setAttribute('stroke-width', 2);
+
+            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            text.setAttribute('x', pos.x);
+            text.setAttribute('y', pos.y);
+            text.setAttribute('font-size', '7');
+            text.setAttribute('fill', '#fff');
+            text.setAttribute('text-anchor', 'middle');
+            text.setAttribute('dominant-baseline', 'central');
+            // 显示节点ID缩写（取前3个字符）
+            let label = id.length > 6 ? id.substring(0, 6) : id;
+            text.textContent = label;
+
+            // 状态
+            if (id === currentId) {
+                group.classList.add('current');
+            } else if (visitedNodes.has(id)) {
+                group.classList.add('visited');
+            } else {
+                group.classList.add('unvisited');
+            }
+
+            group.appendChild(circle);
+            group.appendChild(text);
+
+            // 点击事件：仅当已访问时可跳转
+            group.addEventListener('click', function(e) {
+                const nodeId = this.dataset.id;
+                if (visitedNodes.has(nodeId) || nodeId === currentId) {
+                    // 跳转
+                    renderScene(nodeId);
+                } else {
+                    // 未解锁，无反应
+                }
+            });
+
+            svg.appendChild(group);
+        });
+    }
+
+    // ============================================================
+    // 4. 渲染引擎（修改版，增加 visited 记录和图形更新）
+    // ============================================================
+    function renderScene(nodeId) {
+        const node = storyData[nodeId];
+        if (!node) return;
+
+        // 记录访问
+        visitedNodes.add(nodeId);
+        currentId = nodeId;
+
+        // 成就记录（如果结局有成就）
+        if (node.ending && node.achievement) {
+            if (!achievements.includes(node.achievement)) {
+                achievements.push(node.achievement);
+            }
+        }
+
+        const container = document.getElementById('game-container');
+        if (!container) return;
+
+        // ---- 构建状态栏 ----
+        let statusHtml = `
+            <div class="game-status">
+                <span>🎯 当前阶段：<span class="badge">${node.id === 'start' ? '🌱 新生入学' : node.ending ? '🏁 人生终章' : '🚀 成长中'}</span></span>
+                <span>📌 成就：<span class="achievement-list">${achievements.length > 0 ? achievements.map(a => `<span>${a}</span>`).join('') : '<span style="color:#666;font-size:0.8rem;">暂无</span>'}</span></span>
+            </div>
+        `;
+
+        // ---- 构建故事主体 ----
+        let html = statusHtml;
+        html += `<div class="story-scene">`;
+        html += `<div class="story-text">${node.text}</div>`;
+
+        if (node.options && node.options.length > 0) {
+            html += `<div class="options">`;
+            node.options.forEach((opt) => {
+                html += `<button class="option-btn" data-next="${opt.nextId}"><span class="icon">▸</span> ${opt.text}</button>`;
+            });
+            html += `</div>`;
+        } else if (node.ending) {
+            html += `
+                <div class="ending">
+                    <div class="big-icon">${node.endingIcon || '🎉'}</div>
+                    <div class="ending-title">${node.endingTitle || '🎊 恭喜通关！'}</div>
+                    <div class="ending-desc">${node.endingDesc || '你书写了属于自己的冶金人生故事。'}</div>
+                    <button class="restart-btn" onclick="resetGame()">🔄 重新开始</button>
+                </div>
+            `;
+        } else {
+            html += `<div class="ending"><button class="restart-btn" onclick="resetGame()">🔄 重新开始</button></div>`;
+        }
+
+        html += `</div>`;
+        container.innerHTML = html;
+
+        // ---- 绑定选项点击事件 ----
+        container.querySelectorAll('.option-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const next = this.dataset.next;
+                if (next && storyData[next]) {
+                    renderScene(next);
+                } else {
+                    alert('⚠️ 剧情尚未编写，请返回重试。');
+                }
+            });
+        });
+
+        // ---- 更新分支图 ----
+        renderGraph();
+
+        // 滚动到顶部
+        document.querySelector('#wrapper').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // ============================================================
+    // 5. 重置游戏
+    // ============================================================
+    function resetGame() {
+        achievements = [];
+        visitedNodes = new Set();
+        currentId = 'start';
+        renderScene('start');
+    }
+
+    // ============================================================
+    // 6. 启动游戏
+    // ============================================================
+    renderScene('start');
+    </script>
+
+</body>
+</html>
