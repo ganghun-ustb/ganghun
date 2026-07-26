@@ -7,12 +7,12 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', 'PingFang SC', Roboto, sans-serif;
-            background: #0b0e14;
-            color: #e8edf3;
-            min-height: 100vh;
-            padding: 0;
-        }
+    font-family: 'Segoe UI', 'PingFang SC', Roboto, sans-serif;
+    background: #0b0e14;
+    color: #e8edf3;
+    min-height: 100vh;
+    padding: 0;
+}
         .container { max-width: 1500px; margin: 0 auto; padding: 0 1.5rem 2rem; }
 
         /* 导航栏 */
@@ -307,6 +307,7 @@ const scientists = [
     {
         id: 'wei-shoukun', name: '魏寿昆', title: '冶金物理化学家 · 中科院院士',
         avatarEmoji: '🧪',
+	avatarImg: 'images/weishoukun.jpg', 
         quote: '研究的目的，是在得确定的结果，"是"是结果，而"否"亦是结果。',
         fullInfo: {
             birth: '1907年9月 · 天津', death: '2014年6月',
@@ -326,6 +327,7 @@ const scientists = [
     {
         id: 'wu-ziliang', name: '吴自良', title: '物理冶金专家 · 中科院院士',
         avatarEmoji: '🔬',
+	avatarImg: 'images/wuziliang.jpg',
         quote: '天助自助者。',
         fullInfo: {
             birth: '1917年12月 · 浙江浦江', death: '2008年5月',
@@ -345,6 +347,7 @@ const scientists = [
     {
         id: 'ke-jun', name: '柯俊', title: '金属物理学家 · 中科院院士',
         avatarEmoji: '🧊',
+	avatarImg: 'images/kejun.jpg',
         quote: '我来自东方，那里一吨钢的作用，远远超过一吨钢在英美的作用。',
         fullInfo: {
             birth: '1917年6月 · 浙江黄岩', death: '2017年8月',
@@ -364,6 +367,7 @@ const scientists = [
     {
         id: 'xiao-jimei', name: '肖纪美', title: '材料科学家 · 中科院院士',
         avatarEmoji: '📖',
+	avatarImg: 'images/xiaojimei.jpg',  
         quote: '我的志向不是当官，而是能真正做一些有意义的事情：教书育人、研究学问。',
         fullInfo: {
             birth: '1920年12月 · 湖南凤凰', death: '2014年4月',
@@ -380,28 +384,10 @@ const scientists = [
             honors: ['中科院院士','国家自然科学二等奖','冶金科技终身成就奖']
         }
     },
-    {
-        id: 'ye-hengqiang', name: '叶恒强', title: '材料学与电子显微学专家 · 中科院院士',
-        avatarEmoji: '🔍',
-        quote: '发现、研究新结构，在这个领域中探索是我毕生之目标，其苦我知，但其乐无穷。',
-        fullInfo: {
-            birth: '1940年7月 · 香港',
-            summary: '我国最早从事固体原子像研究者之一，在高温合金四面体密堆相和准晶体研究中取得重大突破。',
-            timeline: [
-                { year:'1958', desc:'考入北京钢铁工业学院金属物理专业' },
-                { year:'1964', desc:'考入中科院金属研究所' },
-                { year:'1981', desc:'赴美国亚利桑那州立大学进修' },
-                { year:'1985', desc:'发现钛镍准晶，成果获国家自然科学一等奖' }
-            ],
-            achievement: '■ 发现多种新相和五次对称准晶\n■ 获国家自然科学一等奖\n■ 中国电子显微学终身成就奖',
-            famousQuote: '"科学需要跳出框框看问题，大胆假设小心求证。"',
-            story: '在比利时研究时，凌晨发现二维非公度结构，连续拍摄数百张照片，被誉为"中国夜猫子"。',
-            honors: ['中科院院士','国家自然科学一等奖','中国电子显微学终身成就奖']
-        }
-    },
-    {
+     {
         id: 'zhang-xingqian', name: '张兴钤', title: '金属材料专家 · 中科院院士',
         avatarEmoji: '⚡',
+	avatarImg: 'images/zhangxingqian.jpg', 
         quote: '我们都是国家的儿女，这很正常。',
         fullInfo: {
             birth: '1921年11月 · 河北武邑',
@@ -418,28 +404,10 @@ const scientists = [
             honors: ['中科院院士','国家自然科学一等奖','国家科技进步特等奖']
         }
     },
-    {
-        id: 'zou-shichang', name: '邹世昌', title: '材料科学家 · 中科院院士',
-        avatarEmoji: '🌐',
-        quote: '我出生于这块饱经蹂躏侵略、贫穷落后的土地上，我的命运就和祖国的前途紧紧相连。',
-        fullInfo: {
-            birth: '1931年7月 · 上海',
-            summary: '材料科学家，参与研制甲种分离膜（第二发明人），在离子束材料改性领域做出开拓性工作。',
-            timeline: [
-                { year:'1952', desc:'毕业于唐山交通大学冶金工程系' },
-                { year:'1958', desc:'获苏联副博士学位' },
-                { year:'1961', desc:'参与甲种分离膜研制' },
-                { year:'1985', desc:'创建离子束实验室' }
-            ],
-            achievement: '■ 甲种分离膜第二发明人\n■ 在离子束领域取得多项成果\n■ 获国家发明一等奖',
-            famousQuote: '"浦东开发建设杰出人才，科学家的责任是竭尽全力改变祖国面貌。"',
-            story: '在苏联留学时亲耳聆听毛主席"世界是你们的"讲话，深受鼓舞。',
-            honors: ['中科院院士','国家发明一等奖','全国优秀共产党员']
-        }
-    },
-    {
+      {
         id: 'li-yiyi', name: '李依依', title: '冶金与金属材料科学家 · 中科院院士',
         avatarEmoji: '🔥',
+	avatarImg: 'images/liyiyi.jpg',  
         quote: '男同志能做到的事，女同志一定也能做到。',
         fullInfo: {
             birth: '1933年10月 · 北京',
@@ -456,28 +424,10 @@ const scientists = [
             honors: ['中科院院士','发展中国家科学院院士','何梁何利奖','中科院十大女杰']
         }
     },
-    {
-        id: 'wang-chongyu', name: '王崇愚', title: '计算材料物理专家 · 中科院院士',
-        avatarEmoji: '🧮',
-        quote: '科学家应具有社会责任感、道德、宽容和正直。',
-        fullInfo: {
-            birth: '1932年10月 · 辽宁丹东',
-            summary: '计算材料物理专家，提出多尺度跨层次算法，在材料电子结构和宏观物性关联方面做出重要贡献。',
-            timeline: [
-                { year:'1950', desc:'考入北洋大学' },
-                { year:'1954', desc:'毕业于北京钢铁工业学院金属学专业' },
-                { year:'1980', desc:'从事量子力学计算材料研究' },
-                { year:'1993', desc:'当选中国科学院院士' }
-            ],
-            achievement: '■ 发展多尺度跨层次序列算法\n■ 研究合金电子结构\n■ 获国家发明奖、全国科学大会奖',
-            famousQuote: '"研究生们超越我才是导师的期待和责任。"',
-            story: '为研究微量氧作用机制，从经典弹性理论发展到量子力学，建立全新理论框架。',
-            honors: ['中科院院士','国家发明奖','中国金属学会终身成就奖']
-        }
-    },
-    {
+      {
         id: 'xu-zuyao', name: '徐祖耀', title: '材料科学家 · 中科院院士',
         avatarEmoji: '🧪',
+	avatarImg: 'images/xuzuyao.jpg',  
         quote: '世界上天才是少数，有成就者大多工作勤奋。做学问要甘于清贫，安于寂寞。',
         fullInfo: {
             birth: '1921年7月 · 浙江宁波', death: '2017年3月',
@@ -497,6 +447,7 @@ const scientists = [
     {
         id: 'zhou-guozhi', name: '周国治', title: '冶金物理化学家 · 中科院院士',
         avatarEmoji: '📐',
+	avatarImg: 'images/zhouguozhi.jpg',  
         quote: '做人要知足，做事要知不足，做学问要不知足。',
         fullInfo: {
             birth: '1937年3月 · 江苏南京',
@@ -516,6 +467,7 @@ const scientists = [
     {
         id: 'ge-changchun', name: '葛昌纯', title: '粉末冶金专家 · 中科院院士',
         avatarEmoji: '🧱',
+	avatarImg: 'images/gechangchun.jpg', 
         quote: '材料报国，追求第一。',
         fullInfo: {
             birth: '1934年3月 · 上海',
@@ -532,48 +484,11 @@ const scientists = [
             honors: ['中科院院士','世界陶瓷科学院院士','国家发明一等奖','核工业功勋奖章']
         }
     },
-    {
-        id: 'zhang-yue', name: '张跃', title: '材料物理与纳米材料专家 · 中科院院士',
-        avatarEmoji: '🌟',
-        quote: '一代材料、一代技术、一代装备、一个时代。',
-        fullInfo: {
-            birth: '1958年11月 · 湖南醴陵',
-            summary: '材料物理和纳米材料专家，在一维氧化锌纳米材料、多场耦合原位表征设备等方面取得重要成果。',
-            timeline: [
-                { year:'1982', desc:'毕业于武汉水利电力学院' },
-                { year:'1993', desc:'获北京科技大学金属物理博士学位' },
-                { year:'1995', desc:'回北科大工作' },
-                { year:'2019', desc:'当选中国科学院院士' }
-            ],
-            achievement: '■ 研制大面积一维氧化锌强流发射冷阴极\n■ 开发纳尺度多场耦合原位表征设备\n■ 获国家自然科学二等奖',
-            famousQuote: '"做人要待人以诚，做事要精益求精，做学问要顶天立地。"',
-            story: '少年时下乡插队，每天挑二百多斤稻谷，在煤油灯下坚持读书，考上大学。',
-            honors: ['中科院院士','国家自然科学二等奖','北京市科技一等奖']
-        }
-    },
-    // ---- 中国工程院 ----
-    {
-        id: 'fan-weitang', name: '范维唐', title: '采矿专家 · 中国工程院院士',
-        avatarEmoji: '⛏️',
-        quote: '科技进步是煤炭工业发展的必由之路。',
-        fullInfo: {
-            birth: '1935年7月 · 北京',
-            summary: '采矿工程技术专家，我国煤矿综合机械化开采技术的主要开拓者，曾任煤炭工业部副部长。',
-            timeline: [
-                { year:'1952', desc:'考入北京钢铁工业学院采矿系' },
-                { year:'1959', desc:'赴苏联莫斯科矿业学院留学' },
-                { year:'1963', desc:'回国后从事煤矿开采研究' },
-                { year:'1994', desc:'当选中国工程院院士' }
-            ],
-            achievement: '■ 开拓煤矿综合机械化开采技术\n■ 提出炮采三项新技术\n■ 建立煤炭工业质量标准化体系',
-            famousQuote: '"需求永无止境，科技进步永不会停顿，需求就是给我们下达的命令。"',
-            story: '祖父范鸿泰曾任民国湖北省教育厅厅长，为人宽厚，其车夫是地下党员，解放后力保范家。',
-            honors: ['中国工程院院士','煤炭工业部副部长']
-        }
-    },
-    {
+      // ---- 中国工程院 ----
+      {
         id: 'xu-kuangdi', name: '徐匡迪', title: '钢铁冶金专家 · 中国工程院院士',
         avatarEmoji: '🏛️',
+	avatarImg: 'images/xukuangdi.jpg', 
         quote: '我们现在大国重器有了，但还没有"精器"。',
         fullInfo: {
             birth: '1937年12月 · 浙江桐乡',
@@ -593,6 +508,7 @@ const scientists = [
     {
         id: 'yin-ruiyu', name: '殷瑞钰', title: '钢铁冶金专家 · 中国工程院院士',
         avatarEmoji: '⚙️',
+	avatarImg: 'images/yinruiyu.jpg',
         quote: '有多大的眼光看多大的事，多大的胸怀办多大的事。',
         fullInfo: {
             birth: '1935年7月 · 江苏苏州',
@@ -612,6 +528,7 @@ const scientists = [
     {
         id: 'chen-xianlin', name: '陈先霖', title: '冶金机械专家 · 中国工程院院士',
         avatarEmoji: '🔧',
+	avatarImg: 'images/chenxianlin.jpg',  
         quote: '精彩来自精心的准备。',
         fullInfo: {
             birth: '1928年9月 · 四川遂宁', death: '2009年',
@@ -631,6 +548,7 @@ const scientists = [
     {
         id: 'tu-mingjing', name: '涂铭旌', title: '金属材料与热处理专家 · 中国工程院院士',
         avatarEmoji: '🧲',
+	avatarImg: 'images/tumingjing.jpg', 
         quote: '知人者智，自知者明。胜人者有力，自胜者强。',
         fullInfo: {
             birth: '1928年11月 · 四川巴县', death: '2019年',
@@ -647,28 +565,10 @@ const scientists = [
             honors: ['中国工程院院士','国家科技进步二等奖','国家有突出贡献中青年专家']
         }
     },
-    {
-        id: 'zhong-jue', name: '钟掘', title: '机械工程专家 · 中国工程院院士',
-        avatarEmoji: '🏗️',
-        quote: '让好奇心驱动我们探索的一生，让使命感引导我们创造鬼斧神工。',
-        fullInfo: {
-            birth: '1936年9月 · 江西南昌',
-            summary: '机械工程专家，在冶金机械、铝加工装备等方面取得重大突破，提出"极端制造"概念。',
-            timeline: [
-                { year:'1960', desc:'毕业于北京钢铁工业学院机械系' },
-                { year:'1980', desc:'提出轧机驱动系统封闭力流理论' },
-                { year:'1999', desc:'担任"973"项目首席科学家' },
-                { year:'1995', desc:'当选中国工程院院士' }
-            ],
-            achievement: '■ 发明铝板带材电磁场铸轧新技术\n■ 解决武钢1700热连轧故障\n■ 获国家科技进步一等奖',
-            famousQuote: '"鬼斧神工，人天合一。人必须要主动地跟自然界融合。"',
-            story: '在西北铝加工厂攻关16年，吃窝窝头、睡板凳，最终成功。',
-            honors: ['中国工程院院士','国家科技进步一等奖','国家发明二等奖']
-        }
-    },
-    {
+        {
         id: 'zhou-bangxin', name: '周邦新', title: '核材料专家 · 中国工程院院士',
         avatarEmoji: '☢️',
+	avatarImg: 'images/zhoubangxin.jpg',  
         quote: '祖国的希望永远寄托在青年一代人的身上，材料领域可以大有作为。',
         fullInfo: {
             birth: '1935年12月 · 湖北武昌',
@@ -688,6 +588,7 @@ const scientists = [
     {
         id: 'cui-kun', name: '崔崑', title: '模具钢专家 · 中国工程院院士',
         avatarEmoji: '🔩',
+	avatarImg: 'images/cuikun.jpg', 
         quote: '中国一定要有自己的模具钢种！',
         fullInfo: {
             birth: '1925年7月 · 山东济南',
@@ -707,6 +608,7 @@ const scientists = [
     {
         id: 'hu-zhenghuan', name: '胡正寰', title: '零件轧制技术专家 · 中国工程院院士',
         avatarEmoji: '⚙️',
+	avatarImg: 'images/huzhenghuan.jpg',   
         quote: '我们搞研究，就是要用于生产，提高生产率。',
         fullInfo: {
             birth: '1934年7月 · 湖北孝感',
@@ -726,6 +628,7 @@ const scientists = [
     {
         id: 'guan-jie', name: '关杰', title: '连铸设备专家 · 中国工程院院士',
         avatarEmoji: '🏭',
+	avatarImg: 'images/guanjie.jpg',    
         quote: '否定之否定，多来几个就能得出比较正确的结论。',
         fullInfo: {
             birth: '1939年11月 · 福建莆田',
@@ -745,6 +648,7 @@ const scientists = [
     {
         id: 'ke-wei', name: '柯伟', title: '耐蚀材料专家 · 中国工程院院士',
         avatarEmoji: '🌊',
+	avatarImg: 'images/kewei.jpg',
         quote: '科研工作是集成的，每个人都应是团队的一部分。',
         fullInfo: {
             birth: '1932年12月 · 辽宁沈阳',
@@ -764,6 +668,7 @@ const scientists = [
     {
         id: 'lei-tingquan', name: '雷廷权', title: '热处理专家 · 中国工程院院士',
         avatarEmoji: '🔥',
+	avatarImg: 'images/leitingquan.jpg',  
         quote: '科学的生命在于否定和创新。',
         fullInfo: {
             birth: '1928年1月 · 陕西西安', death: '2007年',
@@ -780,28 +685,10 @@ const scientists = [
             honors: ['中国工程院院士','国际热处理联合会主席','全国科学大会奖']
         }
     },
-    {
-        id: 'liu-jie', name: '刘玠', title: '冶金自动化专家 · 中国工程院院士',
-        avatarEmoji: '💻',
-        quote: '既不找死，也不要等死，要走出自己的路子来。',
-        fullInfo: {
-            birth: '1943年11月 · 安徽舒城',
-            summary: '冶金自动化及信息工程专家，曾任武钢总工程师、鞍钢总经理，实现大型钢铁联合系统全面国产化。',
-            timeline: [
-                { year:'1967', desc:'毕业于北京钢铁工业学院冶金机械专业' },
-                { year:'1975', desc:'赴日本进修计算机' },
-                { year:'1994', desc:'任鞍钢总经理，扭亏为盈' },
-                { year:'1997', desc:'当选中国工程院院士' }
-            ],
-            achievement: '■ 开发自主知识产权热连轧计算机系统\n■ 主持鞍钢"平改转"技术改造\n■ 获国家科技进步一等奖',
-            famousQuote: '"高起点，少投入，快产出，高效益。"',
-            story: '在日本留学时，老师采用"学生自主讲解"教学法，他苦学半年，最终彻底掌握计算机技术。',
-            honors: ['中国工程院院士','国家科技进步特等奖','何梁何利奖']
-        }
-    },
-    {
+       {
         id: 'chen-guoliang', name: '陈国良', title: '金属材料专家 · 中国工程院院士',
         avatarEmoji: '🧬',
+	avatarImg: 'images/chenguoliang.jpg', 
         quote: '删繁就简三秋树，领异标新二月花。',
         fullInfo: {
             birth: '1934年 · 江苏宜兴', death: '2011年',
@@ -821,6 +708,7 @@ const scientists = [
     {
         id: 'cai-hongnian', name: '才鸿年', title: '金属材料专家 · 中国工程院院士',
         avatarEmoji: '🛡️',
+	avatarImg: 'images/caihongnian.jpg',  
         quote: '国防科技战线上的尖兵，强军为使命。',
         fullInfo: {
             birth: '1940年1月 · 北京',
@@ -840,6 +728,7 @@ const scientists = [
     {
         id: 'he-jilin', name: '何季麟', title: '有色冶金专家 · 中国工程院院士',
         avatarEmoji: '🔶',
+	avatarImg: 'images/hejilin.jpg',  
         quote: '成功没什么诀窍，就是"干"字为先。',
         fullInfo: {
             birth: '1945年9月 · 河南开封',
@@ -859,6 +748,7 @@ const scientists = [
     {
         id: 'wang-yide', name: '王一德', title: '不锈钢专家 · 中国工程院院士',
         avatarEmoji: '🔪',
+	avatarImg: 'images/wangyide.jpg',  
         quote: '我这一辈子，能够为钢铁工业做出点事情非常荣幸，可谓"情系钢铁，一生无悔"。',
         fullInfo: {
             birth: '1938年12月 · 浙江杭州',
@@ -875,28 +765,10 @@ const scientists = [
             honors: ['中国工程院院士','国家科技进步奖','全国劳动模范']
         }
     },
-    {
-        id: 'cai-meifeng', name: '蔡美峰', title: '岩石力学与采矿工程专家 · 中国工程院院士',
-        avatarEmoji: '⛰️',
-        quote: '山高为美，人高为峰。',
-        fullInfo: {
-            birth: '1943年5月 · 江苏如东',
-            summary: '岩石力学与采矿工程专家，我国矿山地应力测量主要开拓者，提出以地应力为基础的采矿设计优化体系。',
-            timeline: [
-                { year:'1968', desc:'毕业于上海交通大学工程力学' },
-                { year:'1980', desc:'获北京钢铁工业学院采矿工程硕士' },
-                { year:'1990', desc:'获澳大利亚新南威尔士大学博士' },
-                { year:'2013', desc:'当选中国工程院院士' }
-            ],
-            achievement: '■ 发明完全温度补偿地应力测量装置\n■ 提出"品"字形采场回采技术\n■ 获国家科技进步二等奖4项',
-            famousQuote: '"教书育人，如同植树造林，利在当代，功在千秋。"',
-            story: '留学澳洲时，每天工作14小时，被誉为"采矿系最辛苦的研究生"，学成后毅然回国。',
-            honors: ['中国工程院院士','国家级教学名师','国家技术发明三等奖']
-        }
-    },
-    {
+        {
         id: 'xie-jianxin', name: '谢建新', title: '金属材料及加工专家 · 中国工程院院士',
         avatarEmoji: '📦',
+	avatarImg: 'images/xiejianxin.jpg',      
         quote: '把论文写在车间、写在现场，促进科技成果转化为生产力。',
         fullInfo: {
             birth: '1958年6月 · 湖南双峰',
@@ -916,6 +788,7 @@ const scientists = [
     {
         id: 'mao-xinping', name: '毛新平', title: '压力加工专家 · 中国工程院院士',
         avatarEmoji: '🏗️',
+	avatarImg: 'images/maoxinping.jpg',   
         quote: '科研就是解决困难，哪一天没有问题了，那生活就太简单了。',
         fullInfo: {
             birth: '1965年6月 · 湖南常德',
@@ -935,6 +808,7 @@ const scientists = [
     {
         id: 'shen-zhengchang', name: '沈政昌', title: '选矿技术专家 · 中国工程院院士',
         avatarEmoji: '⛏️',
+	avatarImg: 'images/shenzhengchang.jpg',
         quote: '把论文写在祖国的大地上。',
         fullInfo: {
             birth: '1960年6月 · 江苏常熟',
@@ -955,6 +829,7 @@ const scientists = [
     {
         id: 'zhu-rong', name: '朱荣', title: '钢铁冶金专家 · 中国工程院院士',
         avatarEmoji: '🌿',
+	avatarImg: 'images/zhurong.jpg',  
         quote: '为钢铁冶金行业降碳赋能，是我们这一代冶金人的使命。',
         fullInfo: {
             birth: '1962年12月 · 江西萍乡',
@@ -971,8 +846,9 @@ const scientists = [
         }
     },
     {
-        id: 'lyu-zhaoping', name: '吕昭平', title: '金属材料专家 · 中国科学院院士',
+        id: 'lv-zhaoping', name: '吕昭平', title: '金属材料专家 · 中国科学院院士',
         avatarEmoji: '🧊',
+	avatarImg: 'images/lvzhaoping.jpg', 
         quote: '突破金属材料高强度与高塑韧性难以兼顾的瓶颈，是我们的不懈追求。',
         fullInfo: {
             birth: '1970年11月 · 安徽桐城',
@@ -989,25 +865,7 @@ const scientists = [
             honors: ['中国科学院院士','国家自然科学二等奖','国家杰出青年基金获得者']
         }
     },
-    {
-        id: 'wu-aixiang', name: '吴爱祥', title: '采矿工程专家 · 中国工程院院士',
-        avatarEmoji: '⛏️',
-        quote: '采矿是工业的粮食，必须走绿色智能之路。',
-        fullInfo: {
-            birth: '1963年',
-            summary: '采矿工程专家，在金属矿膏体充填绿色开采、深井开采等方面取得重要成果。',
-            timeline: [
-                { year:'1985', desc:'毕业于中南矿冶学院' },
-                { year:'2002', desc:'获北京科技大学博士学位' },
-                { year:'2023', desc:'当选中国工程院院士' }
-            ],
-            achievement: '■ 开发膏体充填绿色开采技术\n■ 研究深井开采岩层控制\n■ 获国家科技进步奖',
-            famousQuote: '"矿业要发展，必须依靠科技创新。"',
-            story: '长期深入矿山一线，为解决矿山安全和环保问题做出重要贡献。',
-            honors: ['中国工程院院士','国家科技进步奖']
-        }
-    }
-];
+   ];
 
 // ============================================================
 // 按姓名拼音排序
@@ -1026,7 +884,12 @@ scientists.forEach(s => {
     card.className = 'card';
     card.dataset.id = s.id;
     card.innerHTML = `
-        <div class="avatar">${s.avatarEmoji}</div>
+        <div class="avatar">
+    ${s.avatarImg 
+        ? `<img src="${s.avatarImg}" alt="${s.name}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">` 
+        : s.avatarEmoji
+    }
+</div>
         <div class="name">${s.name}</div>
         <div class="title-tag">${s.title}</div>
         <div class="quote">${s.quote}</div>
@@ -1062,7 +925,12 @@ function openModal(id) {
 
     modalBody.innerHTML = `
         <div class="modal-hero">
-            <div class="modal-avatar">${s.avatarEmoji}</div>
+            <div class="modal-avatar">
+    ${s.avatarImg 
+        ? `<img src="${s.avatarImg}" alt="${s.name}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">` 
+        : s.avatarEmoji
+    }
+</div>
             <div class="modal-info">
                 <div class="name">${s.name}</div>
                 <div class="sub">${info.birth}${deathText} · ${s.title}</div>
