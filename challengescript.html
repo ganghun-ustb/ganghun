@@ -1,272 +1,166 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-    <title>闯关剧本 · 冶金少年</title>
+    <title>钢魂实践团 · 冶金青年闯关录</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
     <link rel="stylesheet" href="assets/css/main.css" />
     <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
     <style>
-        /* 右上角勋章徽章 */
-        #badge {   
-    position: fixed;
-    top: 80px;           /* 原来是20px，改成80px */
-    right: 20px;
-    background: rgba(0,0,0,0.7);
-    backdrop-filter: blur(4px);
-    border: 1px solid #f1c40f;
-    border-radius: 40px;
-    padding: 0.5rem 1.2rem;
-    color: #fff;
-    font-size: 1.2rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    z-index: 999;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-    pointer-events: none;
+      	 /* ===== 全局自定义样式 ===== */
+        #game-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            align-items: flex-start;
         }
-        #badge .icon {
-            font-size: 1.5rem;
+        #game-container {
+            flex: 1;
+            min-width: 300px;
+            width: 100%;
+            max-width: 820px;
+            margin: 0 auto;
+            padding: 0.5rem 1rem 2rem;
         }
-        #badge .count {
+        .game-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            background: rgba(255,255,255,0.06);
+            border-radius: 12px;
+            padding: 0.8rem 1.5rem;
+            margin-bottom: 1.8rem;
+            border-left: 4px solid #f39c12;
+            font-size: 0.95rem;
+            color: #ccc;
+        }
+        .game-status .badge {
+            background: #f39c12;
+            color: #1a1a2e;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
             font-weight: bold;
+            font-size: 0.8rem;
+        }
+        .game-status .achievement-list {
+            display: flex;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+        }
+        .game-status .achievement-list span {
+            background: rgba(243, 156, 18, 0.2);
+            border: 1px solid #f39c12;
+            border-radius: 20px;
+            padding: 0.1rem 0.8rem;
+            font-size: 0.8rem;
             color: #f1c40f;
-            font-size: 1.4rem;
         }
-#wrapper {
-    padding-top: 80px;
-}
-        /* 页面标题 */
-        #wrapper > header {
-            background: rgba(0,0,0,0.3);
-            padding: 2rem 0;
+        .story-scene {
+            background: rgba(255,255,255,0.04);
+            backdrop-filter: blur(4px);
+            border-radius: 20px;
+            padding: 2rem 2.2rem;
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            min-height: 280px;
+        }
+        .story-scene .story-text {
+            font-size: 1.25rem;
+            line-height: 1.9;
+            color: #e8e8e8;
+            white-space: pre-wrap;
+            margin-bottom: 2rem;
+            font-weight: 300;
+            letter-spacing: 0.3px;
+        }
+        .story-scene .story-text .highlight {
+            color: #f1c40f;
+            font-weight: 500;
+        }
+        .story-scene .story-text .scientist {
+            color: #5dade2;
+            font-weight: 600;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+        .option-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #f0f0f0;
+            padding: 0.9rem 1.8rem;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-align: left;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        .option-btn:hover {
+            background: rgba(52, 152, 219, 0.2);
+            border-color: #3498db;
+            transform: translateX(6px);
+            box-shadow: 0 0 20px rgba(52, 152, 219, 0.1);
+        }
+        .option-btn .icon {
+            font-size: 1.2rem;
+            opacity: 0.7;
+        }
+        .ending {
             text-align: center;
+            padding: 1.5rem 0 0.5rem;
         }
-        #wrapper > header h2 {
-            font-size: 2.2rem;
-            margin-bottom: 0.2rem;
+        .ending .big-icon {
+            font-size: 4rem;
+            margin-bottom: 0.5rem;
+        }
+        .ending .ending-title {
+            font-size: 2rem;
+            font-weight: 700;
             background: linear-gradient(135deg, #f1c40f, #e67e22);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        #wrapper > header p {
-            color: #aaa;
+        .ending .ending-desc {
             font-size: 1.1rem;
+            color: #bbb;
+            margin: 1rem 0 1.5rem;
         }
-
-        /* 分支图容器 */
-        #graph-container {
-            background: rgba(255,255,255,0.03);
-            border-radius: 16px;
-            padding: 1rem;
-            border: 1px solid rgba(255,255,255,0.06);
-            overflow: auto;
-        }
-        #graph-svg {
-            width: 100%;
-            height: auto;
-            display: block;
-            min-height: 500px;
-        }
-
-        /* 图例 */
-        .legend {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            flex-wrap: wrap;
-            margin-top: 1rem;
-            color: #ccc;
-            font-size: 0.9rem;
-        }
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .legend-item .dot {
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            border: 2px solid #555;
-        }
-        .legend-item .dot.incomplete { background: #444; border-color: #555; }
-        .legend-item .dot.completed { background: #f1c40f; border-color: #e67e22; }
-
-        /* 节点样式 */
-        .graph-node {
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .graph-node:hover circle {
-            filter: brightness(1.3);
-        }
-        .graph-node text {
-            font-size: 9px;
-            fill: #fff;
-            text-anchor: middle;
-            dominant-baseline: central;
-            pointer-events: none;
-            font-weight: 600;
-            user-select: none;
-        }
-        .graph-node.incomplete circle {
-            fill: #444;
-            stroke: #555;
-        }
-        .graph-node.completed circle {
-            fill: #f1c40f;
-            stroke: #e67e22;
-            filter: drop-shadow(0 0 6px #f1c40f);
-        }
-        .graph-link {
-            stroke: #555;
-            stroke-width: 1.5;
-            fill: none;
-        }
-        .graph-link.completed {
-            stroke: #f1c40f;
-        }
-
-        /* 弹窗 */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(6px);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-overlay.active {
-            display: flex;
-        }
-        .modal-box {
-            background: #1a1a2e;
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 20px;
-            padding: 2rem 2.5rem;
-            max-width: 600px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-            box-shadow: 0 30px 80px rgba(0,0,0,0.6);
-        }
-        .modal-box h3 {
-            color: #f1c40f;
-            font-size: 1.5rem;
-            margin: 0 0 0.3rem;
-        }
-        .modal-box .sub {
-            color: #888;
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-        }
-        .modal-box .section-title {
-            color: #5dade2;
-            font-weight: bold;
-            margin: 1rem 0 0.3rem;
-            font-size: 1.05rem;
-        }
-        .modal-box .task-content, .modal-box .knowledge-content {
-            background: rgba(0,0,0,0.2);
-            padding: 0.8rem 1rem;
-            border-radius: 8px;
-            color: #ddd;
-            line-height: 1.6;
-            white-space: pre-wrap;
-            margin-bottom: 0.5rem;
-            font-size: 0.95rem;
-        }
-        .modal-box .status-badge {
-            display: inline-block;
-            padding: 0.2rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            margin: 0.5rem 0 1rem;
-        }
-        .status-badge.incomplete { background: #444; color: #aaa; }
-        .status-badge.completed { background: #f1c40f; color: #1a1a2e; }
-
-        .modal-box .action-btn {
-            background: linear-gradient(135deg, #f1c40f, #e67e22);
+        .ending .restart-btn {
+            background: linear-gradient(135deg, #3498db, #2ecc71);
             border: none;
-            color: #1a1a2e;
-            padding: 0.7rem 2rem;
+            color: #fff;
+            padding: 0.8rem 2.5rem;
             border-radius: 40px;
-            font-size: 1rem;
-            font-weight: bold;
+            font-size: 1.1rem;
             cursor: pointer;
-            transition: 0.2s;
-            margin-right: 0.8rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 20px rgba(52, 152, 219, 0.3);
         }
-        .modal-box .action-btn:hover {
+        .ending .restart-btn:hover {
             transform: scale(1.04);
+            box-shadow: 0 6px 30px rgba(52, 152, 219, 0.5);
         }
-        .modal-box .action-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-            transform: none;
-        }
-        .modal-box .close-btn {
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
-            color: #ccc;
-            padding: 0.7rem 2rem;
-            border-radius: 40px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .modal-box .close-btn:hover {
-            background: rgba(255,255,255,0.2);
-        }
-
-        /* 重置 */
-        .reset-area {
-            text-align: center;
-            margin-top: 1.5rem;
-        }
-        .reset-area button {
-            background: rgba(255,255,255,0.08);
-            border: 1px solid rgba(255,255,255,0.15);
-            color: #ccc;
-            padding: 0.6rem 2rem;
-            border-radius: 40px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .reset-area button:hover {
-            background: rgba(255,255,255,0.15);
-        }
-
-        /* 响应式 */
         @media (max-width: 768px) {
-            #wrapper > header h2 { font-size: 1.6rem; }
-            .modal-box { padding: 1.5rem; }
-            .modal-box .task-content, .modal-box .knowledge-content { font-size: 0.9rem; }
-            #badge { font-size: 1rem; padding: 0.3rem 0.8rem; }
-            #badge .icon { font-size: 1.2rem; }
+            #game-wrapper { flex-direction: column; }
         }
     </style>
 </head>
 <body class="is-preload">
 
-    <!-- 右上角勋章计数 -->
-    <div id="badge">
-        <span class="icon">🏅</span>
-        <span>勋章</span>
-        <span class="count" id="medalCount">0</span>
-    </div>
-
     <div id="page-wrapper">
 
         <!-- Header -->
-        <header id="header">
-            <h1><a href="gamehomepage.html">钢魂实践团</a></h1>
+        <header id="header" class="alt">
+            <h1><a href="index.html">钢魂实践团</a></h1>
             <nav><a href="#menu">导航栏</a></nav>
         </header>
 
@@ -285,29 +179,20 @@
             </div>
         </nav>
 
-        <!-- Wrapper -->
+        <!-- Banner -->
+        <section id="banner">
+            <div class="inner">
+                <div class="logo"><span class="icon fa-gem"></span></div>
+                <h2>🔥 冶金青年成长闯关录</h2>
+                <p>以北科大冶金学子视角 · 开启成长闯关 · 解锁冶金院士专属人生剧本</p>
+            </div>
+        </section>
+
+        <!-- ========== 游戏主体（无分支图） ========== -->
         <section id="wrapper">
-            <header>
-                <div class="inner">
-                    <h2>🗺️ 闯关剧本 · 任务地图</h2>
-                    <p>点击每个节点查看任务与知识储备 · 完成任务可领取冶金勋章</p>
-                </div>
-            </header>
-
-            <div class="wrapper">
-                <div class="inner">
-                    <div id="graph-container">
-                        <svg id="graph-svg" viewBox="0 0 900 700" preserveAspectRatio="xMidYMid meet"></svg>
-                    </div>
-
-                    <div class="legend">
-                        <span class="legend-item"><span class="dot incomplete"></span> 未完成</span>
-                        <span class="legend-item"><span class="dot completed"></span> 已完成（获得勋章）</span>
-                    </div>
-
-                    <div class="reset-area">
-                        <button onclick="resetAll()">🔄 重置所有进度</button>
-                    </div>
+            <div class="inner" id="game-wrapper">
+                <div id="game-container">
+                    <!-- 由 JavaScript 动态渲染 -->
                 </div>
             </div>
         </section>
@@ -334,23 +219,6 @@
 
     </div>
 
-    <!-- 弹窗 -->
-    <div class="modal-overlay" id="nodeModal">
-        <div class="modal-box">
-            <h3 id="modalTitle">节点名称</h3>
-            <div class="sub" id="modalId">ID: xxx</div>
-            <div><span class="status-badge" id="modalStatus">未完成</span></div>
-            <div class="section-title">📋 任务</div>
-            <div class="task-content" id="modalTask">任务描述</div>
-            <div class="section-title">📚 知识储备</div>
-            <div class="knowledge-content" id="modalKnowledge">需要了解的知识</div>
-            <div style="margin-top: 1.5rem;">
-                <button class="action-btn" id="claimBtn">🏅 领取勋章</button>
-                <button class="close-btn" onclick="closeModal()">关闭</button>
-            </div>
-        </div>
-    </div>
-
     <!-- Scripts -->
     <script src="assets/js/jquery.min.js"></script>
     <script src="assets/js/jquery.scrollex.min.js"></script>
@@ -359,635 +227,894 @@
     <script src="assets/js/util.js"></script>
     <script src="assets/js/main.js"></script>
 
-    <!-- ====== 核心脚本 ====== -->
+    <!-- ====== 游戏主脚本 ====== -->
     <script>
-        // ============================================================
-        // 1. 故事数据（每个节点包含任务和知识储备）
-        // ============================================================
-        const storyData = {
-            start: {
-                id: 'start',
-                text: '🎓 欢迎来到冶金世界！\n这是你的起点，也是钢铁精神的发源地。',
-                task: '1. 阅读《钢铁是怎样炼成的》第一章\n2. 观看纪录片《大国钢铁》第一集\n3. 写下你对“冶金”的第一印象（不少于100字）',
-                knowledge: '· 冶金的定义与历史\n· 钢铁在国民经济中的地位\n· 北京科技大学冶金学院简介',
-                options: [
-                    { text: '了解冶金专业', nextId: 'learn_metallurgy' },
-                    { text: '考虑转专业', nextId: 'consider_transfer' }
-                ]
-            },
-            learn_metallurgy: {
-                id: 'learn_metallurgy',
-                text: '📚 你深入了解了冶金专业的内涵与前景。',
-                task: '1. 完成冶金导论课课后习题\n2. 采访一位冶金专业的学长/学姐\n3. 写一篇800字以上的专业认知报告',
-                knowledge: '· 冶金学科的分支（钢铁冶金、有色冶金、物理化学等）\n· 冶金行业的发展趋势（绿色、智能）\n· 知名冶金院校与科研机构',
-                options: [
-                    { text: '选择核心课程', nextId: 'course_choice' }
-                ]
-            },
-            consider_transfer: {
-                id: 'consider_transfer',
-                text: '💭 你曾考虑过转专业，但最终选择坚守。',
-                task: '1. 列出冶金专业的10个优势\n2. 对比冶金与计算机的异同\n3. 撰写一篇《我为什么选择冶金》的短文',
-                knowledge: '· 冶金与信息技术的交叉领域\n· 冶金行业的职业发展路径\n· 冶金对国家战略的重要性',
-                options: [
-                    { text: '撤回申请，留在冶金', nextId: 'learn_metallurgy' }
-                ]
-            },
-            course_choice: {
-                id: 'course_choice',
-                text: '📖 大一结束，你面临专业方向的分流选择。',
-                task: '1. 查阅冶金学院三个方向（物理化学、材料科学、冶金原理）的培养方案\n2. 与导师进行一次深入交流\n3. 制定你的个人学习计划',
-                knowledge: '· 各方向的课程设置与研究重点\n· 不同方向的就业前景\n· 如何根据兴趣选择方向',
-                options: [
-                    { text: '物理化学方向', nextId: 'course_physchem' },
-                    { text: '材料科学方向', nextId: 'course_materials' },
-                    { text: '冶金原理方向', nextId: 'course_metallurgy' }
-                ]
-            },
-            course_physchem: {
-                id: 'course_physchem',
-                text: '🧪 你选择了物理化学方向，深入探索冶金的本质。',
-                task: '1. 掌握热力学三大定律在冶金中的应用\n2. 完成一个冶金热力学计算案例\n3. 阅读魏寿昆院士的著作《冶金物理化学》',
-                knowledge: '· 吉布斯自由能与反应方向\n· 相图与相变\n· 冶金动力学基础',
-                options: [
-                    { text: '进入实验室', nextId: 'lab_experience' }
-                ]
-            },
-            course_materials: {
-                id: 'course_materials',
-                text: '🧱 你选择了材料科学方向，研究金属材料的微观世界。',
-                task: '1. 学习晶体学基础知识\n2. 观察金相组织并识别不同组织\n3. 分析一种合金的强化机制',
-                knowledge: '· 晶体结构与缺陷\n· 固溶强化、沉淀强化\n· 材料表征方法（XRD、SEM）',
-                options: [
-                    { text: '先进结构材料', nextId: 'advanced_materials' },
-                    { text: '纳米功能材料', nextId: 'nanomaterials' }
-                ]
-            },
-            course_metallurgy: {
-                id: 'course_metallurgy',
-                text: '🔥 你选择了冶金原理方向，聚焦于冶炼工艺的优化。',
-                task: '1. 绘制高炉炼铁流程图\n2. 分析影响高炉焦比的因素\n3. 提出一项节能降耗的改进方案',
-                knowledge: '· 高炉内温度场与气流分布\n· 造渣与脱硫原理\n· 铁水预处理与精炼',
-                options: [
-                    { text: '工艺优化', nextId: 'process_optimization' },
-                    { text: '数值模拟', nextId: 'numerical_simulation' }
-                ]
-            },
-            lab_experience: {
-                id: 'lab_experience',
-                text: '🔬 你进入了实验室，亲身体验科研的魅力。',
-                task: '1. 完成一项冶金物理化学实验\n2. 撰写实验报告并分析数据\n3. 参加一次组会并汇报进展',
-                knowledge: '· 实验操作规范与安全\n· 数据采集与处理\n· 科学论文的写作规范',
-                options: [
-                    { text: '科研项目', nextId: 'research_project' }
-                ]
-            },
-            research_project: {
-                id: 'research_project',
-                text: '📝 你全身心投入科研项目，准备产出成果。',
-                task: '1. 确定研究课题并制定方案\n2. 完成实验并整理数据\n3. 撰写一篇学术论文（或申请专利）',
-                knowledge: '· 科研选题与创新思维\n· 实验设计与控制变量\n· 学术论文结构与投稿流程',
-                options: [
-                    { text: '发表论文', nextId: 'publish_paper' },
-                    { text: '申请专利', nextId: 'apply_patent' }
-                ]
-            },
-            publish_paper: {
-                id: 'publish_paper',
-                text: '📄 你的论文成功发表，学术之路开启。',
-                task: '1. 将论文投稿至核心期刊\n2. 参加一次学术会议并做报告\n3. 拓展研究至相关领域',
-                knowledge: '· 学术期刊分类与投稿要求\n· 同行评审流程\n· 学术交流与展示技巧',
-                options: [
-                    { text: '读研深造', nextId: 'grad_school_choice' },
-                    { text: '直接工作', nextId: 'work_choice' }
-                ]
-            },
-            apply_patent: {
-                id: 'apply_patent',
-                text: '📜 你申请了发明专利，技术转化迈出第一步。',
-                task: '1. 撰写专利申请书\n2. 与专利代理机构沟通\n3. 寻找技术应用场景或企业合作',
-                knowledge: '· 专利类型与申请流程\n· 技术交底书的撰写\n· 知识产权保护的基本法律',
-                options: [
-                    { text: '创业', nextId: 'entrepreneur_ending' },
-                    { text: '进入大企业', nextId: 'big_company_ending' }
-                ]
-            },
-            grad_school_choice: {
-                id: 'grad_school_choice',
-                text: '🎓 你面临读研深造的选择。',
-                task: '1. 确定攻读硕士或博士\n2. 选择目标院校与导师\n3. 准备考研或申请材料',
-                knowledge: '· 国内冶金强校与研究方向\n· 导师选择与沟通技巧\n· 研究生生涯规划',
-                options: [
-                    { text: '攻读博士', nextId: 'phd_path' },
-                    { text: '攻读硕士', nextId: 'master_path' }
-                ]
-            },
-            phd_path: {
-                id: 'phd_path',
-                text: '🎓 你选择了直博，深耕冶金学术。',
-                task: '1. 完成博士课程学习\n2. 开展原创性研究\n3. 发表高水平论文并完成博士论文',
-                knowledge: '· 博士培养流程与要求\n· 科研方法论\n· 学术诚信与伦理',
-                options: [
-                    { text: '留在高校', nextId: 'academia_ending' },
-                    { text: '进入科研院所', nextId: 'research_inst_ending' }
-                ]
-            },
-            master_path: {
-                id: 'master_path',
-                text: '🎓 你选择了攻读硕士，准备进入业界。',
-                task: '1. 完成硕士课程\n2. 参与企业合作项目\n3. 完成硕士学位论文',
-                knowledge: '· 工程硕士与学术硕士的区别\n· 企业研发流程\n· 职业规划与求职技巧',
-                options: [
-                    { text: '技术工程师', nextId: 'engineer_ending' },
-                    { text: '管理岗位', nextId: 'manager_ending' }
-                ]
-            },
-            work_choice: {
-                id: 'work_choice',
-                text: '💼 你决定本科毕业后直接工作。',
-                task: '1. 制作简历并投递\n2. 参加面试\n3. 选择最适合的offer',
-                knowledge: '· 冶金行业企业概览\n· 岗位要求与职业发展\n· 职场素养与沟通技能',
-                options: [
-                    { text: '技术岗', nextId: 'technical_route' },
-                    { text: '销售岗', nextId: 'sales_route' }
-                ]
-            },
-            advanced_materials: {
-                id: 'advanced_materials',
-                text: '🛰️ 你专注于先进结构材料的研究。',
-                task: '1. 学习高温合金或钛合金的知识\n2. 分析一种航空材料的性能要求\n3. 提出改进材料性能的方案',
-                knowledge: '· 航空材料的分类与特性\n· 材料选型与失效分析\n· 先进制造技术（增材制造等）',
-                options: [
-                    { text: '航空航天', nextId: 'aerospace_ending' },
-                    { text: '汽车轻量化', nextId: 'automotive_ending' }
-                ]
-            },
-            nanomaterials: {
-                id: 'nanomaterials',
-                text: '🧬 你探索纳米功能材料的无限可能。',
-                task: '1. 学习纳米材料制备方法\n2. 研究纳米金属的催化性能\n3. 设计一种纳米材料应用场景',
-                knowledge: '· 纳米效应与尺寸效应\n· 纳米材料的表征技术\n· 纳米材料在能源、环保等领域的应用',
-                options: [
-                    { text: '生物医学', nextId: 'biomedical_ending' },
-                    { text: '电子器件', nextId: 'electronics_ending' }
-                ]
-            },
-            process_optimization: {
-                id: 'process_optimization',
-                text: '⚡ 你致力于工艺优化，提升生产效能。',
-                task: '1. 分析现有工艺的瓶颈\n2. 提出一项改进措施\n3. 评估改进效果（能耗、质量等）',
-                knowledge: '· 冶金流程工程\n· 节能降耗技术\n· 质量与成本控制',
-                options: [
-                    { text: '节能减排', nextId: 'energy_saving_ending' },
-                    { text: '质量控制', nextId: 'quality_control_ending' }
-                ]
-            },
-            numerical_simulation: {
-                id: 'numerical_simulation',
-                text: '📊 你利用数值模拟技术优化工艺。',
-                task: '1. 学习一款CFD或有限元软件\n2. 建立高炉或连铸过程的模型\n3. 模拟并优化一个参数',
-                knowledge: '· 计算流体力学基础\n· 有限元方法\n· 数字孪生技术概念',
-                options: [
-                    { text: '数字孪生', nextId: 'digital_twin_ending' },
-                    { text: 'AI控制', nextId: 'ai_control_ending' }
-                ]
-            },
+    // ============================================================
+    // 1. 故事数据（完整，与之前一致）
+    // ============================================================
+    const storyData = {
+        start: {
+            id: 'start',
+            text: `🎓 你手握北京科技大学冶金学院的录取通知书，站在校门口。\n\n梧桐叶沙沙作响，你深吸一口气，迈进了这所“钢铁摇篮”。\n\n“冶金”两个字对你来说既熟悉又陌生——你只知道它和钢铁有关，但具体学什么、未来做什么，心里完全没底。\n\n今天，是你大学的第一天，也是你人生岔路口的起点。`,
+            options: [
+                { text: '🔍 深入了解冶金专业', nextId: 'learn_metallurgy' },
+                { text: '💭 考虑转专业到计算机', nextId: 'consider_transfer' }
+            ]
+        },
+        consider_transfer: {
+            id: 'consider_transfer',
+            text: `💻 你听说计算机专业就业好、薪资高，心里有些动摇。\n\n你打开转专业申请表，却迟迟下不了笔。\n\n你想起高中时曾读过一篇关于 <span class="scientist">魏寿昆</span> 院士的文章，他说：“<span class="highlight">冶金是化腐朽为神奇的科学。</span>”\n\n你开始犹豫：真的要放弃这个可能改变物质世界的专业吗？`,
+            options: [
+                { text: '❤️ 撤回申请，留在冶金', nextId: 'learn_metallurgy' },
+                { text: '🚀 坚持转专业', nextId: 'cs_ending' }
+            ]
+        },
+        cs_ending: {
+            id: 'cs_ending',
+            text: `💻 你转到了计算机专业，成为一名优秀的软件工程师。\n\n你进入互联网大厂，薪资优厚，生活安稳。\n\n但每当看到关于钢铁、新材料、新能源的新闻，你心中总会泛起一丝波澜。\n\n你曾梦到高炉中熊熊燃烧的火焰，醒来时默默关掉了电脑。\n\n<span class="highlight">成就解锁：【另辟蹊径 · 跨界人生】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '💻',
+            endingTitle: '🔄 另辟蹊径 · 跨界人生',
+            endingDesc: '你走出了另一条路，但冶金精神始终在你心中闪耀。'
+        },
+        learn_metallurgy: {
+            id: 'learn_metallurgy',
+            text: `📚 你参加了冶金学院的“新生专业导论课”。\n\n教授在台上娓娓道来：“从青铜器到高铁，从航天合金到芯片材料，冶金贯穿了整个人类文明史。”\n\n你第一次听到 <span class="scientist">柯俊</span> 院士的名言：“<span class="highlight">冶金工业是现代化国家的基石。</span>”\n\n你感到胸膛里有什么东西被点燃了。`,
+            options: [
+                { text: '📖 选择专业核心课程', nextId: 'course_choice' }
+            ]
+        },
+        course_choice: {
+            id: 'course_choice',
+            text: `📖 大一结束，你面临专业方向的分流选择。\n\n冶金学院提供了四条主修路径，每一条都将通向不同的未来。\n\n你仔细阅读了培养方案，陷入沉思……`,
+            options: [
+                { text: '🌿 绿色低碳方向', nextId: 'green_lowcarbon' },
+                { text: '🧪 冶金新材料方向', nextId: 'new_materials' },
+                { text: '🤖 智慧冶金方向', nextId: 'smart_metallurgy' },
+                { text: '⚔️ 战略金属方向', nextId: 'strategic_metal' }
+            ]
+        },
+        green_lowcarbon: {
+            id: 'green_lowcarbon',
+            text: `🌿 你选择了绿色低碳方向，致力于让冶金行业变得更环保、更可持续。\n\n你学习了碳捕集、氢冶金、循环经济等前沿知识。\n\n你想起 <span class="scientist">殷瑞钰</span> 院士的话：“<span class="highlight">钢铁工业应成为循环经济的重要组成部分。</span>”\n\n大三的课题选择，你准备深入研究哪一个方向？`,
+            options: [
+                { text: '🌱 氢基直接还原技术', nextId: 'green_hydrogen' },
+                { text: '♻️ 冶金固废资源化利用', nextId: 'green_recycle' },
+                { text: '📊 碳排放核算与碳交易', nextId: 'green_carbon' }
+            ]
+        },
+        green_hydrogen: {
+            id: 'green_hydrogen',
+            text: `🌱 你选择了氢基直接还原技术，这是钢铁行业实现碳中和的核心路径之一。\n\n你研读了数百篇文献，发现氢冶金的核心瓶颈在于“绿氢成本太高”和“还原效率不足”。\n\n你的导师说：“这个方向很有挑战性，你确定要走到底吗？”\n\n你深吸一口气，点了点头。`,
+            options: [
+                { text: '💪 挑战核心技术研发', nextId: 'green_hydrogen_rd' },
+                { text: '📊 转战政策与产业研究', nextId: 'green_hydrogen_policy' }
+            ]
+        },
+        green_hydrogen_rd: {
+            id: 'green_hydrogen_rd',
+            text: `🔬 你选择了技术研发路线，从基础研究做起，探索如何降低氢冶金成本。\n\n你的毕业设计是关于“新型催化剂在氢基竖炉中的应用”，经过数百次实验，终于取得突破。\n\n你的成果发表在《钢铁》期刊上，引起了行业内的高度关注。\n\n毕业时，你面前有两条路……`,
+            options: [
+                { text: '🏭 加入宝武集团，推动氢冶金示范工程', nextId: 'green_hydrogen_ending1' },
+                { text: '🎓 继续读研深造，深入研究氢冶金基础理论', nextId: 'green_hydrogen_ending2' }
+            ]
+        },
+        green_hydrogen_ending1: {
+            id: 'green_hydrogen_ending1',
+            text: `🏭 你加入宝武集团，成为氢冶金示范项目的核心成员。\n\n你参与建设了中国首个万吨级氢基竖炉示范工程，2026 年成功投产。\n\n项目投产后，每年可减少碳排放 50 万吨，被央视《新闻联播》报道。\n\n你站在项目现场，看着氢气流向高炉，热泪盈眶。\n\n“<span class="highlight">让钢铁变成绿色的，这是我们的使命。</span>”\n\n<span class="highlight">成就解锁：【绿氢先锋 · 钢铁脱碳】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '🌱',
+            endingTitle: '💚 绿氢先锋 · 钢铁脱碳',
+            endingDesc: '你用绿氢技术，为钢铁行业碳中和开辟了新路径。'
+        },
+        green_hydrogen_ending2: {
+            id: 'green_hydrogen_ending2',
+            text: `🎓 你考入中国科学院过程工程研究所，师从国内氢冶金顶级专家。\n\n博士期间，你首次从原子层面揭示了氢还原铁氧化物的反应路径，被国际同行誉为“重大突破”。\n\n你的论文发表于《Nature Communications》，成为中国氢冶金研究领域最具影响力的青年学者。\n\n<span class="highlight">成就解锁：【氢冶金学者 · 国际引领】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '🔬',
+            endingTitle: '🧪 氢冶金学者 · 国际引领',
+            endingDesc: '你用基础研究，推动氢冶金从实验室走向工业化。'
+        },
+        green_hydrogen_policy: {
+            id: 'green_hydrogen_policy',
+            text: `📊 你选择了政策与产业研究方向，认为技术突破需要政策支持才能落地。\n\n你的研究报告《中国氢冶金产业发展的政策建议》被国家发改委采纳。\n\n你收到了国务院发展研究中心的实习邀请。`,
+            options: [
+                { text: '🏛️ 进入政府智库，推动政策制定', nextId: 'green_hydrogen_policy_ending' },
+                { text: '🌍 加入国际组织，推动全球氢能合作', nextId: 'green_hydrogen_global_ending' }
+            ]
+        },
+        green_hydrogen_policy_ending: {
+            id: 'green_hydrogen_policy_ending',
+            text: `🏛️ 你加入国务院发展研究中心，参与制定国家氢能产业政策。\n\n你撰写的《氢冶金产业发展路线图》被写入国家“十五五”规划纲要。\n\n你成为全国最年轻的产业政策专家之一，被各大媒体争相报道。\n\n“<span class="highlight">政策的杠杆，可以撬动整个行业的变革。</span>”\n\n<span class="highlight">成就解锁：【政策推动者 · 氢能蓝图】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '🏛️',
+            endingTitle: '📜 政策推动者 · 氢能蓝图',
+            endingDesc: '你用政策和规划，为国家氢冶金发展绘就了蓝图。'
+        },
+        green_hydrogen_global_ending: {
+            id: 'green_hydrogen_global_ending',
+            text: `🌍 你加入联合国工业发展组织（UNIDO），负责全球氢冶金技术推广。\n\n你推动的“全球氢冶金伙伴计划”被 50 多个国家采纳。\n\n你在联合国气候大会上发表演讲：“<span class="highlight">中国的钢铁正在变绿，而且速度比任何人想象的都快。</span>”\n\n<span class="highlight">成就解锁：【国际氢能使者 · 全球视野】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '🌍',
+            endingTitle: '🌱 国际氢能使者 · 全球视野',
+            endingDesc: '你让中国氢冶金技术走向了世界舞台。'
+        },
+        green_recycle: {
+            id: 'green_recycle',
+            text: `♻️ 你选择了冶金固废资源化利用方向，研究钢渣、尾矿、粉尘的再利用技术。\n\n你发现全国每年产生的冶金固废超过 5 亿吨，但综合利用率不足 50%。\n\n你的导师说：“这个方向很有前景，但需要把技术真正落地到企业才行。”\n\n你暗下决心：一定要让固废变成资源。`,
+            options: [
+                { text: '🔬 技术研发路线：发明新型固废利用技术', nextId: 'green_recycle_tech' },
+                { text: '🏭 产业落地路线：推动技术在企业应用', nextId: 'green_recycle_industry' }
+            ]
+        },
+        green_recycle_tech: {
+            id: 'green_recycle_tech',
+            text: `🔬 你专注于技术研发，经过两年多的攻关，发明了一种“钢渣-二氧化碳协同固化技术”。\n\n这项技术可以将钢渣与工业尾气中的 CO₂ 反应，生成高强度的建材，实现“变废为宝”。\n\n你的技术获得了国家发明专利，多家企业想要购买授权。`,
+            options: [
+                { text: '🚀 创业成立公司，将技术商业化', nextId: 'green_recycle_ending1' },
+                { text: '🔬 继续深化研究，追求更完美的技术', nextId: 'green_recycle_ending3' }
+            ]
+        },
+        green_recycle_ending1: {
+            id: 'green_recycle_ending1',
+            text: `🚀 你创立了一家环保科技公司，专注于固废资源化技术商业化。\n\n三年后，你的技术被推广到全国 50 多家钢铁企业，年处理固废超 2000 万吨。\n\n公司估值突破 100 亿元，你登上福布斯“30 位 30 岁以下精英”榜单。\n\n“<span class="highlight">垃圾是放错位置的资源。</span>”\n\n<span class="highlight">成就解锁：【固废魔术师 · 循环经济】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '♻️',
+            endingTitle: '🔄 固废魔术师 · 循环经济',
+            endingDesc: '你把别人眼中的废料，变成了高价值的资源。'
+        },
+        green_recycle_ending3: {
+            id: 'green_recycle_ending3',
+            text: `🔬 你选择继续深化技术研究，把钢渣-二氧化碳协同固化技术做到了极致。\n\n你的研究成功将 CO₂ 封存效率提升了 3 倍，研究成果发表于《环境科学与技术》期刊。\n\n你被国际固废利用协会授予“青年科学家奖”，成为中国在该领域的首位获奖者。\n\n<span class="highlight">成就解锁：【固废科学家 · 技术极致】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '🧪',
+            endingTitle: '🔬 固废科学家 · 技术极致',
+            endingDesc: '你用极致的技术追求，将固废利用推向了新高度。'
+        },
+        green_recycle_industry: {
+            id: 'green_recycle_industry',
+            text: `🏭 你选择了产业落地路线，深入钢铁企业一线，了解固废利用的实际痛点。\n\n你发现企业最需要的是“低投入、高回报”的技术方案。\n\n你设计了一套“模块化固废处理方案”，可以在不影响生产的情况下快速部署。`,
+            options: [
+                { text: '🏢 进入大型钢铁企业，推动固废资源化', nextId: 'green_recycle_ending2' },
+                { text: '📈 进入咨询公司，服务更多企业', nextId: 'green_recycle_consulting_ending' }
+            ]
+        },
+        green_recycle_ending2: {
+            id: 'green_recycle_ending2',
+            text: `🏢 你加入宝武集团环境资源部，负责推动全集团的固废资源化工作。\n\n你主导建成了国内最大的钢渣综合利用基地，年产值超 15 亿元。\n\n你被授予“全国循环经济先进个人”荣誉称号，并受邀在全国循环经济大会上做主旨报告。\n\n<span class="highlight">成就解锁：【循环经济践行者】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '🏭',
+            endingTitle: '🏗️ 循环经济践行者',
+            endingDesc: '你在大企业中，让循环经济理念落地生根。'
+        },
+        green_recycle_consulting_ending: {
+            id: 'green_recycle_consulting_ending',
+            text: `📈 你加入了一家顶尖的环保咨询公司，专门为钢铁企业提供固废资源化解决方案。\n\n你服务了包括鞍钢、沙钢、首钢在内的 30 多家钢铁企业，累计为客户创造价值超 50 亿元。\n\n你被行业称为“固废资源化的总设计师”。\n\n<span class="highlight">成就解锁：【固废总设计师 · 价值创造】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '📊',
+            endingTitle: '📈 固废总设计师 · 价值创造',
+            endingDesc: '你用专业服务，让固废利用为更多企业创造价值。'
+        },
+        green_carbon: {
+            id: 'green_carbon',
+            text: `📊 你选择了碳排放核算与碳交易方向，成为冶金行业为数不多的“碳管理”专家。\n\n你学习了碳核算方法学、碳金融、碳市场交易规则等课程。\n\n你意识到：未来 30 年，碳排放权就是企业的“生存权”。`,
+            options: [
+                { text: '📈 进入碳交易市场，成为专业交易员', nextId: 'green_carbon_trader' },
+                { text: '📋 进入政策研究机构，参与碳市场规则制定', nextId: 'green_carbon_policy2' }
+            ]
+        },
+        green_carbon_trader: {
+            id: 'green_carbon_trader',
+            text: `📈 你加入了全国碳排放权交易市场，成为首批碳交易员之一。\n\n你凭借对钢铁行业的深刻理解，在碳市场中屡战屡胜，年交易额突破 10 亿元。\n\n你被媒体称为“中国碳市场的钢铁侠”。`,
+            options: [
+                { text: '🌍 加入国际碳交易巨头', nextId: 'green_carbon_ending1' },
+                { text: '🚀 创业成立碳资产管理公司', nextId: 'green_carbon_entrepreneur_ending' }
+            ]
+        },
+        green_carbon_ending1: {
+            id: 'green_carbon_ending1',
+            text: `🌍 你加入了一家国际碳交易机构，成为全球碳市场的中国专家。\n\n你代表中国参与了联合国气候变化大会的谈判，为发展中国家争取了利益。\n\n你在联合国讲台上说：“<span class="highlight">中国的钢铁正在变绿，碳市场是最好的证明。</span>”\n\n<span class="highlight">成就解锁：【碳市场专家 · 全球视野】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '🌍',
+            endingTitle: '📈 碳市场专家 · 全球视野',
+            endingDesc: '你让世界听到了中国钢铁绿色转型的声音。'
+        },
+        green_carbon_entrepreneur_ending: {
+            id: 'green_carbon_entrepreneur_ending',
+            text: `🚀 你创立了一家碳资产管理公司，专注于钢铁企业的碳资产托管与交易。\n\n五年后，你的公司管理了全国 30% 的钢铁行业碳配额，年交易额超 200 亿元。\n\n你成为中国碳金融领域的领军人物，被誉为“碳市场弄潮儿”。\n\n<span class="highlight">成就解锁：【碳金融先锋 · 市场弄潮】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '📊',
+            endingTitle: '💰 碳金融先锋 · 市场弄潮',
+            endingDesc: '你用碳金融的力量，助推钢铁行业绿色转型。'
+        },
+        green_carbon_policy2: {
+            id: 'green_carbon_policy2',
+            text: `📋 你选择了政策研究路线，加入中国环境科学研究院，参与碳市场规则制定。\n\n你主导设计了钢铁行业碳配额分配方案，被写入国家碳市场核心制度文件。\n\n你被国家发改委聘为“碳市场专家顾问”，成为该领域最年轻的专家组成员。`,
+            options: [
+                { text: '🏛️ 进入政府部门，推动政策执行', nextId: 'green_carbon_ending2' },
+                { text: '🎓 继续深造，攻读碳管理博士学位', nextId: 'green_carbon_academic_ending' }
+            ]
+        },
+        green_carbon_ending2: {
+            id: 'green_carbon_ending2',
+            text: `🏛️ 你进入国家发改委气候司，参与了中国碳达峰、碳中和政策的制定。\n\n你主导制定的钢铁行业碳配额分配方案，被写入国家“双碳”顶层设计文件。\n\n你常说：“<span class="highlight">政策的力量，可以撬动整个行业的变革。</span>”\n\n<span class="highlight">成就解锁：【政策制定者 · 制度创新】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '🏛️',
+            endingTitle: '📜 政策制定者 · 制度创新',
+            endingDesc: '你用政策和制度，推动了钢铁行业的绿色变革。'
+        },
+        green_carbon_academic_ending: {
+            id: 'green_carbon_academic_ending',
+            text: `🎓 你选择继续攻读碳管理博士学位，深入研究碳市场的微观机制。\n\n你的博士论文《中国钢铁行业碳交易机制优化研究》被评为全国优秀博士学位论文。\n\n你毕业后留校任教，成为国内碳管理领域的顶尖学者，培养了众多碳市场人才。\n\n<span class="highlight">成就解锁：【碳管理学者 · 学术领航】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '🎓',
+            endingTitle: '📖 碳管理学者 · 学术领航',
+            endingDesc: '你用学术研究，为碳市场提供了理论支撑。'
+        },
+        new_materials: {
+            id: 'new_materials',
+            text: `🧪 你选择了冶金新材料方向，研究如何通过成分设计和工艺创新，创造全新的金属材料。\n\n你学习了合金设计、相变理论、材料表征等知识。\n\n你想起 <span class="scientist">肖纪美</span> 院士的话：“<span class="highlight">材料是工业的基础，新材料是创新的源泉。</span>”\n\n你准备在哪个领域深入研究？`,
+            options: [
+                { text: '🛰️ 高温合金（航空航天用）', nextId: 'newmaterials_high_temp' },
+                { text: '🔩 超高强度钢（汽车轻量化）', nextId: 'newmaterials_ultra_high' },
+                { text: '🧬 纳米功能材料', nextId: 'newmaterials_nano' }
+            ]
+        },
+        newmaterials_high_temp: {
+            id: 'newmaterials_high_temp',
+            text: `🛰️ 你专注于高温合金研究，这种材料是航空发动机涡轮叶片的关键材料。\n\n你第一次在实验室看到单晶合金的微观组织时，被那种完美深深震撼。\n\n你的导师说：“高温合金是‘材料皇冠上的明珠’，你现在看到的每一点进步，都凝聚着几代人的心血。”`,
+            options: [
+                { text: '🔬 技术研发路线：挑战更高的耐温极限', nextId: 'newmaterials_high_rd' },
+                { text: '🏭 产业应用路线：推动国产化替代', nextId: 'newmaterials_high_industry' }
+            ]
+        },
+        newmaterials_high_rd: {
+            id: 'newmaterials_high_rd',
+            text: `🔬 你选择了技术研发路线，目标是开发一种能在 1200℃ 以上稳定工作的新型单晶高温合金。\n\n你在实验室里度过了无数个日日夜夜，经过上千次实验，终于找到了理想的成分设计。\n\n你的成果被中国航发集团关注，他们向你发出了邀请。`,
+            options: [
+                { text: '✈️ 加入中国航发集团', nextId: 'newmaterials_high_ending1' },
+                { text: '🎓 继续深造，攻读博士', nextId: 'newmaterials_high_ending2' }
+            ]
+        },
+        newmaterials_high_ending1: {
+            id: 'newmaterials_high_ending1',
+            text: `✈️ 你加入中国航发集团，成为航空发动机材料研发团队的核心成员。\n\n你参与研制的单晶高温合金被用于国产大飞机 C929 的发动机，通过了全部适航认证。\n\n你站在国产大飞机的总装线上，看着自己研发的材料安装在“国之重器”上，热泪盈眶。\n\n<span class="highlight">成就解锁：【逐梦蓝天 · 材料报国】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '✈️',
+            endingTitle: '🛫 逐梦蓝天 · 材料报国',
+            endingDesc: '你用高温合金，托起了中国航空的梦想。'
+        },
+        newmaterials_high_ending2: {
+            id: 'newmaterials_high_ending2',
+            text: `🎓 你选择继续攻读博士学位，在高温合金领域深耕。\n\n你的博士论文被评为全国优秀博士学位论文，你被多所高校争相聘请。\n\n你最终选择回到母校北京科技大学任教，传承冶金材料的精神。\n\n<span class="highlight">成就解锁：【学术传承 · 育人铸魂】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '🎓',
+            endingTitle: '📖 学术传承 · 育人铸魂',
+            endingDesc: '你在讲台上传承了冶金材料的火种。'
+        },
+        newmaterials_high_industry: {
+            id: 'newmaterials_high_industry',
+            text: `🏭 你选择了产业应用路线，目标是打破国外对高温合金的技术垄断。\n\n你深入企业一线，了解国产高温合金“不好用”的痛点，提出了改进方案。\n\n你的方案被多家企业采纳，国产高温合金的成品率从 60% 提升到了 85%。`,
+            options: [
+                { text: '🏢 加入大型特钢企业，推动技术升级', nextId: 'newmaterials_high_industry_ending' },
+                { text: '📈 进入技术咨询公司，服务更多企业', nextId: 'newmaterials_high_consult_ending' }
+            ]
+        },
+        newmaterials_high_industry_ending: {
+            id: 'newmaterials_high_industry_ending',
+            text: `🏢 你加入抚顺特钢，负责高温合金产业化工作。\n\n你主导建成了国内最大的单晶高温合金生产线，产品性能达到国际先进水平。\n\n你打破了国外在航空发动机材料领域的技术封锁，被称为“中国高温合金产业化的推手”。\n\n<span class="highlight">成就解锁：【产业报国 · 技术突围】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '🏭',
+            endingTitle: '🏗️ 产业报国 · 技术突围',
+            endingDesc: '你用产业化实践，打破了国外技术封锁。'
+        },
+        newmaterials_high_consult_ending: {
+            id: 'newmaterials_high_consult_ending',
+            text: `📈 你加入了一家顶尖的技术咨询公司，专注于高端金属材料的产业化咨询。\n\n你服务了包括中国航发、航天科技在内的 20 多家军工企业，帮助它们解决材料难题。\n\n你被称为“高端金属材料的军师”，在业内享有极高声誉。\n\n<span class="highlight">成就解锁：【材料军师 · 产业智囊】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '📊',
+            endingTitle: '📈 材料军师 · 产业智囊',
+            endingDesc: '你用专业智慧，推动了中国高端材料产业的发展。'
+        },
+        newmaterials_ultra_high: {
+            id: 'newmaterials_ultra_high',
+            text: `🔩 你专注于超高强度钢研究，目标是让汽车更轻、更安全、更环保。\n\n你了解到，汽车每减重 10%，油耗可降低 6-8%。而超高强度钢是实现轻量化的关键。\n\n你的导师说：“这个方向的成果将直接服务于国家‘双碳’战略，责任重大。”`,
+            options: [
+                { text: '🔬 技术研发路线：开发更强的材料', nextId: 'newmaterials_auto_rd' },
+                { text: '🏭 产业应用路线：推动材料上车', nextId: 'newmaterials_auto_industry2' }
+            ]
+        },
+        newmaterials_auto_rd: {
+            id: 'newmaterials_auto_rd',
+            text: `🔬 你选择了技术研发路线，目标是开发一种强度超过 2000MPa、同时具有良好塑性的热成形钢。\n\n你创新性地引入了纳米析出相强化机制，成功开发出全球首款 2200MPa 级热成形钢。\n\n你的成果引起了全球汽车行业的关注，多家国际车企前来洽谈合作。`,
+            options: [
+                { text: '🚗 加入整车企业，推动材料上车', nextId: 'newmaterials_auto_ending1' },
+                { text: '🏭 加入钢铁企业，推动材料量产', nextId: 'newmaterials_auto_ending2' }
+            ]
+        },
+        newmaterials_auto_ending1: {
+            id: 'newmaterials_auto_ending1',
+            text: `🚗 你加入一家新能源汽车企业，负责车身轻量化材料研发。\n\n你开发的 2200MPa 热成形钢被应用于多款畅销车型，使车身减重 20% 且安全性大幅提升。\n\n你推动了汽车行业的绿色转型，被授予“中国汽车工业杰出青年”称号。\n\n<span class="highlight">成就解锁：【轻量化先锋 · 绿色出行】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '🚗',
+            endingTitle: '🌿 轻量化先锋 · 绿色出行',
+            endingDesc: '你用新材料让汽车跑得更轻、更远、更环保。'
+        },
+        newmaterials_auto_ending2: {
+            id: 'newmaterials_auto_ending2',
+            text: `🏭 你加入宝武集团，负责超高强度钢的新产品开发。\n\n你成功实现了 2200MPa 热成形钢的工业化量产，填补了国内空白。\n\n你的产品被奔驰、宝马等国际品牌采用，年销售额突破 80 亿元。\n\n<span class="highlight">成就解锁：【钢铁脊梁 · 产品创新】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '🏭',
+            endingTitle: '🏗️ 钢铁脊梁 · 产品创新',
+            endingDesc: '你用创新产品，让中国钢铁从“大”走向“强”。'
+        },
+        newmaterials_auto_industry2: {
+            id: 'newmaterials_auto_industry2',
+            text: `🏭 你选择了产业应用路线，深入汽车和钢铁企业，推动超高强度钢的实际应用。\n\n你发现很多车企“不敢用”超高强度钢，主要是担心焊接和成形问题。\n\n你开发了一套“超高强度钢成形-焊接一体化解决方案”，解决了企业的后顾之忧。`,
+            options: [
+                { text: '📈 加入技术咨询公司，推广你的方案', nextId: 'newmaterials_auto_consult_ending' },
+                { text: '🚀 创业成立技术解决方案公司', nextId: 'newmaterials_auto_solution_ending' }
+            ]
+        },
+        newmaterials_auto_consult_ending: {
+            id: 'newmaterials_auto_consult_ending',
+            text: `📈 你加入了一家顶尖的汽车材料咨询公司，专门为客户提供轻量化解决方案。\n\n你服务了包括吉利、比亚迪、蔚来在内的 30 多家车企，帮助它们实现了车身轻量化。\n\n你成为中国汽车轻量化领域的权威专家，被誉为“轻量化军师”。\n\n<span class="highlight">成就解锁：【轻量化军师 · 行业赋能】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '📊',
+            endingTitle: '📈 轻量化军师 · 行业赋能',
+            endingDesc: '你用专业知识，赋能了整个汽车轻量化产业。'
+        },
+        newmaterials_auto_solution_ending: {
+            id: 'newmaterials_auto_solution_ending',
+            text: `🚀 你创立了一家汽车材料技术解决方案公司，专注于超高强度钢的应用推广。\n\n五年后，你的公司成为国内领先的汽车轻量化技术服务商，客户覆盖 80% 的自主品牌车企。\n\n你入选了国家“万人计划”科技创业领军人才。\n\n<span class="highlight">成就解锁：【科创先锋 · 轻量化引领】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '🚀',
+            endingTitle: '💡 科创先锋 · 轻量化引领',
+            endingDesc: '你用创业实践，推动了汽车轻量化的产业革命。'
+        },
+        newmaterials_nano: {
+            id: 'newmaterials_nano',
+            text: `🧬 你探索纳米功能材料，研究纳米金属颗粒在催化、传感、能源等领域的应用。\n\n你第一次在电镜下看到纳米颗粒的原子排列时，被那个微观世界的美丽所震撼。\n\n你发现了一种新型纳米催化剂，可大幅提高燃料电池的效率。`,
+            options: [
+                { text: '🔬 学术研究路线：深耕纳米材料基础研究', nextId: 'newmaterials_nano_academic' },
+                { text: '💡 创业转化路线：将技术转化为产品', nextId: 'newmaterials_nano_business' }
+            ]
+        },
+        newmaterials_nano_academic: {
+            id: 'newmaterials_nano_academic',
+            text: `🔬 你选择了学术研究路线，决定在纳米材料领域深耕不辍。\n\n你的研究成果陆续发表在《自然·材料》《先进材料》等顶刊上，被引用超过 5000 次。\n\n你获得了国家杰出青年科学基金，组建了自己的研究团队。`,
+            options: [
+                { text: '🧬 继续在学术界深耕', nextId: 'newmaterials_nano_ending1' },
+                { text: '🏫 回国任教，培养下一代纳米人才', nextId: 'newmaterials_nano_ending3' }
+            ]
+        },
+        newmaterials_nano_ending1: {
+            id: 'newmaterials_nano_ending1',
+            text: `🧬 你选择继续深耕纳米催化领域，成为该领域冉冉升起的新星。\n\n你被美国麻省理工学院聘为客座教授，在国际纳米材料大会上作特邀报告。\n\n你被誉为“中国纳米催化的未来”，成为中国最年轻的纳米材料领域顶尖学者之一。\n\n<span class="highlight">成就解锁：【纳米先锋 · 催化未来】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '🧬',
+            endingTitle: '🔬 纳米先锋 · 催化未来',
+            endingDesc: '你在纳米世界，为能源和环境问题提供了新的解决方案。'
+        },
+        newmaterials_nano_ending3: {
+            id: 'newmaterials_nano_ending3',
+            text: `🏫 你选择回到母校北京科技大学任教，成为纳米材料方向最年轻的教授。\n\n你开设的“纳米材料前沿”课程座无虚席，你培养的博士生多次获得国家奖学金。\n\n你传承了 <span class="scientist">张跃</span> 院士的精神，在纳米材料领域薪火相传。\n\n<span class="highlight">成就解锁：【薪火相传 · 纳米育人】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '🎓',
+            endingTitle: '📖 薪火相传 · 纳米育人',
+            endingDesc: '你在讲台上，为纳米材料事业培养了下一代接班人。'
+        },
+        newmaterials_nano_business: {
+            id: 'newmaterials_nano_business',
+            text: `💡 你选择了创业路线，将纳米催化剂技术商业化。\n\n你参加创业大赛并获得金奖，获得了 5000 万元的天使投资。\n\n你组建了一支涵盖材料、化工、市场的跨界团队，准备大干一场。`,
+            options: [
+                { text: '🚀 专注技术产业化', nextId: 'newmaterials_nano_ending2' },
+                { text: '📊 先做技术咨询，积累资源再创业', nextId: 'newmaterials_nano_consult_ending' }
+            ]
+        },
+        newmaterials_nano_ending2: {
+            id: 'newmaterials_nano_ending2',
+            text: `🚀 你创立了一家纳米科技公司，将纳米催化剂技术产业化。\n\n你的产品被广泛应用于燃料电池和汽车尾气处理，年产值突破 20 亿元。\n\n你入选了国家“万人计划”科技创业领军人才。\n\n<span class="highlight">成就解锁：【科创先锋 · 纳米产业化】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '💡',
+            endingTitle: '🚀 科创先锋 · 纳米产业化',
+            endingDesc: '你把纳米技术从实验室带到了市场，创造了巨大的价值。'
+        },
+        newmaterials_nano_consult_ending: {
+            id: 'newmaterials_nano_consult_ending',
+            text: `📊 你选择先做技术咨询，为多家企业提供纳米材料解决方案，积累行业资源。\n\n三年后，你积累了足够的客户资源和行业经验，创立了自己的纳米材料公司。\n\n你的公司快速发展，成为纳米材料领域的领军企业。\n\n<span class="highlight">成就解锁：【厚积薄发 · 纳米企业家】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '📊',
+            endingTitle: '📈 厚积薄发 · 纳米企业家',
+            endingDesc: '你用自己的方式，走出了一条独特的创业之路。'
+        },
+        smart_metallurgy: {
+            id: 'smart_metallurgy',
+            text: `🤖 你选择了智慧冶金方向，将人工智能、大数据、数字孪生等技术与冶金工艺深度融合。\n\n你学习了机器学习、工业互联网、自动控制等课程。\n\n你想起 <span class="scientist">刘玠</span> 院士的话：“<span class="highlight">信息化是钢铁工业现代化的必由之路。</span>”\n\n你准备在哪个领域重点突破？`,
+            options: [
+                { text: '🧠 AI 驱动的冶炼过程控制', nextId: 'smart_ai_control' },
+                { text: '🖥️ 数字孪生与虚拟仿真', nextId: 'smart_digital_twin' },
+                { text: '📊 工业大数据与智能决策', nextId: 'smart_big_data' }
+            ]
+        },
+        smart_ai_control: {
+            id: 'smart_ai_control',
+            text: `🧠 你专注于 AI 驱动的冶炼过程控制，用深度学习算法优化高炉和转炉的操作参数。\n\n你发现传统的高炉操作严重依赖“老师傅的经验”，而 AI 可以学习这些经验并超越它们。\n\n你开发了一个 AI 模型，在模拟环境中取得了非常好的效果，但需要到真正的钢厂去验证。`,
+            options: [
+                { text: '🏭 去钢厂现场验证你的 AI 模型', nextId: 'smart_ai_onsite' },
+                { text: '🖥️ 继续优化模型，追求更高的精度', nextId: 'smart_ai_optimize' }
+            ]
+        },
+        smart_ai_onsite: {
+            id: 'smart_ai_onsite',
+            text: `🏭 你带着你的 AI 模型来到一家钢厂，准备进行现场验证。\n\n在钢厂的三个月里，你吃住都在现场，不断调整模型适应实际生产数据。\n\n最终，你的 AI 系统成功上线，使铁水合格率提升 5%，能耗降低 8%。`,
+            options: [
+                { text: '🤖 继续深耕 AI 冶金', nextId: 'smart_ai_ending1' },
+                { text: '🏢 进入工业互联网平台公司', nextId: 'smart_ai_ending2' }
+            ]
+        },
+        smart_ai_ending1: {
+            id: 'smart_ai_ending1',
+            text: `🤖 你继续深耕 AI 冶金领域，成为该方向的学术带头人。\n\n你发表了多篇顶会论文，研发的智能控制系统被推广到全国 100 多家钢厂。\n\n你被《麻省理工科技评论》评为“35 岁以下科技创新 35 人”。\n\n“<span class="highlight">AI 不是替代人，而是让人更有价值。</span>”\n\n<span class="highlight">成就解锁：【智造先锋 · AI 冶金】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '🧠',
+            endingTitle: '🤖 智造先锋 · AI 冶金',
+            endingDesc: '你用人工智能，让冶金炉拥有了“大脑”。'
+        },
+        smart_ai_ending2: {
+            id: 'smart_ai_ending2',
+            text: `🏢 你加入了一家工业互联网平台公司，负责冶金行业的 AI 解决方案。\n\n你主导开发了“钢铁大脑”智能管控平台，被 200 多家钢铁企业采用。\n\n你成为工业互联网领域的知名专家，被誉为“钢铁行业的数字化推手”。\n\n<span class="highlight">成就解锁：【工业互联网先锋】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '🌐',
+            endingTitle: '📡 工业互联网先锋',
+            endingDesc: '你让钢铁企业插上了智能化的翅膀。'
+        },
+        smart_ai_optimize: {
+            id: 'smart_ai_optimize',
+            text: `🖥️ 你选择继续优化 AI 模型，在实验室里进行了上万次模拟训练。\n\n你的模型精度从 85% 提升到了 95%，达到了工业应用的顶级水平。\n\n多家钢厂听说了你的成果，纷纷邀请你去现场部署。`,
+            options: [
+                { text: '🚀 创业成立 AI 冶金公司', nextId: 'smart_ai_startup_ending' },
+                { text: '🏢 与大型钢企合作，联合推广', nextId: 'smart_ai_partner_ending' }
+            ]
+        },
+        smart_ai_startup_ending: {
+            id: 'smart_ai_startup_ending',
+            text: `🚀 你创立了一家 AI 冶金科技公司，将你的智能控制系统商业化。\n\n三年后，你的公司成为全球领先的 AI 冶金技术服务商，估值突破 200 亿元。\n\n你入选了《福布斯》“30 位 30 岁以下精英”榜单。\n\n<span class="highlight">成就解锁：【AI 冶金先锋 · 科技创新】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '🚀',
+            endingTitle: '💡 AI 冶金先锋 · 科技创新',
+            endingDesc: '你用 AI 技术，重塑了冶金行业的生产方式。'
+        },
+        smart_ai_partner_ending: {
+            id: 'smart_ai_partner_ending',
+            text: `🏢 你与宝武集团达成了深度合作，将你的 AI 系统在集团内全面推广。\n\n你的系统帮助宝武集团每年节省成本超过 10 亿元，成为行业标杆案例。\n\n你被宝武集团聘为“首席 AI 科学家”，成为国内冶金行业 AI 应用的第一人。\n\n<span class="highlight">成就解锁：【首席 AI 科学家 · 行业标杆】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '🏢',
+            endingTitle: '🏛️ 首席 AI 科学家 · 行业标杆',
+            endingDesc: '你在大企业中，让 AI 技术落地生根、开花结果。'
+        },
+        smart_digital_twin: {
+            id: 'smart_digital_twin',
+            text: `🖥️ 你专注于数字孪生与虚拟仿真，用高保真模型模拟高炉内部反应过程。\n\n你发现，如果能建立一个“虚拟高炉”，就可以在电脑上进行各种实验，大幅降低试错成本。\n\n你的导师说：“这是一个革命性的方向，但实现难度极大。”`,
+            options: [
+                { text: '🔬 技术攻坚：攻克高炉建模难题', nextId: 'smart_digital_rd' },
+                { text: '🏭 工程应用：先做简单模型的工程应用', nextId: 'smart_digital_industry' }
+            ]
+        },
+        smart_digital_rd: {
+            id: 'smart_digital_rd',
+            text: `🔬 你选择了技术攻坚路线，目标是建立一个高精度的全流程数字孪生模型。\n\n你整合了流体力学、热力学、化学反应动力学等多学科知识，经过三年攻关终于成功。\n\n你的数字孪生系统可以实时预测炉况，误差控制在 3% 以内。`,
+            options: [
+                { text: '🖥️ 深化数字孪生技术', nextId: 'smart_digital_ending1' },
+                { text: '🏭 推动数字孪生落地', nextId: 'smart_digital_ending2' }
+            ]
+        },
+        smart_digital_ending1: {
+            id: 'smart_digital_ending1',
+            text: `🖥️ 你继续深化数字孪生技术，开发了全球首个“高炉全生命周期数字孪生系统”。\n\n你的系统被国际权威期刊《Nature》子刊报道，引起了全球钢铁行业的关注。\n\n你受邀到德国、日本、韩国等国家讲学，分享中国的数字孪生经验。\n\n<span class="highlight">成就解锁：【数字孪生 · 全球领跑】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '🖥️',
+            endingTitle: '💻 数字孪生 · 全球领跑',
+            endingDesc: '你用数字孪生技术，让虚拟与现实在冶金领域深度融合。'
+        },
+        smart_digital_ending2: {
+            id: 'smart_digital_ending2',
+            text: `🏭 你加入沙钢集团，负责推动数字孪生技术在全公司的落地。\n\n你建成了国内首个全流程数字孪生钢厂，成为行业标杆。\n\n你被授予“中国智能制造年度人物”称号。\n\n<span class="highlight">成就解锁：【智能工厂 · 落地先锋】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '🏭',
+            endingTitle: '🏗️ 智能工厂 · 落地先锋',
+            endingDesc: '你把数字孪生从概念变成了现实生产力。'
+        },
+        smart_digital_industry: {
+            id: 'smart_digital_industry',
+            text: `🏭 你选择了工程应用路线，先做一个简化版的数字孪生系统，解决企业的实际问题。\n\n你开发的“高炉热状态在线监测系统”成功上线，帮助钢厂提前预警炉况异常。\n\n你的系统在试用期间成功避免了一次重大事故，得到了企业的高度认可。`,
+            options: [
+                { text: '📈 加入工业软件公司，打造标准化产品', nextId: 'smart_digital_software_ending' },
+                { text: '🚀 创业成立数字孪生技术服务公司', nextId: 'smart_digital_entrepreneur_ending' }
+            ]
+        },
+        smart_digital_software_ending: {
+            id: 'smart_digital_software_ending',
+            text: `📈 你加入了一家工业软件公司，负责冶金行业数字孪生产品的开发。\n\n你将你的技术产品化，推出了“冶金数字孪生平台”标准化产品，被 50 多家企业采购。\n\n你成为中国工业软件领域的知名专家。\n\n<span class="highlight">成就解锁：【工业软件先锋 · 产品化之路】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '💻',
+            endingTitle: '📦 工业软件先锋 · 产品化之路',
+            endingDesc: '你将前沿技术做成了标准化产品，让更多企业受益。'
+        },
+        smart_digital_entrepreneur_ending: {
+            id: 'smart_digital_entrepreneur_ending',
+            text: `🚀 你创立了一家数字孪生技术服务公司，专注于冶金行业的数字孪生解决方案。\n\n五年后，你的公司成为中国冶金数字孪生领域的领军企业，估值超 100 亿元。\n\n你被誉为“中国冶金数字孪生第一人”。\n\n<span class="highlight">成就解锁：【数字孪生企业家 · 行业引领】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '🚀',
+            endingTitle: '💡 数字孪生企业家 · 行业引领',
+            endingDesc: '你用创业实践，引领了冶金行业数字化转型的浪潮。'
+        },
+        smart_big_data: {
+            id: 'smart_big_data',
+            text: `📊 你专注于工业大数据与智能决策，用数据驱动冶金企业的精细化运营。\n\n你发现钢铁企业积累了海量的生产数据，但大部分都“沉睡”在数据库里，从未被真正利用。\n\n你决心用数据挖掘这些“沉睡的金矿”。`,
+            options: [
+                { text: '🔬 技术路线：开发数据挖掘算法', nextId: 'smart_big_data_tech' },
+                { text: '📈 应用路线：将数据转化为决策价值', nextId: 'smart_big_data_apply' }
+            ]
+        },
+        smart_big_data_tech: {
+            id: 'smart_big_data_tech',
+            text: `🔬 你选择了技术路线，开发了一套基于机器学习的质量预测系统。\n\n你的系统可以提前 30 分钟预测产品质量，帮助操作人员及时调整工艺参数。\n\n系统上线后，帮助钢厂每年减少废品损失超过 5000 万元。`,
+            options: [
+                { text: '📈 进入数据咨询公司，服务更多企业', nextId: 'smart_data_ending1' },
+                { text: '🏢 进入大型钢铁企业，担任 CDO（首席数据官）', nextId: 'smart_data_ending2' }
+            ]
+        },
+        smart_data_ending1: {
+            id: 'smart_data_ending1',
+            text: `📈 你加入了一家顶尖的数据咨询公司，专门为钢铁企业提供数据驱动的解决方案。\n\n你服务了包括宝武、鞍钢、沙钢在内的 50 多家钢铁巨头，创造了巨大的价值。\n\n你被称为“钢铁行业的数据医生”。\n\n<span class="highlight">成就解锁：【数据医生 · 价值创造】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '📊',
+            endingTitle: '📈 数据医生 · 价值创造',
+            endingDesc: '你用数据，治好了钢铁企业的“疑难杂症”。'
+        },
+        smart_data_ending2: {
+            id: 'smart_data_ending2',
+            text: `🏢 你加入鞍钢集团，担任中国钢铁行业第一位首席数据官（CDO）。\n\n你主导建设了鞍钢工业大数据平台，实现了全流程的数据驱动决策。\n\n你推动鞍钢入选“全球数字工厂标杆企业”。\n\n<span class="highlight">成就解锁：【首席数据官 · 数字领导力】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '📋',
+            endingTitle: '📊 首席数据官 · 数字领导力',
+            endingDesc: '你用数据，重塑了这家百年钢企的决策方式。'
+        },
+        smart_big_data_apply: {
+            id: 'smart_big_data_apply',
+            text: `📈 你选择了应用路线，深入企业一线，将数据技术与实际业务相结合。\n\n你主导了多个“数据驱动降本增效”项目，累计为企业创造价值超过 2 亿元。\n\n你收到了一家国际知名咨询公司的 offer。`,
+            options: [
+                { text: '🌍 加入国际咨询公司，服务全球客户', nextId: 'smart_big_data_global_ending' },
+                { text: '🚀 创业成立数据服务公司', nextId: 'smart_big_data_startup_ending' }
+            ]
+        },
+        smart_big_data_global_ending: {
+            id: 'smart_big_data_global_ending',
+            text: `🌍 你加入了麦肯锡咨询公司，专注于全球钢铁行业数字化转型咨询。\n\n你服务了包括安赛乐米塔尔、浦项制铁在内的全球顶级钢铁企业。\n\n你成为中国在全球工业数字化领域的一张名片。\n\n<span class="highlight">成就解锁：【全球数字化顾问 · 国际视野】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '🌍',
+            endingTitle: '📈 全球数字化顾问 · 国际视野',
+            endingDesc: '你让中国智慧，服务了全球钢铁企业。'
+        },
+        smart_big_data_startup_ending: {
+            id: 'smart_big_data_startup_ending',
+            text: `🚀 你创立了一家数据服务公司，专注于钢铁行业的大数据应用。\n\n四年后，你的公司成为国内领先的冶金大数据服务商，服务客户超过 100 家。\n\n你被评为“中国大数据行业领军人物”。\n\n<span class="highlight">成就解锁：【数据企业家 · 行业赋能】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '🚀',
+            endingTitle: '💡 数据企业家 · 行业赋能',
+            endingDesc: '你用数据服务，赋能了整个冶金行业。'
+        },
+        strategic_metal: {
+            id: 'strategic_metal',
+            text: `⚔️ 你选择了战略金属方向，专注于稀有金属（稀土、钨、钛、锂等）的提取、加工与应用。\n\n你学习了湿法冶金、火法冶金、材料加工等知识。\n\n你想起 <span class="scientist">何季麟</span> 院士的话：“<span class="highlight">战略金属是国家安全的重要保障。</span>”\n\n你准备在哪个细分领域深入研究？`,
+            options: [
+                { text: '🔶 稀土提取与深加工', nextId: 'strategic_rare_earth' },
+                { text: '⚡ 锂电材料与新能源金属', nextId: 'strategic_lithium' },
+                { text: '🛡️ 国防用特种合金', nextId: 'strategic_defense' }
+            ]
+        },
+        strategic_rare_earth: {
+            id: 'strategic_rare_earth',
+            text: `🔶 你专注于稀土提取与深加工，这是中国最具战略优势的资源领域。\n\n你了解到，中国虽然拥有全球 90% 的稀土产能，但在高端稀土材料领域仍然依赖进口。\n\n你的导师说：“稀土是国之重器，我们不仅要卖资源，更要卖技术、卖产品。”`,
+            options: [
+                { text: '🔬 技术突破路线：攻克高端稀土材料制备难题', nextId: 'strategic_rare_tech' },
+                { text: '📈 产业升级路线：推动稀土产业链升级', nextId: 'strategic_rare_industry2' }
+            ]
+        },
+        strategic_rare_tech: {
+            id: 'strategic_rare_tech',
+            text: `🔬 你选择了技术突破路线，目标是开发一种高端稀土永磁材料的制备工艺。\n\n你在实验室里研究了三年，终于找到了最优的成分和工艺参数。\n\n你研发的稀土永磁材料性能达到了国际顶尖水平，打破了国外技术垄断。`,
+            options: [
+                { text: '🏭 加入大型稀土企业，推动技术产业化', nextId: 'strategic_rare_ending1' },
+                { text: '🔬 继续深造，研究下一代稀土材料', nextId: 'strategic_rare_ending2' }
+            ]
+        },
+        strategic_rare_ending1: {
+            id: 'strategic_rare_ending1',
+            text: `🏭 你加入中国稀土集团，成为稀土分离领域最年轻的技术总监。\n\n你主导建成了全球最大的高端稀土永磁材料生产线，年产能达到 5 万吨。\n\n你为保障中国稀土供应链安全做出了重要贡献，被授予“稀土行业功勋人物”。\n\n“<span class="highlight">稀土是国之重器，必须掌握在自己手中。</span>”\n\n<span class="highlight">成就解锁：【稀土脊梁 · 战略保障】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '🔶',
+            endingTitle: '🧱 稀土脊梁 · 战略保障',
+            endingDesc: '你用技术，守护了中国的稀土战略资源。'
+        },
+        strategic_rare_ending2: {
+            id: 'strategic_rare_ending2',
+            text: `🔬 你进入中国科学院稀土研究所，专注于稀土在新能源、新材料领域的应用。\n\n你研发的稀土永磁材料被用于风力发电和新能源汽车，大幅提升了电机效率。\n\n你发表了 60 多篇高水平论文，成为稀土材料领域的青年领军人物。\n\n<span class="highlight">成就解锁：【稀土材料 · 创新引领】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '🧪',
+            endingTitle: '🔬 稀土材料 · 创新引领',
+            endingDesc: '你用稀土材料，为绿色能源提供了“心脏”。'
+        },
+        strategic_rare_industry2: {
+            id: 'strategic_rare_industry2',
+            text: `📈 你选择了产业升级路线，深入稀土企业，推动产业链从“卖矿石”向“卖产品”转型。\n\n你主导制定了多项稀土行业标准，推动了中国稀土产业的规范化发展。\n\n你被中国稀土行业协会聘为最年轻的专家顾问。`,
+            options: [
+                { text: '🏛️ 进入政府相关部门，推动稀土产业政策', nextId: 'strategic_rare_policy_ending' },
+                { text: '📈 加入行业智库，推动产业研究', nextId: 'strategic_rare_thinktank_ending' }
+            ]
+        },
+        strategic_rare_policy_ending: {
+            id: 'strategic_rare_policy_ending',
+            text: `🏛️ 你进入国家工信部原材料工业司，负责稀土产业政策制定。\n\n你推动出台了《稀土行业高质量发展行动计划》，引导稀土产业向高附加值方向转型。\n\n你被称为“中国稀土产业的战略规划师”。\n\n<span class="highlight">成就解锁：【稀土战略家 · 政策引领】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '🏛️',
+            endingTitle: '📜 稀土战略家 · 政策引领',
+            endingDesc: '你用政策，引领了中国稀土产业的高质量发展。'
+        },
+        strategic_rare_thinktank_ending: {
+            id: 'strategic_rare_thinktank_ending',
+            text: `📈 你加入中国稀土行业协会，担任产业研究部主任。\n\n你撰写的多份稀土产业研究报告被中央领导批示，成为国家决策的重要参考。\n\n你成为中国稀土产业研究领域的顶级智库专家。\n\n<span class="highlight">成就解锁：【稀土智库 · 决策智囊】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '📊',
+            endingTitle: '📈 稀土智库 · 决策智囊',
+            endingDesc: '你用研究，为国家稀土战略提供了智力支撑。'
+        },
+        strategic_lithium: {
+            id: 'strategic_lithium',
+            text: `⚡ 你专注于锂电材料与新能源金属，这是全球能源转型的关键材料。\n\n你了解到，全球锂资源争夺战已经打响，中国锂资源对外依存度超过 70%。\n\n你的导师说：“保障锂资源安全，就是保障中国新能源产业的未来。”`,
+            options: [
+                { text: '🔬 技术路线：开发高效提锂技术', nextId: 'strategic_lithium_tech' },
+                { text: '📈 战略路线：推动锂资源全球布局', nextId: 'strategic_lithium_strategy' }
+            ]
+        },
+        strategic_lithium_tech: {
+            id: 'strategic_lithium_tech',
+            text: `🔬 你选择了技术路线，目标是开发一种从盐湖卤水中高效提锂的技术。\n\n你在青海盐湖工作了整整一年，克服了高寒缺氧的恶劣环境，终于取得了突破。\n\n你的提锂技术将成本降低了 40%，效率提升了 50%。`,
+            options: [
+                { text: '🚀 创业，推动技术产业化', nextId: 'strategic_lithium_ending1' },
+                { text: '🏢 进入新能源巨头，推动技术应用', nextId: 'strategic_lithium_ending2' }
+            ]
+        },
+        strategic_lithium_ending1: {
+            id: 'strategic_lithium_ending1',
+            text: `🚀 你创立了一家锂提取技术公司，专注于盐湖提锂技术的产业化。\n\n三年后，你的公司成为全球最大的盐湖提锂技术服务商，年产值突破 80 亿元。\n\n你入选了国家“万人计划”科技创业领军人才，被誉为“锂电材料的魔术师”。\n\n<span class="highlight">成就解锁：【锂电先锋 · 能源转型】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '⚡',
+            endingTitle: '🔋 锂电先锋 · 能源转型',
+            endingDesc: '你用锂材料，为全球能源转型提供了“血液”。'
+        },
+        strategic_lithium_ending2: {
+            id: 'strategic_lithium_ending2',
+            text: `🏢 你加入宁德时代，负责锂电材料的战略采购与技术评估。\n\n你帮助宁德时代建立了全球最稳定的锂资源供应链，保障了电池生产的原材料安全。\n\n你成为新能源电池行业的知名专家，被誉为“锂资源战略家”。\n\n<span class="highlight">成就解锁：【锂资源战略家 · 供应链安全】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '🔋',
+            endingTitle: '📊 锂资源战略家 · 供应链安全',
+            endingDesc: '你用战略眼光，保障了中国新能源产业的供应链安全。'
+        },
+        strategic_lithium_strategy: {
+            id: 'strategic_lithium_strategy',
+            text: `📈 你选择了战略路线，立志推动中国锂资源的全球布局。\n\n你深入研究全球锂资源分布和各国政策，撰写了一份《中国锂资源安全战略报告》。\n\n这份报告引起了国家高层的高度重视，你被邀请参与国家锂资源战略的制定。`,
+            options: [
+                { text: '🌍 进入国际矿业公司，参与全球资源博弈', nextId: 'strategic_lithium_global_ending' },
+                { text: '🏛️ 进入政府部门，推动国家战略实施', nextId: 'strategic_lithium_government_ending' }
+            ]
+        },
+        strategic_lithium_global_ending: {
+            id: 'strategic_lithium_global_ending',
+            text: `🌍 你加入了一家国际矿业巨头，负责全球锂资源的投资和开发。\n\n你在南美、澳洲等地主导了多个锂矿项目的收购和开发，为中国锁定了大量锂资源。\n\n你被称为“中国锂资源的海外拓荒者”。\n\n<span class="highlight">成就解锁：【全球锂资源拓荒者 · 战略布局】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '🌍',
+            endingTitle: '🧭 全球锂资源拓荒者 · 战略布局',
+            endingDesc: '你在全球范围内，为中国锁定了锂资源的战略安全。'
+        },
+        strategic_lithium_government_ending: {
+            id: 'strategic_lithium_government_ending',
+            text: `🏛️ 你进入国家自然资源部，参与国家锂资源战略的制定和实施。\n\n你推动出台了《中国锂资源安全保障行动计划》，为中国新能源产业发展提供了资源保障。\n\n你成为中国新能源资源安全领域最年轻的专家型官员。\n\n<span class="highlight">成就解锁：【资源战略家 · 国家保障】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '🏛️',
+            endingTitle: '📜 资源战略家 · 国家保障',
+            endingDesc: '你用国家战略，为中国新能源产业提供了资源安全保障。'
+        },
+        strategic_defense: {
+            id: 'strategic_defense',
+            text: `🛡️ 你专注于国防用特种合金，研究用于航空航天、舰船、装甲的高性能金属材料。\n\n你了解到，很多国防关键材料长期依赖进口，面临“卡脖子”风险。\n\n你的导师说：“国防材料研究，是一项需要隐姓埋名、默默奉献的事业，你准备好了吗？”`,
+            options: [
+                { text: '🛡️ 进入国防军工单位，直接服务国防', nextId: 'strategic_defense_industry' },
+                { text: '🔬 留在高校，从事国防材料基础研究', nextId: 'strategic_defense_academic' }
+            ]
+        },
+        strategic_defense_industry: {
+            id: 'strategic_defense_industry',
+            text: `🛡️ 你选择了进入国防军工单位，成为一名国防科技工作者。\n\n你参与了某型号战斗机关键结构件的材料研发，通过了严苛的军用标准测试。\n\n你的工作性质决定了你不能公开谈论自己的成果，但你知道自己正在为国家安全贡献力量。`,
+            options: [
+                { text: '🛡️ 继续在国防一线工作', nextId: 'strategic_defense_ending1' },
+                { text: '🔬 回归高校，培养国防后备人才', nextId: 'strategic_defense_ending3' }
+            ]
+        },
+        strategic_defense_ending1: {
+            id: 'strategic_defense_ending1',
+            text: `🛡️ 你继续在国防一线工作，参与了多个国防重点型号的材料研发。\n\n你参与研制的钛合金材料被用于歼-20 战斗机，为国防现代化建设做出了重要贡献。\n\n你获得了国防科技进步一等奖，受到了中央领导的接见。\n\n<span class="highlight">成就解锁：【国防脊梁 · 材料铸盾】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '🛡️',
+            endingTitle: '🏅 国防脊梁 · 材料铸盾',
+            endingDesc: '你用特种合金，筑起了国防的钢铁长城。'
+        },
+        strategic_defense_ending3: {
+            id: 'strategic_defense_ending3',
+            text: `🔬 你选择回到北京科技大学，从事国防材料的基础研究和人才培养。\n\n你带领团队开发了多种新型特种合金，多项成果被应用于国防装备。\n\n你培养了 40 多名博士生，为国防材料领域输送了大批人才。\n\n你常说：“<span class="highlight">国防材料研究，需要几代人接力前行。</span>”\n\n<span class="highlight">成就解锁：【薪火相传 · 国防育人】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '🎓',
+            endingTitle: '📖 薪火相传 · 国防育人',
+            endingDesc: '你在讲台上，为国防材料事业培养了下一代接班人。'
+        },
+        strategic_defense_academic: {
+            id: 'strategic_defense_academic',
+            text: `🔬 你选择了留在高校，从事国防材料的基础研究，重点攻关“卡脖子”材料的底层科学问题。\n\n你在钛合金、高温合金等领域取得了一系列原创性成果，发表了多篇高水平论文。\n\n你的研究成果引起了国内外同行的广泛关注，你收到了多家国际知名实验室的邀请。`,
+            options: [
+                { text: '🌍 赴海外深造，学习先进技术', nextId: 'strategic_defense_abroad_ending' },
+                { text: '🇨🇳 留在国内，坚守国防科研阵地', nextId: 'strategic_defense_home_ending' }
+            ]
+        },
+        strategic_defense_abroad_ending: {
+            id: 'strategic_defense_abroad_ending',
+            text: `🌍 你赴美国麻省理工学院做博士后，深入学习国际最前沿的金属材料技术。\n\n两年后，你学成回国，将国际先进技术与中国国防需求相结合，创造了一系列原创成果。\n\n你成为中国国防材料领域最年轻的领军人物之一。\n\n<span class="highlight">成就解锁：【学成归国 · 国防领军】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '🌍',
+            endingTitle: '🇨🇳 学成归国 · 国防领军',
+            endingDesc: '你带着国际先进技术归来，为国防材料事业注入了新动力。'
+        },
+        strategic_defense_home_ending: {
+            id: 'strategic_defense_home_ending',
+            text: `🇨🇳 你选择留在国内，坚守国防科研阵地，在最困难的条件下开展基础研究。\n\n你在特种合金领域取得了一系列重要突破，多项成果填补了国内空白。\n\n你被授予“全国优秀科技工作者”称号，成为国防材料领域一面旗帜。\n\n<span class="highlight">成就解锁：【国防坚守 · 材料铸魂】</span>`,
+            options: [],
+            ending: true,
+            endingIcon: '🇨🇳',
+            endingTitle: '🏛️ 国防坚守 · 材料铸魂',
+            endingDesc: '你在最困难的环境中，坚守了国防科研的阵地。'
+        }
+    };
 
-            // ---------- 结局节点（含任务和知识） ----------
-            academia_ending: {
-                id: 'academia_ending',
-                text: '🏫 你成为了一名大学教授，传承冶金火种。',
-                task: '1. 完成博士后研究\n2. 申请教职并成功入职\n3. 开设一门冶金专业课程',
-                knowledge: '· 高校教师职业路径\n· 教学法与课程设计\n· 科研项目申请与管理',
-                options: []
-            },
-            research_inst_ending: {
-                id: 'research_inst_ending',
-                text: '🔬 你进入了国家级科研院所，攻关核心技术。',
-                task: '1. 参与国家重大专项\n2. 攻克一项“卡脖子”技术\n3. 培养青年科研人才',
-                knowledge: '· 科研院所的组织架构\n· 项目管理与团队协作\n· 科技成果转化',
-                options: []
-            },
-            engineer_ending: {
-                id: 'engineer_ending',
-                text: '🏭 你成为了一名冶金工程师，扎根生产一线。',
-                task: '1. 熟悉生产全流程\n2. 解决现场技术难题\n3. 持续改进工艺',
-                knowledge: '· 生产工艺与设备\n· 故障诊断与处理\n· 安全生产与环保法规',
-                options: []
-            },
-            manager_ending: {
-                id: 'manager_ending',
-                text: '📈 你走上了管理岗位，引领企业发展。',
-                task: '1. 学习管理学知识\n2. 领导一个团队完成项目\n3. 制定企业发展战略',
-                knowledge: '· 企业管理与领导力\n· 冶金市场与经济分析\n· 创新与变革管理',
-                options: []
-            },
-            entrepreneur_ending: {
-                id: 'entrepreneur_ending',
-                text: '🚀 你创办了公司，将技术转化为产品。',
-                task: '1. 撰写商业计划书\n2. 组建团队并融资\n3. 推出首款产品并开拓市场',
-                knowledge: '· 创业方法论\n· 知识产权与商业机密\n· 市场营销与客户关系',
-                options: []
-            },
-            big_company_ending: {
-                id: 'big_company_ending',
-                text: '🏢 你进入大型冶金集团，成为技术中坚。',
-                task: '1. 参与集团级研发项目\n2. 推动技术标准化\n3. 培养团队技术能力',
-                knowledge: '· 大型企业研发体系\n· 标准化与知识产权\n· 技术领导力',
-                options: []
-            },
-            technical_route: {
-                id: 'technical_route',
-                text: '🔧 你成为技术骨干，专注解决实际问题。',
-                task: '1. 掌握核心工艺参数控制\n2. 优化一个关键工序\n3. 撰写技术总结报告',
-                knowledge: '· 工艺参数对质量的影响\n· 数据分析与决策\n· 技术文档撰写',
-                options: []
-            },
-            sales_route: {
-                id: 'sales_route',
-                text: '📞 你成为销售精英，用技术打动客户。',
-                task: '1. 学习产品技术特点\n2. 拜访客户并挖掘需求\n3. 完成一笔大额订单',
-                knowledge: '· 产品知识与竞争分析\n· 客户关系管理\n· 谈判技巧与合同条款',
-                options: []
-            },
-            aerospace_ending: {
-                id: 'aerospace_ending',
-                text: '✈️ 你投身航空航天材料事业。',
-                task: '1. 了解航空发动机材料要求\n2. 参与一种叶片材料的研制\n3. 通过适航认证测试',
-                knowledge: '· 航空材料标准与规范\n· 高温合金的疲劳与蠕变\n· 适航认证流程',
-                options: []
-            },
-            automotive_ending: {
-                id: 'automotive_ending',
-                text: '🚗 你推动汽车轻量化材料的应用。',
-                task: '1. 研究超高强度钢的性能\n2. 设计一种轻量化车身结构\n3. 与主机厂合作完成试制',
-                knowledge: '· 汽车用钢的等级与性能\n· 轻量化技术路线\n· 整车制造流程',
-                options: []
-            },
-            biomedical_ending: {
-                id: 'biomedical_ending',
-                text: '🧬 你将纳米材料用于生物医学创新。',
-                task: '1. 研究纳米载药系统\n2. 进行细胞实验\n3. 撰写科研论文并申请基金',
-                knowledge: '· 纳米生物效应\n· 靶向治疗原理\n· 生物安全性评价',
-                options: []
-            },
-            electronics_ending: {
-                id: 'electronics_ending',
-                text: '📱 你开发了高性能电子器件用材料。',
-                task: '1. 研究纳米传感器的原理\n2. 制备样品并测试性能\n3. 寻找应用客户',
-                knowledge: '· 传感原理与信号处理\n· 微纳加工技术\n· 电子产品可靠性',
-                options: []
-            },
-            energy_saving_ending: {
-                id: 'energy_saving_ending',
-                text: '🌱 你成为了节能减排的先锋。',
-                task: '1. 计算吨钢能耗并找出改进点\n2. 实施一项节能改造\n3. 推广节能技术',
-                knowledge: '· 能源审计方法\n· 节能技术（余热回收、富氧燃烧等）\n· 碳排放核算与碳交易',
-                options: []
-            },
-            quality_control_ending: {
-                id: 'quality_control_ending',
-                text: '📈 你致力于产品质量的极致追求。',
-                task: '1. 建立质量管理体系\n2. 解决一个长期质量缺陷\n3. 推行六西格玛或精益生产',
-                knowledge: '· 质量管理工具（SPC、FMEA）\n· 过程能力分析\n· 客户满意度提升',
-                options: []
-            },
-            digital_twin_ending: {
-                id: 'digital_twin_ending',
-                text: '🖥️ 你构建了冶金的数字孪生世界。',
-                task: '1. 建立关键设备的三维模型\n2. 集成实时数据流\n3. 实现虚拟仿真与预测',
-                knowledge: '· 数字孪生技术栈\n· 数据采集与物联网\n· 仿真建模与优化算法',
-                options: []
-            },
-            ai_control_ending: {
-                id: 'ai_control_ending',
-                text: '🤖 你利用AI实现了冶金的智能控制。',
-                task: '1. 收集并清洗生产数据\n2. 训练一个预测模型\n3. 部署模型到现场并验证效果',
-                knowledge: '· 机器学习基础\n· 工业大数据分析\n· 自动化控制系统',
-                options: []
+    // ============================================================
+    // 2. 游戏状态
+    // ============================================================
+    let currentId = 'start';
+    let achievements = [];
+    let visitedNodes = new Set();
+
+    // ============================================================
+    // 3. 渲染引擎
+    // ============================================================
+    function renderScene(nodeId) {
+        const node = storyData[nodeId];
+        if (!node) return;
+
+        visitedNodes.add(nodeId);
+        currentId = nodeId;
+
+        if (node.ending && node.achievement) {
+            if (!achievements.includes(node.achievement)) {
+                achievements.push(node.achievement);
             }
-        };
-
-        // ============================================================
-        // 2. 中文标签（用于节点显示）
-        // ============================================================
-        const nodeLabels = {
-            start: '起始',
-            learn_metallurgy: '了解冶金',
-            consider_transfer: '转专业',
-            course_choice: '课程选择',
-            course_physchem: '物理化学',
-            course_materials: '材料科学',
-            course_metallurgy: '冶金原理',
-            lab_experience: '实验室',
-            research_project: '科研项目',
-            publish_paper: '发表论文',
-            apply_patent: '申请专利',
-            grad_school_choice: '深造选择',
-            phd_path: '读博',
-            master_path: '读硕',
-            work_choice: '就业选择',
-            advanced_materials: '先进材料',
-            nanomaterials: '纳米材料',
-            process_optimization: '工艺优化',
-            numerical_simulation: '数值模拟',
-            academia_ending: '教授',
-            research_inst_ending: '研究院',
-            engineer_ending: '工程师',
-            manager_ending: '管理岗',
-            entrepreneur_ending: '创业',
-            big_company_ending: '大企业',
-            technical_route: '技术岗',
-            sales_route: '销售岗',
-            aerospace_ending: '航空航天',
-            automotive_ending: '汽车轻量化',
-            biomedical_ending: '生物医学',
-            electronics_ending: '电子器件',
-            energy_saving_ending: '节能减排',
-            quality_control_ending: '质量控制',
-            digital_twin_ending: '数字孪生',
-            ai_control_ending: 'AI控制'
-        };
-
-        // ============================================================
-        // 3. 状态管理（localStorage独立存储）
-        // ============================================================
-        const STORAGE_KEY = 'metallurgy_task_progress';
-
-        function loadProgress() {
-            const saved = localStorage.getItem(STORAGE_KEY);
-            if (saved) {
-                try {
-                    const data = JSON.parse(saved);
-                    return {
-                        completed: new Set(data.completed || []),
-                        medalCount: data.medalCount || 0
-                    };
-                } catch (e) {
-                    return { completed: new Set(), medalCount: 0 };
-                }
-            }
-            return { completed: new Set(), medalCount: 0 };
         }
 
-        function saveProgress(completedSet, medalCount) {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify({
-                completed: Array.from(completedSet),
-                medalCount: medalCount
-            }));
-        }
+        const container = document.getElementById('game-container');
+        if (!container) return;
 
-        let completedNodes = new Set();
-        let medalCount = 0;
+        let statusHtml = `
+            <div class="game-status">
+                <span>🎯 当前阶段：<span class="badge">${node.id === 'start' ? '🌱 新生入学' : node.ending ? '🏁 人生终章' : '🚀 成长中'}</span></span>
+                <span>📌 成就：<span class="achievement-list">${achievements.length > 0 ? achievements.map(a => `<span>${a}</span>`).join('') : '<span style="color:#666;font-size:0.8rem;">暂无</span>'}</span></span>
+            </div>
+        `;
 
-        function initState() {
-            const state = loadProgress();
-            completedNodes = state.completed;
-            medalCount = state.medalCount;
-            updateBadge();
-        }
+        let html = statusHtml;
+        html += `<div class="story-scene">`;
+        html += `<div class="story-text">${node.text}</div>`;
 
-        function updateBadge() {
-            document.getElementById('medalCount').textContent = medalCount;
-        }
-
-        function saveState() {
-            saveProgress(completedNodes, medalCount);
-        }
-
-        // ============================================================
-        // 4. 分支图布局与绘制
-        // ============================================================
-        function buildGraphData() {
-            const edges = [];
-            const nodeIds = Object.keys(storyData);
-            nodeIds.forEach(id => {
-                const node = storyData[id];
-                if (node && node.options) {
-                    node.options.forEach(opt => {
-                        if (opt.nextId) edges.push({ from: id, to: opt.nextId });
-                    });
-                }
+        if (node.options && node.options.length > 0) {
+            html += `<div class="options">`;
+            node.options.forEach((opt) => {
+                html += `<button class="option-btn" data-next="${opt.nextId}"><span class="icon">▸</span> ${opt.text}</button>`;
             });
-            return { nodes: nodeIds, edges };
+            html += `</div>`;
+        } else if (node.ending) {
+            html += `
+                <div class="ending">
+                    <div class="big-icon">${node.endingIcon || '🎉'}</div>
+                    <div class="ending-title">${node.endingTitle || '🎊 恭喜通关！'}</div>
+                    <div class="ending-desc">${node.endingDesc || '你书写了属于自己的冶金人生故事。'}</div>
+                    <button class="restart-btn" onclick="resetGame()">🔄 重新开始</button>
+                </div>
+            `;
+        } else {
+            html += `<div class="ending"><button class="restart-btn" onclick="resetGame()">🔄 重新开始</button></div>`;
         }
 
-        function layoutGraph() {
-            const { nodes, edges } = buildGraphData();
-            const depths = {};
-            const visited = new Set();
-            const queue = ['start'];
-            depths['start'] = 0;
-            visited.add('start');
-            while (queue.length) {
-                const id = queue.shift();
-                const node = storyData[id];
-                if (node && node.options) {
-                    node.options.forEach(opt => {
-                        const next = opt.nextId;
-                        if (next && !visited.has(next) && storyData[next]) {
-                            visited.add(next);
-                            depths[next] = (depths[id] || 0) + 1;
-                            queue.push(next);
-                        }
-                    });
-                }
-            }
-            const groups = {};
-            nodes.forEach(id => {
-                const d = depths[id] !== undefined ? depths[id] : 99;
-                if (!groups[d]) groups[d] = [];
-                groups[d].push(id);
-            });
-            const positions = {};
-            const maxDepth = Math.max(...Object.keys(groups).map(Number));
-            const width = 880, height = 680;
-            const hMargin = 50, vMargin = 50;
-            Object.keys(groups).forEach(depth => {
-                const ids = groups[depth];
-                const count = ids.length;
-                const spacing = (width - 2 * hMargin) / (count + 1);
-                ids.forEach((id, idx) => {
-                    const x = hMargin + (idx + 1) * spacing;
-                    const y = vMargin + (parseInt(depth) / (maxDepth || 1)) * (height - 2 * vMargin);
-                    positions[id] = { x, y };
-                });
-            });
-            return positions;
-        }
+        html += `</div>`;
+        container.innerHTML = html;
 
-        function renderGraph() {
-            const svg = document.getElementById('graph-svg');
-            if (!svg) return;
-            const positions = layoutGraph();
-
-            const edges = [];
-            Object.keys(storyData).forEach(id => {
-                const node = storyData[id];
-                if (node && node.options) {
-                    node.options.forEach(opt => {
-                        if (opt.nextId) edges.push({ from: id, to: opt.nextId });
-                    });
-                }
-            });
-
-            svg.innerHTML = '';
-
-            // 连线
-            edges.forEach(edge => {
-                const fromPos = positions[edge.from];
-                const toPos = positions[edge.to];
-                if (!fromPos || !toPos) return;
-                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                const dx = toPos.x - fromPos.x;
-                const dy = toPos.y - fromPos.y;
-                const cp1x = fromPos.x + dx * 0.5;
-                const cp1y = fromPos.y;
-                const cp2x = toPos.x - dx * 0.5;
-                const cp2y = toPos.y;
-                path.setAttribute('d', `M ${fromPos.x} ${fromPos.y} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${toPos.x} ${toPos.y}`);
-                path.setAttribute('class', 'graph-link');
-                if (completedNodes.has(edge.from) && completedNodes.has(edge.to)) {
-                    path.classList.add('completed');
-                }
-                svg.appendChild(path);
-            });
-
-            // 节点
-            Object.keys(positions).forEach(id => {
-                const pos = positions[id];
-                const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-                group.setAttribute('class', 'graph-node');
-                group.dataset.id = id;
-
-                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                circle.setAttribute('cx', pos.x);
-                circle.setAttribute('cy', pos.y);
-                circle.setAttribute('r', 20);
-
-                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                text.setAttribute('x', pos.x);
-                text.setAttribute('y', pos.y);
-                text.setAttribute('font-size', '9');
-                const label = nodeLabels[id] || id.substring(0, 4);
-                text.textContent = label;
-
-                if (completedNodes.has(id)) {
-                    group.classList.add('completed');
+        container.querySelectorAll('.option-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const next = this.dataset.next;
+                if (next && storyData[next]) {
+                    renderScene(next);
                 } else {
-                    group.classList.add('incomplete');
+                    alert('⚠️ 剧情尚未编写，请返回重试。');
                 }
-
-                group.appendChild(circle);
-                group.appendChild(text);
-
-                // 点击事件：弹窗
-                group.addEventListener('click', function(e) {
-                    const nodeId = this.dataset.id;
-                    showNodeDetail(nodeId);
-                });
-
-                svg.appendChild(group);
             });
-        }
-
-        // ============================================================
-        // 5. 弹窗逻辑
-        // ============================================================
-        let currentModalNodeId = null;
-
-        function showNodeDetail(nodeId) {
-            const node = storyData[nodeId];
-            if (!node) return;
-
-            currentModalNodeId = nodeId;
-            const modal = document.getElementById('nodeModal');
-
-            document.getElementById('modalTitle').textContent = nodeLabels[nodeId] || nodeId;
-            document.getElementById('modalId').textContent = `ID: ${nodeId}`;
-
-            // 状态
-            const statusEl = document.getElementById('modalStatus');
-            const isCompleted = completedNodes.has(nodeId);
-            if (isCompleted) {
-                statusEl.textContent = '✅ 已完成（已获得勋章）';
-                statusEl.className = 'status-badge completed';
-            } else {
-                statusEl.textContent = '🔒 未完成';
-                statusEl.className = 'status-badge incomplete';
-            }
-
-            // 任务和知识
-            document.getElementById('modalTask').textContent = node.task || '（暂无任务）';
-            document.getElementById('modalKnowledge').textContent = node.knowledge || '（暂无知识储备）';
-
-            // 领取按钮
-            const claimBtn = document.getElementById('claimBtn');
-            if (isCompleted) {
-                claimBtn.disabled = true;
-                claimBtn.textContent = '🏅 已领取';
-            } else {
-                claimBtn.disabled = false;
-                claimBtn.textContent = '🏅 领取勋章';
-                // 移除旧监听，避免重复绑定
-                claimBtn.onclick = null;
-                claimBtn.onclick = function() {
-                    claimMedal(nodeId);
-                };
-            }
-
-            modal.classList.add('active');
-        }
-
-        function claimMedal(nodeId) {
-            if (completedNodes.has(nodeId)) return;
-
-            // 标记完成
-            completedNodes.add(nodeId);
-            medalCount += 1;
-            updateBadge();
-            saveState();
-            renderGraph();
-
-            // 更新弹窗状态
-            const statusEl = document.getElementById('modalStatus');
-            statusEl.textContent = '✅ 已完成（已获得勋章）';
-            statusEl.className = 'status-badge completed';
-            document.getElementById('claimBtn').disabled = true;
-            document.getElementById('claimBtn').textContent = '🏅 已领取';
-
-            // 可选：短暂的庆祝提示
-            alert('🎉 恭喜你获得一枚冶金勋章！');
-        }
-
-        function closeModal() {
-            document.getElementById('nodeModal').classList.remove('active');
-        }
-        // 点击背景关闭
-        document.getElementById('nodeModal').addEventListener('click', function(e) {
-            if (e.target === this) closeModal();
         });
 
-        // ============================================================
-        // 6. 重置
-        // ============================================================
-        function resetAll() {
-            if (confirm('确定要重置所有进度吗？')) {
-                completedNodes.clear();
-                medalCount = 0;
-                updateBadge();
-                saveState();
-                renderGraph();
-                closeModal();
-            }
-        }
+        document.querySelector('#wrapper').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
 
-        // ============================================================
-        // 7. 初始化
-        // ============================================================
-        initState();
-        renderGraph();
+    function resetGame() {
+        achievements = [];
+        visitedNodes = new Set();
+        currentId = 'start';
+        renderScene('start');
+    }
+
+    renderScene('start');
     </script>
 
 </body>
-</html>F
+</html>
