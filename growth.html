@@ -5,15 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <title>钢魂实践团 · 我的成长档案</title>
     <style>
-        /* ===== 样式与之前完全相同，省略，避免重复 ===== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', 'PingFang SC', Roboto, sans-serif;
-            background: #0b0e14;
-            color: #e8edf3;
-            min-height: 100vh;
-            padding: 0;
-        }
+      body {
+    font-family: 'Segoe UI', 'PingFang SC', Roboto, sans-serif;
+    background: #0b0e14;
+    color: #e8edf3;
+    min-height: 100vh;
+    padding: 0;
+}
         .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem 2rem; }
 
         .navbar {
@@ -321,7 +320,7 @@
 </head>
 <body>
 
-<!-- ===== 导航栏（已修正链接） ===== -->
+<!-- ===== 导航栏 ===== -->
 <nav class="navbar">
     <div class="logo">⚙️ 钢魂实践团</div>
     <ul class="nav-links">
@@ -359,12 +358,8 @@
 
 <script>
 // ============================================================
-// 1. 与闯关剧本共享数据 —— 读取 metallurgy_task_progress
+// 1. 完整节点标签映射（包含所有剧情节点）
 // ============================================================
-const STORAGE_KEY = 'metallurgy_task_progress';   // 改成与 challengescript 一致
-const NICKNAME_KEY = 'metallurgy_player_nickname';
-
-// 节点标签映射（必须与 challengescript 完全一致）
 const nodeLabels = {
     start: '起始',
     learn_metallurgy: '了解冶金',
@@ -406,19 +401,112 @@ const nodeLabels = {
     energy_saving_ending: '节能减排',
     quality_control_ending: '质量控制',
     digital_twin_ending: '数字孪生',
-    ai_control_ending: 'AI控制'
+    ai_control_ending: 'AI控制',
+    // ---------- 四大方向新增节点 ----------
+    green_lowcarbon: '绿色低碳',
+    new_materials: '冶金新材料',
+    smart_metallurgy: '智慧冶金',
+    strategic_metal: '战略金属',
+    green_hydrogen: '氢冶金',
+    green_recycle: '固废资源化',
+    green_carbon: '碳交易',
+    green_hydrogen_rd: '氢技术研发',
+    green_hydrogen_policy: '氢政策研究',
+    green_hydrogen_ending1: '绿氢先锋',
+    green_hydrogen_ending2: '氢冶金学者',
+    green_hydrogen_policy_ending: '政策推动者',
+    green_hydrogen_global_ending: '国际氢能',
+    green_recycle_tech: '固废技术研发',
+    green_recycle_industry: '固废产业应用',
+    green_recycle_ending1: '固废魔术师',
+    green_recycle_ending3: '固废科学家',
+    green_recycle_ending2: '循环经济践行者',
+    green_recycle_consulting_ending: '固废总设计师',
+    green_carbon_trader: '碳交易员',
+    green_carbon_policy2: '碳政策研究',
+    green_carbon_ending1: '碳市场专家',
+    green_carbon_entrepreneur_ending: '碳金融先锋',
+    green_carbon_ending2: '政策制定者',
+    green_carbon_academic_ending: '碳管理学者',
+    newmaterials_high_temp: '高温合金',
+    newmaterials_ultra_high: '超高强度钢',
+    newmaterials_nano: '纳米材料',
+    newmaterials_high_rd: '高温合金研发',
+    newmaterials_high_industry: '高温合金产业',
+    newmaterials_high_ending1: '逐梦蓝天',
+    newmaterials_high_ending2: '学术传承',
+    newmaterials_high_industry_ending: '产业报国',
+    newmaterials_high_consult_ending: '材料军师',
+    newmaterials_auto_rd: '汽车钢研发',
+    newmaterials_auto_industry2: '汽车钢产业',
+    newmaterials_auto_ending1: '轻量化先锋',
+    newmaterials_auto_ending2: '钢铁脊梁',
+    newmaterials_auto_consult_ending: '轻量化军师',
+    newmaterials_auto_solution_ending: '科创先锋',
+    newmaterials_nano_academic: '纳米学术',
+    newmaterials_nano_business: '纳米创业',
+    newmaterials_nano_ending1: '纳米先锋',
+    newmaterials_nano_ending3: '纳米育人',
+    newmaterials_nano_ending2: '纳米产业化',
+    newmaterials_nano_consult_ending: '纳米企业家',
+    smart_ai_control: 'AI控制',
+    smart_digital_twin: '数字孪生',
+    smart_big_data: '工业大数据',
+    smart_ai_onsite: 'AI现场验证',
+    smart_ai_optimize: 'AI模型优化',
+    smart_ai_ending1: '智造先锋',
+    smart_ai_ending2: '工业互联网',
+    smart_ai_startup_ending: 'AI创业',
+    smart_ai_partner_ending: '首席AI科学家',
+    smart_digital_rd: '数字孪生研发',
+    smart_digital_industry: '数字孪生应用',
+    smart_digital_ending1: '全球领跑',
+    smart_digital_ending2: '智能工厂',
+    smart_digital_software_ending: '工业软件',
+    smart_digital_entrepreneur_ending: '数字孪生企业家',
+    smart_big_data_tech: '数据技术',
+    smart_big_data_apply: '数据应用',
+    smart_data_ending1: '数据医生',
+    smart_data_ending2: '首席数据官',
+    smart_big_data_global_ending: '全球数字化顾问',
+    smart_big_data_startup_ending: '数据企业家',
+    strategic_rare_earth: '稀土',
+    strategic_lithium: '锂电材料',
+    strategic_defense: '国防合金',
+    strategic_rare_tech: '稀土技术',
+    strategic_rare_industry2: '稀土产业',
+    strategic_rare_ending1: '稀土脊梁',
+    strategic_rare_ending2: '稀土材料创新',
+    strategic_rare_policy_ending: '稀土战略家',
+    strategic_rare_thinktank_ending: '稀土智库',
+    strategic_lithium_tech: '提锂技术',
+    strategic_lithium_strategy: '锂战略',
+    strategic_lithium_ending1: '锂电先锋',
+    strategic_lithium_ending2: '锂资源战略家',
+    strategic_lithium_global_ending: '全球锂资源拓荒者',
+    strategic_lithium_government_ending: '资源战略家',
+    strategic_defense_industry: '国防一线',
+    strategic_defense_academic: '国防基础研究',
+    strategic_defense_ending1: '国防脊梁',
+    strategic_defense_ending3: '国防育人',
+    strategic_defense_abroad_ending: '学成归国',
+    strategic_defense_home_ending: '国防坚守'
 };
 
 // ============================================================
-// 2. 加载数据
+// 2. 存储键名
+// ============================================================
+const STORAGE_KEY = 'metallurgy_task_progress';   // 与闯关剧本共用
+const NICKNAME_KEY = 'metallurgy_player_nickname';
+
+// ============================================================
+// 3. 数据读取
 // ============================================================
 function loadProgress() {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
         try {
-            const data = JSON.parse(saved);
-            // 数据结构：{ completed: [], medalCount: 0 }
-            return data;
+            return JSON.parse(saved);
         } catch (e) {
             return null;
         }
@@ -435,7 +523,7 @@ function setNickname(name) {
 }
 
 // ============================================================
-// 3. 渲染档案页面
+// 4. 渲染档案
 // ============================================================
 function renderProfile() {
     const container = document.getElementById('profileContent');
@@ -443,7 +531,6 @@ function renderProfile() {
     const nickname = getNickname();
 
     if (!data || !data.completed || data.completed.length === 0) {
-        // 空状态
         container.innerHTML = `
             <div class="empty-state">
                 <div class="big-icon">🌱</div>
@@ -457,42 +544,33 @@ function renderProfile() {
 
     const completed = data.completed || [];
     const medalCount = data.medalCount || 0;
-    // 当前阶段：取最后一个完成的节点作为当前位置，若没有则显示 '起始'
     const currentId = completed.length > 0 ? completed[completed.length - 1] : 'start';
     const currentStageName = nodeLabels[currentId] || currentId;
 
-    // 总节点数（与 challengescript 中的节点数量一致）
-    const totalNodes = 35;
-
-    // 进度百分比
+    // 总节点数 = nodeLabels 中所有键的数量（自动适应新增节点）
+    const totalNodes = 93;
     const progress = Math.min(100, Math.round((completed.length / totalNodes) * 100));
 
-    // 构建时间线（按完成顺序）
+    // 生成时间线
     let timelineHtml = '';
-    if (completed.length > 0) {
-        completed.forEach((id, index) => {
-            const label = nodeLabels[id] || id;
-            timelineHtml += `
-                <div class="timeline-item">
-                    <span class="step">#${index + 1}</span>
-                    <span class="node-name">${label}</span>
-                </div>
-            `;
-        });
-    }
+    completed.forEach((id, index) => {
+        const label = nodeLabels[id] || id;
+        timelineHtml += `
+            <div class="timeline-item">
+                <span class="step">#${index + 1}</span>
+                <span class="node-name">${label}</span>
+            </div>
+        `;
+    });
 
-    // 勋章墙：显示所有已完成的节点（每个节点都是一枚勋章）
-    let medalHtml = '';
-    if (completed.length > 0) {
-        // 去重（其实不会重复）
-        const unique = [...new Set(completed)];
-        medalHtml = unique.map(id => {
-            const name = nodeLabels[id] || id;
-            return `<div class="medal-item"><span class="icon">🏅</span> ${name}</div>`;
-        }).join('');
-    } else {
-        medalHtml = `<span class="no-medal">暂无勋章，继续探索吧</span>`;
-    }
+    // 生成勋章墙（去重）
+    const uniqueMedals = [...new Set(completed)];
+    let medalHtml = uniqueMedals.map(id => {
+        const name = nodeLabels[id] || id;
+        return `<div class="medal-item"><span class="icon">🏅</span> ${name}</div>`;
+    }).join('');
+
+    if (!medalHtml) medalHtml = `<span class="no-medal">暂无勋章</span>`;
 
     container.innerHTML = `
         <!-- 个人信息 -->
@@ -548,7 +626,7 @@ function renderProfile() {
 }
 
 // ============================================================
-// 4. 昵称编辑功能（不变）
+// 5. 昵称编辑（不变）
 // ============================================================
 function showNicknameModal() {
     const modal = document.getElementById('nicknameModal');
@@ -580,18 +658,17 @@ document.getElementById('nicknameModal').addEventListener('click', function(e) {
 });
 
 // ============================================================
-// 5. 重置进度（清空任务进度）
+// 6. 重置进度
 // ============================================================
 function resetProgress() {
     if (confirm('确定要重置所有闯关进度吗？此操作不可撤销！')) {
         localStorage.removeItem(STORAGE_KEY);
         renderProfile();
-        // 也可同时清除游戏主页的进度，但这里只清理任务数据
     }
 }
 
 // ============================================================
-// 6. 初始化
+// 7. 初始化
 // ============================================================
 renderProfile();
 </script>
