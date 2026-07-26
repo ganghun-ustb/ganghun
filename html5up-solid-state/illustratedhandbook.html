@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>北科大 · 冶金科学家图鉴</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+    font-family: 'Segoe UI', 'PingFang SC', Roboto, sans-serif;
+    background: #0b0e14;
+    color: #e8edf3;
+    min-height: 100vh;
+    padding: 0;
+}
+        .container { max-width: 1500px; margin: 0 auto; padding: 0 1.5rem 2rem; }
+
+        /* 导航栏 */
+        .navbar {
+            background: rgba(20, 26, 36, 0.92);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            padding: 0.8rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .navbar .logo {
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #f6d365, #fda085);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+        .navbar .nav-links {
+            display: flex;
+            gap: 1.8rem;
+            flex-wrap: wrap;
+            list-style: none;
+        }
+        .navbar .nav-links a {
+            color: #a8b2c9;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+            letter-spacing: 0.5px;
+        }
+        .navbar .nav-links a:hover { color: #f6d365; }
+        .navbar .nav-links a.active {
+            color: #f6d365;
+            border-bottom: 2px solid #f6d365;
+            padding-bottom: 2px;
+        }
+        @media (max-width: 640px) {
+            .navbar { flex-direction: column; gap: 0.5rem; align-items: stretch; }
+            .navbar .nav-links { justify-content: center; gap: 1rem; }
+            .navbar .nav-links a { font-size: 0.85rem; }
+        }
+
+        /* 页眉 */
+        .header {
+            text-align: center;
+            padding: 2.5rem 0 2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            margin-bottom: 2.5rem;
+        }
+        .header h1 {
+            font-size: 2.6rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #f6d365, #fda085);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 4px;
+        }
+        .header p { color: #8892a8; margin-top: 0.5rem; font-size: 1.1rem; }
+
+        /* 卡片网格 */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1.8rem;
+        }
+        .card {
+            background: rgba(255,255,255,0.04);
+            backdrop-filter: blur(4px);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.06);
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.25s, box-shadow 0.3s, border-color 0.3s;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1.8rem 1.2rem 1.5rem;
+            text-align: center;
+        }
+        .card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(253,160,133,0.3);
+            box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+        }
+        .card .avatar {
+            width: 110px; height: 110px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #2a2f3a, #1a1e26);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.2rem;
+            color: #f6d365;
+            border: 2px solid rgba(255,255,255,0.08);
+            margin-bottom: 1rem;
+            flex-shrink: 0;
+            user-select: none;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+        }
+        .card .name { font-size: 1.2rem; font-weight: 600; color: #f0f4fa; letter-spacing: 1px; }
+        .card .title-tag {
+            font-size: 0.75rem;
+            color: #f6d365;
+            background: rgba(246,211,101,0.12);
+            padding: 0.2rem 1rem;
+            border-radius: 30px;
+            margin-top: 0.3rem;
+            border: 1px solid rgba(246,211,101,0.15);
+        }
+        .card .quote {
+            margin-top: 0.8rem;
+            font-size: 0.9rem;
+            color: #a8b2c9;
+            line-height: 1.5;
+            font-style: italic;
+            padding: 0 0.2rem;
+            min-height: 2.8rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .card .quote::before { content: "“"; color: #f6d365; opacity: 0.5; }
+        .card .quote::after { content: "”"; color: #f6d365; opacity: 0.5; }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(10px);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: #141a24;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 28px;
+            max-width: 820px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 2.2rem 2.5rem;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.7);
+            position: relative;
+            animation: modalFadeIn 0.3s ease;
+        }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.96) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .modal::-webkit-scrollbar { width: 4px; }
+        .modal::-webkit-scrollbar-thumb { background: #f6d365; border-radius: 10px; }
+        .modal-close {
+            position: sticky;
+            top: 0;
+            float: right;
+            background: rgba(255,255,255,0.06);
+            border: none;
+            color: #a8b2c9;
+            font-size: 1.8rem;
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.12); color: #fff; }
+        .modal-hero {
+            display: flex;
+            gap: 2rem;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            margin-top: 0.5rem;
+        }
+        .modal-avatar {
+            flex: 0 0 130px; width: 130px; height: 130px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #2a2f3a, #1a1e26);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.8rem;
+            color: #f6d365;
+            border: 2px solid rgba(255,255,255,0.08);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+            flex-shrink: 0;
+        }
+        .modal-info { flex: 1; min-width: 200px; }
+        .modal-info .name { font-size: 1.8rem; font-weight: 700; color: #fff; }
+        .modal-info .sub { color: #8892a8; font-size: 0.95rem; margin: 0.2rem 0 0.6rem; }
+        .modal-info .badge {
+            display: inline-block;
+            background: rgba(246,211,101,0.12);
+            color: #f6d365;
+            padding: 0.15rem 1rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            border: 1px solid rgba(246,211,101,0.15);
+        }
+        .modal-info .desc { margin-top: 0.8rem; color: #c8d0e0; line-height: 1.7; font-size: 0.98rem; }
+        .modal-section { margin-top: 1.8rem; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 1.5rem; }
+        .modal-section h4 { color: #f6d365; font-size: 1rem; font-weight: 600; letter-spacing: 1px; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.5rem; }
+        .timeline { display: flex; flex-direction: column; gap: 0.4rem; padding-left: 0.2rem; }
+        .timeline-item { display: flex; gap: 0.8rem; font-size: 0.92rem; color: #c8d0e0; line-height: 1.5; }
+        .timeline-item .year { color: #f6d365; font-weight: 600; white-space: nowrap; min-width: 72px; }
+        .highlight-quote {
+            background: rgba(246,211,101,0.06);
+            border-left: 3px solid #f6d365;
+            padding: 0.8rem 1.2rem;
+            border-radius: 0 10px 10px 0;
+            color: #e0e6f0;
+            font-style: italic;
+            margin: 0.6rem 0 0.2rem;
+            font-size: 0.95rem;
+        }
+        .story { color: #b0bacf; font-size: 0.92rem; line-height: 1.7; margin-top: 0.2rem; }
+        .honor-tag {
+            display: inline-block;
+            background: rgba(255,215,0,0.08);
+            border: 1px solid rgba(255,215,0,0.15);
+            color: #f6d365;
+            padding: 0.15rem 0.9rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            margin: 0.2rem 0.3rem 0.2rem 0;
+        }
+        @media (max-width: 640px) {
+            .grid { grid-template-columns: repeat(auto-fill, minmax(180px,1fr)); gap:1rem; }
+            .card { padding:1.2rem 0.8rem 1rem; }
+            .card .avatar { width:80px; height:80px; font-size:2.4rem; }
+            .modal { padding:1.5rem; }
+            .modal-hero { flex-direction:column; align-items:center; text-align:center; }
+            .modal-avatar { flex:0 0 100px; width:100px; height:100px; font-size:2.8rem; }
+        }
+        .footer { text-align:center; margin-top:3.5rem; padding-top:2rem; border-top:1px solid rgba(255,255,255,0.04); color:#4a5368; font-size:0.85rem; }
+    </style>
+</head>
+<body>
+
+<!-- ===== 导航栏 ===== -->
+<nav class="navbar">
+    <div class="logo">⚙️ 钢魂实践团</div>
+    <ul class="nav-links">
+        <li><a href="gamehomepage.html">游戏首页</a></li>
+        <li><a href="challengescript.html">闯关剧本</a></li>
+        <li><a href="illutratedhandbook" class="active">冶金科学家图鉴</a></li>
+        <li><a href="growth.html">我的成长档案</a></li>
+        <li><a href="ganghun.html">关于北科大钢魂实践团</a></li>
+    </ul>
+</nav>
+
+<!-- ===== 主体 ===== -->
+<div class="container">
+    <header class="header">
+        <h1>🔬 冶金科学家图鉴</h1>
+        <p>北京科技大学 · 钢铁摇篮走出的院士（共 <span id="countDisplay">33</span> 位）</p>
+    </header>
+    <div class="grid" id="cardGrid"></div>
+    <div class="footer">❖ 传承钢铁精神 · 探索未至之境 ❖</div>
+</div>
+
+<!-- ===== Modal ===== -->
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal" id="modalContent">
+        <button class="modal-close" id="modalCloseBtn">✕</button>
+        <div id="modalBody"></div>
+    </div>
+</div>
+
+<script>
+// ============================================================
+// 全部 33 位院士数据（与你的代码完全一致，未删减）
+// ============================================================
+const scientists = [
+    // ---- 中国科学院 ----
+    {
+        id: 'wei-shoukun', name: '魏寿昆', title: '冶金物理化学家 · 中科院院士',
+        avatarEmoji: '🧪',
+	avatarImg: 'images/weishoukun.jpg', 
+        quote: '研究的目的，是在得确定的结果，"是"是结果，而"否"亦是结果。',
+        fullInfo: {
+            birth: '1907年9月 · 天津', death: '2014年6月',
+            summary: '中国冶金物理化学学科创始人之一，北京科技大学建校元老。在冶金热力学、高温熔体活度理论等方面取得开拓性成果。',
+            timeline: [
+                { year:'1929', desc:'以创纪录成绩毕业于北洋大学' },
+                { year:'1935', desc:'获德国德累斯顿工业大学博士学位' },
+                { year:'1952', desc:'参与创建北京钢铁工业学院' },
+                { year:'1964', desc:'出版《活度在冶金物理化学中的应用》' }
+            ],
+            achievement: '■ 建立高温熔体活度理论体系\n■ 提出选择性氧化与转化温度概念\n■ 获国家自然科学奖、何梁何利奖',
+            famousQuote: '"芝兰生幽谷，不以无人而不芳；君子修道立德，不为穷困而改节。"',
+            story: '留德期间，德国青年误认其为日本人，他厉声斥责："我们中国人一定能把日本人赶出去！"',
+            honors: ['中科院院士','国家自然科学奖','何梁何利奖']
+        }
+    },
+    {
+        id: 'wu-ziliang', name: '吴自良', title: '物理冶金专家 · 中科院院士',
+        avatarEmoji: '🔬',
+	avatarImg: 'images/wuziliang.jpg',
+        quote: '天助自助者。',
+        fullInfo: {
+            birth: '1917年12月 · 浙江浦江', death: '2008年5月',
+            summary: '物理冶金学家，"两弹一星"功勋科学家。领导研制甲种分离膜，为我国原子能事业做出重大贡献。',
+            timeline: [
+                { year:'1937', desc:'毕业于北洋大学航空工程系' },
+                { year:'1948', desc:'获美国卡内基理工学院博士学位' },
+                { year:'1951', desc:'回国，任唐交大冶金系教授' },
+                { year:'1960', desc:'负责甲种分离膜研制，打破核垄断' }
+            ],
+            achievement: '■ 建立我国合金钢体系\n■ 领导甲种分离膜研制\n■ 获国家发明一等奖、两弹一星功勋奖章',
+            famousQuote: '"自强不息两弹一星建功勋，良师益友教书育人铸辉煌。"',
+            story: '曾在美国研究航空，因不愿加入国民党被"永不录用"，转而投身冶金，成就卓越。',
+            honors: ['中科院院士','国家发明一等奖','两弹一星功勋奖章']
+        }
+    },
+    {
+        id: 'ke-jun', name: '柯俊', title: '金属物理学家 · 中科院院士',
+        avatarEmoji: '🧊',
+	avatarImg: 'images/kejun.jpg',
+        quote: '我来自东方，那里一吨钢的作用，远远超过一吨钢在英美的作用。',
+        fullInfo: {
+            birth: '1917年6月 · 浙江黄岩', death: '2017年8月',
+            summary: '金属物理、冶金史学科奠基人，首次提出钢中贝氏体切变位移运动，被国际学界称为"贝茵体先生"。',
+            timeline: [
+                { year:'1938', desc:'毕业于武汉大学化学系' },
+                { year:'1948', desc:'获英国伯明翰大学博士学位' },
+                { year:'1955', desc:'创建中国首个金属物理专业' },
+                { year:'1980', desc:'当选中国科学院学部委员' }
+            ],
+            achievement: '■ 提出"柯氏贝氏体"理论\n■ 开拓中国冶金与材料史研究\n■ 获国家自然科学奖、何梁何利奖',
+            famousQuote: '"祖国需要我们到哪里，我们就去哪里，不能挑三拣四。"',
+            story: '婉拒美国、德国研究所邀请，毅然回国，说："那里一吨钢的作用，远远超过一吨钢在英美的作用。"',
+            honors: ['中科院院士','国家自然科学奖','何梁何利奖']
+        }
+    },
+    {
+        id: 'xiao-jimei', name: '肖纪美', title: '材料科学家 · 中科院院士',
+        avatarEmoji: '📖',
+	avatarImg: 'images/xiaojimei.jpg',  
+        quote: '我的志向不是当官，而是能真正做一些有意义的事情：教书育人、研究学问。',
+        fullInfo: {
+            birth: '1920年12月 · 湖南凤凰', death: '2014年4月',
+            summary: '金属材料专家，我国断裂学科和腐蚀科学的重要开拓者，提出"断裂化学"新分支。',
+            timeline: [
+                { year:'1943', desc:'毕业于唐山交通大学矿冶系' },
+                { year:'1950', desc:'获美国密苏里大学冶金学博士' },
+                { year:'1957', desc:'冲破重重阻挠回国，任教于钢院' },
+                { year:'1987', desc:'获国家自然科学二等奖' }
+            ],
+            achievement: '■ 提出"断裂化学"新分支\n■ 首次发现宏观压应力也能导致应力腐蚀断裂',
+            famousQuote: '"人才的话，要想办法利用知识分子的能力，不限于当官。"',
+            story: '回国途中美国官员三次威逼利诱，甚至威胁扣留其儿子，他毅然回答："我是一个炎黄子孙，我深爱着我的祖国！"',
+            honors: ['中科院院士','国家自然科学二等奖','冶金科技终身成就奖']
+        }
+    },
+     {
+        id: 'zhang-xingqian', name: '张兴钤', title: '金属材料专家 · 中科院院士',
+        avatarEmoji: '⚡',
+	avatarImg: 'images/zhangxingqian.jpg', 
+        quote: '我们都是国家的儿女，这很正常。',
+        fullInfo: {
+            birth: '1921年11月 · 河北武邑',
+            summary: '金属物理学和"两弹"专家，在蠕变机制和晶界行为研究方面有开创性贡献，为"两弹一星"事业做出杰出贡献。',
+            timeline: [
+                { year:'1942', desc:'毕业于武汉大学矿冶系' },
+                { year:'1952', desc:'获麻省理工学院物理冶金博士' },
+                { year:'1956', desc:'回国任北京钢铁工业学院教授' },
+                { year:'1963', desc:'调往青海参加核武器研制' }
+            ],
+            achievement: '■ 提出晶界裂纹形成和传播模型\n■ 获国家自然科学一等奖\n■ 获国家科技进步特等奖',
+            famousQuote: '"回家感觉就是不一样，感觉一下子抬起头来了。"',
+            story: '为争取回国，组织留美学生向美国总统写信，被媒体广泛报道，最终迫使美国政府放行。',
+            honors: ['中科院院士','国家自然科学一等奖','国家科技进步特等奖']
+        }
+    },
+      {
+        id: 'li-yiyi', name: '李依依', title: '冶金与金属材料科学家 · 中科院院士',
+        avatarEmoji: '🔥',
+	avatarImg: 'images/liyiyi.jpg',  
+        quote: '男同志能做到的事，女同志一定也能做到。',
+        fullInfo: {
+            birth: '1933年10月 · 北京',
+            summary: '我国第一批女高炉工长，在抗氢合金、大型铸锻件制备等领域做出重大贡献，被誉为"巾帼不让须眉"。',
+            timeline: [
+                { year:'1957', desc:'毕业于北京钢铁工业学院冶金系' },
+                { year:'1958', desc:'任本溪钢铁厂1号高炉工长' },
+                { year:'1962', desc:'调至中科院金属研究所' },
+                { year:'1993', desc:'当选中国科学院院士' }
+            ],
+            achievement: '■ 突破大型铸锻件制造瓶颈\n■ 为三峡、核电等重大工程做出贡献\n■ 获何梁何利奖',
+            famousQuote: '"失败也是一种宝贵的资源，只有允许失败才有可能创新。"',
+            story: '在钢院读书时打破北京市80米低栏纪录，体育精神贯穿一生。',
+            honors: ['中科院院士','发展中国家科学院院士','何梁何利奖','中科院十大女杰']
+        }
+    },
+      {
+        id: 'xu-zuyao', name: '徐祖耀', title: '材料科学家 · 中科院院士',
+        avatarEmoji: '🧪',
+	avatarImg: 'images/xuzuyao.jpg',  
+        quote: '世界上天才是少数，有成就者大多工作勤奋。做学问要甘于清贫，安于寂寞。',
+        fullInfo: {
+            birth: '1921年7月 · 浙江宁波', death: '2017年3月',
+            summary: '材料科学家，在马氏体相变、贝氏体相变、形状记忆合金和超高强度钢设计方面成就卓著。',
+            timeline: [
+                { year:'1942', desc:'毕业于国立云南大学矿冶系' },
+                { year:'1953', desc:'调入北京钢铁工业学院任教' },
+                { year:'1964', desc:'出版《金属学原理》' },
+                { year:'1995', desc:'当选中国科学院院士' }
+            ],
+            achievement: '■ 提出Q-P-T热处理工艺\n■ 研制超高强度纳米马氏体钢\n■ 获国家自然科学奖',
+            famousQuote: '"科学研究不是为了金钱，不是为了名利，而是作为一名科学工作者的责任。"',
+            story: '"文化大革命"期间身患肺结核，仍在病床上完成"马氏体相变热力学"初稿。',
+            honors: ['中科院院士','国家自然科学奖','何梁何利奖']
+        }
+    },
+    {
+        id: 'zhou-guozhi', name: '周国治', title: '冶金物理化学家 · 中科院院士',
+        avatarEmoji: '📐',
+	avatarImg: 'images/zhouguozhi.jpg',  
+        quote: '做人要知足，做事要知不足，做学问要不知足。',
+        fullInfo: {
+            birth: '1937年3月 · 江苏南京',
+            summary: '冶金物理化学专家，创立"R函数法"和"周模型"，在热力学几何模型和气固反应动力学方面国际领先。',
+            timeline: [
+                { year:'1959', desc:'提前毕业于北京钢铁工业学院并留校' },
+                { year:'1979', desc:'赴美国麻省理工学院进修' },
+                { year:'1984', desc:'破格晋升为教授' },
+                { year:'1995', desc:'当选中国科学院院士' }
+            ],
+            achievement: '■ 创立R函数法计算多元系热力学性质\n■ 提出"真实物理图像"动力学模型\n■ 获国家自然科学奖',
+            famousQuote: '"我最迫切的希望，就是怎么把更多的知识贡献给国家。"',
+            story: '"文化大革命"期间被打成反革命，仍偷偷在《红旗》杂志下推演公式，十年完成R函数法。',
+            honors: ['中科院院士','国家自然科学奖','北京市教学名师']
+        }
+    },
+    {
+        id: 'ge-changchun', name: '葛昌纯', title: '粉末冶金专家 · 中科院院士',
+        avatarEmoji: '🧱',
+	avatarImg: 'images/gechangchun.jpg', 
+        quote: '材料报国，追求第一。',
+        fullInfo: {
+            birth: '1934年3月 · 上海',
+            summary: '粉末冶金和先进陶瓷专家，我国"两弹一艇"重要贡献者，负责乙种分离膜研制，创建中国第一个纳米材料实验室。',
+            timeline: [
+                { year:'1952', desc:'毕业于唐山交通大学冶金工程系' },
+                { year:'1960', desc:'负责乙种分离膜研制' },
+                { year:'1986', desc:'调入北京钢铁学院任教' },
+                { year:'2001', desc:'当选中国科学院院士' }
+            ],
+            achievement: '■ 乙种分离膜第一发明人\n■ 创建首个纳米材料实验室\n■ 获国家发明一等奖、核工业功勋奖章',
+            famousQuote: '"束发读诗书，修德兼修身。躬耕从未忘忧国，谁知热血在山林。"',
+            story: '抗战期间家族藏书阁毁于战火，母亲孤身带他逃难，仍坚持让他读书。',
+            honors: ['中科院院士','世界陶瓷科学院院士','国家发明一等奖','核工业功勋奖章']
+        }
+    },
+      // ---- 中国工程院 ----
+      {
+        id: 'xu-kuangdi', name: '徐匡迪', title: '钢铁冶金专家 · 中国工程院院士',
+        avatarEmoji: '🏛️',
+	avatarImg: 'images/xukuangdi.jpg', 
+        quote: '我们现在大国重器有了，但还没有"精器"。',
+        fullInfo: {
+            birth: '1937年12月 · 浙江桐乡',
+            summary: '钢铁冶金专家，曾任上海市市长、中国工程院院长、全国政协副主席。在喷射冶金、炉外精炼等领域成果卓著。',
+            timeline: [
+                { year:'1959', desc:'毕业于北京钢铁工业学院冶金系' },
+                { year:'1982', desc:'赴瑞典开发北海油田管线钢技术' },
+                { year:'1995', desc:'当选中国工程院院士，任上海市市长' },
+                { year:'2002', desc:'任中国工程院院长' }
+            ],
+            achievement: '■ 开发电弧炉水冷挂渣炉壁技术\n■ 主持炉外精炼研究\n■ 获国家科技进步奖',
+            famousQuote: '"科研本就是小众的，科学家应该专注于自己的研究。"',
+            story: '在瑞典用肉眼判断钢水温度，准确预判"冻包"事故，被称为"中国眼镜"。',
+            honors: ['中国工程院院士','瑞典皇家工程院外籍院士','英国皇家工程院外籍院士']
+        }
+    },
+    {
+        id: 'yin-ruiyu', name: '殷瑞钰', title: '钢铁冶金专家 · 中国工程院院士',
+        avatarEmoji: '⚙️',
+	avatarImg: 'images/yinruiyu.jpg',
+        quote: '有多大的眼光看多大的事，多大的胸怀办多大的事。',
+        fullInfo: {
+            birth: '1935年7月 · 江苏苏州',
+            summary: '钢铁冶金专家，原冶金工业部副部长。提出"冶金流程工程学"新学科分支，是工程哲学的开拓者之一。',
+            timeline: [
+                { year:'1957', desc:'毕业于北京钢铁工业学院冶金系' },
+                { year:'1975', desc:'发现炉渣在转炉炉衬上熔接生长现象' },
+                { year:'1988', desc:'任冶金工业部总工程师' },
+                { year:'1994', desc:'当选中国工程院首批院士' }
+            ],
+            achievement: '■ 开创"冶金流程工程学"\n■ 提出钢厂三大功能理论\n■ 推动全国连铸技术突破',
+            famousQuote: '"工程哲学是面向实践的、面向现实生产力的、面向工程管理的哲学。"',
+            story: '在唐钢力主停建初轧机、选择连铸工艺，为唐钢改造把握正确方向。',
+            honors: ['中国工程院院士','国家科技进步奖','冶金科技终身成就奖']
+        }
+    },
+    {
+        id: 'chen-xianlin', name: '陈先霖', title: '冶金机械专家 · 中国工程院院士',
+        avatarEmoji: '🔧',
+	avatarImg: 'images/chenxianlin.jpg',  
+        quote: '精彩来自精心的准备。',
+        fullInfo: {
+            birth: '1928年9月 · 四川遂宁', death: '2009年',
+            summary: '冶金机械专家，在宽带钢轧机板形控制和重大设备失效分析方面取得系统成果，被誉为"板形之先"。',
+            timeline: [
+                { year:'1949', desc:'毕业于上海交通大学机械系' },
+                { year:'1954', desc:'任教于北京钢铁工业学院' },
+                { year:'1972', desc:'解决攀钢转炉主轴断裂难题' },
+                { year:'1995', desc:'当选中国工程院院士' }
+            ],
+            achievement: '■ 提出"机型、辊形、控制"一体化板形控制理论\n■ 开发VCR板形控制技术\n■ 获国家科技进步一等奖',
+            famousQuote: '"搞科学技术容不得粗制滥造，更容不得弄虚作假。"',
+            story: '讲课前会提前到教室试音，确保最后一排学生听得清，一节课准备三个月。',
+            honors: ['中国工程院院士','国家科技进步一等奖','全国教育系统劳动模范']
+        }
+    },
+    {
+        id: 'tu-mingjing', name: '涂铭旌', title: '金属材料与热处理专家 · 中国工程院院士',
+        avatarEmoji: '🧲',
+	avatarImg: 'images/tumingjing.jpg', 
+        quote: '知人者智，自知者明。胜人者有力，自胜者强。',
+        fullInfo: {
+            birth: '1928年11月 · 四川巴县', death: '2019年',
+            summary: '金属材料与热处理专家，在稀土永磁材料、纳米材料等方面取得多项成果，获国家科技进步奖。',
+            timeline: [
+                { year:'1951', desc:'毕业于同济大学机械系' },
+                { year:'1955', desc:'毕业于北京钢铁工业学院研究生' },
+                { year:'1958', desc:'赴西安交通大学任教' },
+                { year:'1995', desc:'当选中国工程院院士' }
+            ],
+            achievement: '■ 开发塑料黏结Nd-Fe-B永磁材料\n■ 研究稀土功能材料\n■ 获国家科技进步二等奖',
+            famousQuote: '"人生如歌，学生们取得的每个成就，都是我人生中最珍贵的财富。"',
+            story: '患直肠癌期间坚持给研究生讲课，说"生与死对立统一，不惧怕死，反而会起死回生"。',
+            honors: ['中国工程院院士','国家科技进步二等奖','国家有突出贡献中青年专家']
+        }
+    },
+        {
+        id: 'zhou-bangxin', name: '周邦新', title: '核材料专家 · 中国工程院院士',
+        avatarEmoji: '☢️',
+	avatarImg: 'images/zhoubangxin.jpg',  
+        quote: '祖国的希望永远寄托在青年一代人的身上，材料领域可以大有作为。',
+        fullInfo: {
+            birth: '1935年12月 · 湖北武昌',
+            summary: '核材料专家，我国核燃料元件领域学科带头人，在核材料研发和核燃料元件制造方面做出重要贡献。',
+            timeline: [
+                { year:'1956', desc:'毕业于北京钢铁工业学院金相热处理专业' },
+                { year:'1960', desc:'从事核燃料及核材料研究' },
+                { year:'1970', desc:'调入中国核动力研究设计院' },
+                { year:'1995', desc:'当选中国工程院院士' }
+            ],
+            achievement: '■ 解决核燃料元件包壳"小白点"问题\n■ 研制低浓铀板型燃料元件\n■ 获国家科技进步一等奖',
+            famousQuote: '"材料是一切工业发展的基础，研究材料的人需要有担当铺路石的精神。"',
+            story: '在英国访问时，用肉眼判断盐浴炉温度，准确指出热电偶显示错误，令英国同行惊叹。',
+            honors: ['中国工程院院士','国家科技进步一等奖','全国科学大会奖']
+        }
+    },
+    {
+        id: 'cui-kun', name: '崔崑', title: '模具钢专家 · 中国工程院院士',
+        avatarEmoji: '🔩',
+	avatarImg: 'images/cuikun.jpg', 
+        quote: '中国一定要有自己的模具钢种！',
+        fullInfo: {
+            birth: '1925年7月 · 山东济南',
+            summary: '模具钢专家，开发出一系列高性能新型模具钢，纳入国家标准，为我国模具工业做出重大贡献。',
+            timeline: [
+                { year:'1948', desc:'毕业于武汉大学机械系' },
+                { year:'1954', desc:'借调至北京钢铁工业学院工作' },
+                { year:'1958', desc:'赴莫斯科钢铁合金学院进修' },
+                { year:'1997', desc:'当选中国工程院院士' }
+            ],
+            achievement: '■ 首创含铌基体钢\n■ 研制成易切削精密模具钢\n■ 获国家发明奖多项',
+            famousQuote: '"研究最重要的是要勤奋，平时学习要勤奋，遇到困难更要勤奋。"',
+            story: '为躲避日军，独自步行穿越封锁线，爬火车头到西安，经历80多天才到成都考大学。',
+            honors: ['中国工程院院士','国家发明奖','全国劳动模范','湖北省优秀共产党员']
+        }
+    },
+    {
+        id: 'hu-zhenghuan', name: '胡正寰', title: '零件轧制技术专家 · 中国工程院院士',
+        avatarEmoji: '⚙️',
+	avatarImg: 'images/huzhenghuan.jpg',   
+        quote: '我们搞研究，就是要用于生产，提高生产率。',
+        fullInfo: {
+            birth: '1934年7月 · 湖北孝感',
+            summary: '零件轧制技术专家，我国轴类零件轧制技术的主要开创人，技术已推广到多国。',
+            timeline: [
+                { year:'1956', desc:'毕业于北京钢铁工业学院' },
+                { year:'1958', desc:'研制成功钢球轧机' },
+                { year:'1972', desc:'开发斜轧复杂零件技术' },
+                { year:'1997', desc:'当选中国工程院院士' }
+            ],
+            achievement: '■ 全面掌握斜轧、楔横轧技术\n■ 推广数百条生产线\n■ 获国家发明奖、科技进步奖',
+            famousQuote: '"论文写在车间里，这样的文章才能体现真知灼见。"',
+            story: '为研制钢球轧机，40天完成图纸设计，60天造出机器，献礼国庆。',
+            honors: ['中国工程院院士','全国五一劳动奖章','中国机械工程学会科技成就奖']
+        }
+    },
+    {
+        id: 'guan-jie', name: '关杰', title: '连铸设备专家 · 中国工程院院士',
+        avatarEmoji: '🏭',
+	avatarImg: 'images/guanjie.jpg',    
+        quote: '否定之否定，多来几个就能得出比较正确的结论。',
+        fullInfo: {
+            birth: '1939年11月 · 福建莆田',
+            summary: '连铸设备专家，主持研制我国第一套国内为主研制的百万吨级板坯连铸机，扭转依赖进口局面。',
+            timeline: [
+                { year:'1963', desc:'毕业于北京钢铁工业学院机械系' },
+                { year:'1965', desc:'参与我国最早连铸机研发' },
+                { year:'1986', desc:'主持攀钢1350mm板坯连铸机设计' },
+                { year:'1997', desc:'当选中国工程院院士' }
+            ],
+            achievement: '■ 研制成功大型板坯连铸机\n■ 获国家科技进步一等奖\n■ 培养大批连铸人才',
+            famousQuote: '"对于提出的每一个方案，从不同角度去分析它，横挑鼻子竖挑眼。"',
+            story: '在印尼出生，九岁丧母，回国后刻苦求学，成为连铸专家。',
+            honors: ['中国工程院院士','国家科技进步一等奖','部级科技进步特等奖']
+        }
+    },
+    {
+        id: 'ke-wei', name: '柯伟', title: '耐蚀材料专家 · 中国工程院院士',
+        avatarEmoji: '🌊',
+	avatarImg: 'images/kewei.jpg',
+        quote: '科研工作是集成的，每个人都应是团队的一部分。',
+        fullInfo: {
+            birth: '1932年12月 · 辽宁沈阳',
+            summary: '耐蚀材料和环境敏感断裂专家，成功组建金属腐蚀与防护国家重点实验室，解决杭州湾大桥防腐难题。',
+            timeline: [
+                { year:'1957', desc:'毕业于北京钢铁工业学院' },
+                { year:'1979', desc:'赴英国国家物理实验室访问' },
+                { year:'1983', desc:'调任中科院金属腐蚀与防护研究所所长' },
+                { year:'1997', desc:'当选中国工程院院士' }
+            ],
+            achievement: '■ 提出疲劳预形变诱发蠕变空穴模型\n■ 解决杭州湾大桥钢管桩腐蚀难题\n■ 获国家科技进步奖',
+            famousQuote: '"学会做人最重要。"',
+            story: '与妻子李依依同为院士，在钢院跑道上相识，因体育爱好结缘。',
+            honors: ['中国工程院院士','国家科技进步奖','全国科学大会奖']
+        }
+    },
+    {
+        id: 'lei-tingquan', name: '雷廷权', title: '热处理专家 · 中国工程院院士',
+        avatarEmoji: '🔥',
+	avatarImg: 'images/leitingquan.jpg',  
+        quote: '科学的生命在于否定和创新。',
+        fullInfo: {
+            birth: '1928年1月 · 陕西西安', death: '2007年',
+            summary: '国际著名热处理与表面工程专家，中国形变热处理奠基人，提出"东方乌拉尔学派"理念。',
+            timeline: [
+                { year:'1949', desc:'毕业于西北工学院机械系' },
+                { year:'1955', desc:'在北京钢铁工业学院进修' },
+                { year:'1956', desc:'赴苏联莫斯科钢铁合金学院留学' },
+                { year:'1997', desc:'当选中国工程院院士' }
+            ],
+            achievement: '■ 创立形变热处理理论\n■ 提出高温回火脆性"沉淀-偏析"新机制\n■ 获全国科学大会奖',
+            famousQuote: '"勇争第一掀巨浪，海纳百川波涛涌。"',
+            story: '患直肠癌手术后仍坚持工作，临终前一个月还关注科研设备落实。',
+            honors: ['中国工程院院士','国际热处理联合会主席','全国科学大会奖']
+        }
+    },
+       {
+        id: 'chen-guoliang', name: '陈国良', title: '金属材料专家 · 中国工程院院士',
+        avatarEmoji: '🧬',
+	avatarImg: 'images/chenguoliang.jpg', 
+        quote: '删繁就简三秋树，领异标新二月花。',
+        fullInfo: {
+            birth: '1934年 · 江苏宜兴', death: '2011年',
+            summary: '金属材料专家，在高温合金、金属间化合物、大块金属玻璃等领域有重要贡献，创建新金属材料国家重点实验室。',
+            timeline: [
+                { year:'1955', desc:'毕业于北京钢铁工业学院' },
+                { year:'1960', desc:'组建高温合金专业' },
+                { year:'1991', desc:'筹建新金属材料国家重点实验室' },
+                { year:'1999', desc:'当选中国工程院院士' }
+            ],
+            achievement: '■ 发展高铌钛铝合金\n■ 研制高质量涡轮盘\n■ 获国家科技进步奖',
+            famousQuote: '"创新是一种自我要求和工作态度，是有责任感的学者应该具有的能力。"',
+            story: '在病房中仍坚持给博士生修改论文，指导两人获优秀博士论文。',
+            honors: ['中国工程院院士','何梁何利奖','美国金属学会荣誉会员']
+        }
+    },
+    {
+        id: 'cai-hongnian', name: '才鸿年', title: '金属材料专家 · 中国工程院院士',
+        avatarEmoji: '🛡️',
+	avatarImg: 'images/caihongnian.jpg',  
+        quote: '国防科技战线上的尖兵，强军为使命。',
+        fullInfo: {
+            birth: '1940年1月 · 北京',
+            summary: '金属材料专家，我国薄装甲钢、复合装甲、火炮身管自紧技术的创始人之一，为国防装备做出重大贡献。',
+            timeline: [
+                { year:'1962', desc:'本科毕业于北京钢铁工业学院' },
+                { year:'1966', desc:'硕士毕业后分配到兵器工业五二所' },
+                { year:'1971', desc:'研制成功我国首个薄装甲钢' },
+                { year:'2001', desc:'当选中国工程院院士' }
+            ],
+            achievement: '■ 研制焊前不预热薄装甲钢\n■ 建立火炮身管自紧技术\n■ 主持军用新材料发展战略研究',
+            famousQuote: '"我们的脚步一刻也不能停歇，一定要为建设世界一流的军队继续做贡献。"',
+            story: '为研究装甲钢，深入部队调研，得知水陆坦克开裂威胁战士生命，从此一门心思投入科研。',
+            honors: ['中国工程院院士','国家发明奖','兵器工业功勋奖']
+        }
+    },
+    {
+        id: 'he-jilin', name: '何季麟', title: '有色冶金专家 · 中国工程院院士',
+        avatarEmoji: '🔶',
+	avatarImg: 'images/hejilin.jpg',  
+        quote: '成功没什么诀窍，就是"干"字为先。',
+        fullInfo: {
+            birth: '1945年9月 · 河南开封',
+            summary: '有色冶金专家，在钽铌铍冶炼加工方面取得重大突破，使我国钽粉技术达到世界先进水平。',
+            timeline: [
+                { year:'1969', desc:'毕业于北京钢铁工业学院冶金物理化学专业' },
+                { year:'1987', desc:'主导钽粉技术攻关' },
+                { year:'1994', desc:'率团打开国际市场' },
+                { year:'2001', desc:'当选中国工程院院士' }
+            ],
+            achievement: '■ 改进氟钽酸钾钠还原工艺\n■ 开发高比容钽粉\n■ 获国家科技进步奖、技术发明奖',
+            famousQuote: '"吃苦耐劳、乐观勇毅、力争上游。"',
+            story: '出身寒门，高中时休学拉板车，考上大学却无钱交学费，靠亲戚帮工才凑齐路费。',
+            honors: ['中国工程院院士','全国劳动模范','国家技术发明二等奖']
+        }
+    },
+    {
+        id: 'wang-yide', name: '王一德', title: '不锈钢专家 · 中国工程院院士',
+        avatarEmoji: '🔪',
+	avatarImg: 'images/wangyide.jpg',  
+        quote: '我这一辈子，能够为钢铁工业做出点事情非常荣幸，可谓"情系钢铁，一生无悔"。',
+        fullInfo: {
+            birth: '1938年12月 · 浙江杭州',
+            summary: '不锈钢技术和压力加工专家，主持太钢不锈钢系统改造，使太钢成为全球最大不锈钢生产基地。',
+            timeline: [
+                { year:'1961', desc:'毕业于北京钢铁工业学院' },
+                { year:'1968', desc:'获北京钢铁工业学院研究生学位' },
+                { year:'1990', desc:'任太钢总工程师' },
+                { year:'2005', desc:'当选中国工程院院士' }
+            ],
+            achievement: '■ 开发铁水"三步法"冶炼不锈钢\n■ 建成世界最大不锈钢冷轧厂\n■ 获国家科技进步奖',
+            famousQuote: '"自己不要把自己打倒，永远要记住，越是遭受磨难多的人，越是要比别人更多地付出。"',
+            story: '曾三次经历"生死"考验，包括被误诊肝癌晚期，切掉三分之一肝脏后发现是血管瘤。',
+            honors: ['中国工程院院士','国家科技进步奖','全国劳动模范']
+        }
+    },
+        {
+        id: 'xie-jianxin', name: '谢建新', title: '金属材料及加工专家 · 中国工程院院士',
+        avatarEmoji: '📦',
+	avatarImg: 'images/xiejianxin.jpg',      
+        quote: '把论文写在车间、写在现场，促进科技成果转化为生产力。',
+        fullInfo: {
+            birth: '1958年6月 · 湖南双峰',
+            summary: '金属材料及加工专家，在金属控制凝固、材料基因工程等领域有重要创新，获多项国家奖。',
+            timeline: [
+                { year:'1982', desc:'毕业于中南矿冶学院' },
+                { year:'1991', desc:'获日本东北大学博士学位' },
+                { year:'1995', desc:'回国任北京科技大学教授' },
+                { year:'2015', desc:'当选中国工程院院士' }
+            ],
+            achievement: '■ 发明铜铝复合材料连铸直接成形技术\n■ 推动材料基因工程研究\n■ 获国家技术发明二等奖',
+            famousQuote: '"科研就是生活，生活亦是科研。"',
+            story: '贫苦出身，8岁放牛挣工分，高中时通过考试选拔，成为村里第一个大学生。',
+            honors: ['中国工程院院士','国家技术发明二等奖','国家科技进步二等奖','何梁何利奖']
+        }
+    },
+    {
+        id: 'mao-xinping', name: '毛新平', title: '压力加工专家 · 中国工程院院士',
+        avatarEmoji: '🏗️',
+	avatarImg: 'images/maoxinping.jpg',   
+        quote: '科研就是解决困难，哪一天没有问题了，那生活就太简单了。',
+        fullInfo: {
+            birth: '1965年6月 · 湖南常德',
+            summary: '压力加工专家，在薄板坯连铸连轧技术方面做出开创性成果，为我国钢铁工业绿色低碳发展做出贡献。',
+            timeline: [
+                { year:'1989', desc:'毕业于武汉钢铁学院' },
+                { year:'1999', desc:'建成中国第一条薄板坯连铸连轧生产线' },
+                { year:'2002', desc:'任珠江钢铁总工程师' },
+                { year:'2015', desc:'当选中国工程院院士' }
+            ],
+            achievement: '■ 开发单一钛微合金化超高强钢\n■ 推动汽车用钢短流程制造\n■ 获国家科技进步二等奖3项',
+            famousQuote: '"有人总说你不行，不要争，做好自己的事。"',
+            story: '父亲是钢院首批采矿专业学生，自称为"矿山的儿子"。',
+            honors: ['中国工程院院士','全国劳动模范','全国五一劳动奖章','何梁何利奖']
+        }
+    },
+    {
+        id: 'shen-zhengchang', name: '沈政昌', title: '选矿技术专家 · 中国工程院院士',
+        avatarEmoji: '⛏️',
+	avatarImg: 'images/shenzhengchang.jpg',
+        quote: '把论文写在祖国的大地上。',
+        fullInfo: {
+            birth: '1960年6月 · 江苏常熟',
+            summary: '浮选装备研究学术带头人，推动我国浮选装备大型化、系列化，研制世界最大680立方米浮选机。',
+            timeline: [
+                { year:'1982', desc:'毕业于北京钢铁工业学院矿山机械专业' },
+                { year:'2001', desc:'研制成功50立方米浮选机' },
+                { year:'2008', desc:'获北京科技大学博士学位' },
+                { year:'2021', desc:'当选中国工程院院士' }
+            ],
+            achievement: '■ 研制KYF-680超大型浮选机\n■ 打破国外垄断\n■ 获国家科技进步奖、发明奖',
+            famousQuote: '"浮选机是分离和富集矿物的核心装备，技术必须自主。"',
+            story: '高中毕业后在运输队跑船，困在上海半月，趁机复习，考上钢院。',
+            honors: ['中国工程院院士','国家科技进步奖','国家发明奖']
+        }
+    },
+    // ---- 新当选（补充） ----
+    {
+        id: 'zhu-rong', name: '朱荣', title: '钢铁冶金专家 · 中国工程院院士',
+        avatarEmoji: '🌿',
+	avatarImg: 'images/zhurong.jpg',  
+        quote: '为钢铁冶金行业降碳赋能，是我们这一代冶金人的使命。',
+        fullInfo: {
+            birth: '1962年12月 · 江西萍乡',
+            summary: '绿色低碳钢铁冶金专家，我国电炉高效洁净冶炼及CO₂在炼钢领域应用的主要开拓者。',
+            timeline: [
+                { year:'1983', desc:'毕业于江西理工大学' },
+                { year:'1996', desc:'获北京科技大学博士学位并留校' },
+                { year:'2025', desc:'当选中国工程院院士' }
+            ],
+            achievement: '■ 研发电炉炼钢复合吹炼技术\n■ 原创基于CO₂利用的绿色洁净炼钢技术\n■ 获国家科技进步二等奖4项',
+            famousQuote: '"科技报国，需要脚踏实地，更需要仰望星空。"',
+            story: '从技术员做起，历任炉长、车间主任，积累了丰富的一线经验。',
+            honors: ['中国工程院院士','何梁何利奖','全国创新争先奖状']
+        }
+    },
+    {
+        id: 'lv-zhaoping', name: '吕昭平', title: '金属材料专家 · 中国科学院院士',
+        avatarEmoji: '🧊',
+	avatarImg: 'images/lvzhaoping.jpg', 
+        quote: '突破金属材料高强度与高塑韧性难以兼顾的瓶颈，是我们的不懈追求。',
+        fullInfo: {
+            birth: '1970年11月 · 安徽桐城',
+            summary: '金属材料及物理冶金专家，提出"低错配强有序效应"强韧化新思路，现任北京科技大学校长。',
+            timeline: [
+                { year:'1992', desc:'获华中科技大学学士' },
+                { year:'2001', desc:'获新加坡国立大学博士' },
+                { year:'2001-2006', desc:'任职美国橡树岭国家实验室' },
+                { year:'2025', desc:'当选中国科学院院士，任北京科技大学校长' }
+            ],
+            achievement: '■ 提出"低错配强有序效应"理论\n■ 研发多个超高强韧金属材料体系\n■ 获国家自然科学二等奖2项',
+            famousQuote: '"科学没有捷径，只有不断地探索和坚持。"',
+            story: '从美国回国后，带领团队在金属材料强韧化领域持续攻关，成果发表于Nature和Science。',
+            honors: ['中国科学院院士','国家自然科学二等奖','国家杰出青年基金获得者']
+        }
+    },
+   ];
+
+// ============================================================
+// 按姓名拼音排序
+// ============================================================
+scientists.sort((a, b) => a.name.localeCompare(b.name, 'zh'));
+
+// 更新总人数显示
+document.getElementById('countDisplay').textContent = scientists.length;
+
+// ============================================================
+// 渲染卡片
+// ============================================================
+const grid = document.getElementById('cardGrid');
+scientists.forEach(s => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.dataset.id = s.id;
+    card.innerHTML = `
+        <div class="avatar">
+    ${s.avatarImg 
+        ? `<img src="${s.avatarImg}" alt="${s.name}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">` 
+        : s.avatarEmoji
+    }
+</div>
+        <div class="name">${s.name}</div>
+        <div class="title-tag">${s.title}</div>
+        <div class="quote">${s.quote}</div>
+    `;
+    card.addEventListener('click', () => openModal(s.id));
+    grid.appendChild(card);
+});
+
+// ============================================================
+// 弹窗逻辑（与之前完全相同）
+// ============================================================
+const overlay = document.getElementById('modalOverlay');
+const modalBody = document.getElementById('modalBody');
+const closeBtn = document.getElementById('modalCloseBtn');
+
+function openModal(id) {
+    const s = scientists.find(p => p.id === id);
+    if (!s) return;
+    const info = s.fullInfo;
+    const deathText = info.death ? ` — ${info.death}` : '';
+
+    let timelineHtml = '';
+    if (info.timeline && info.timeline.length) {
+        timelineHtml = info.timeline.map(item =>
+            `<div class="timeline-item"><span class="year">${item.year}</span><span>${item.desc}</span></div>`
+        ).join('');
+    }
+
+    let honorsHtml = '';
+    if (info.honors && info.honors.length) {
+        honorsHtml = info.honors.map(h => `<span class="honor-tag">${h}</span>`).join('');
+    }
+
+    modalBody.innerHTML = `
+        <div class="modal-hero">
+            <div class="modal-avatar">
+    ${s.avatarImg 
+        ? `<img src="${s.avatarImg}" alt="${s.name}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">` 
+        : s.avatarEmoji
+    }
+</div>
+            <div class="modal-info">
+                <div class="name">${s.name}</div>
+                <div class="sub">${info.birth}${deathText} · ${s.title}</div>
+                <div class="badge">${info.summary}</div>
+                <div class="desc">${info.summary}</div>
+            </div>
+        </div>
+        <div class="modal-section">
+            <h4>⏳ 生平时间轴</h4>
+            <div class="timeline">${timelineHtml}</div>
+        </div>
+        <div class="modal-section">
+            <h4>🏆 主要成就</h4>
+            <div style="color:#c8d0e0;font-size:0.92rem;line-height:1.8;white-space:pre-wrap;">${info.achievement}</div>
+        </div>
+        <div class="modal-section">
+            <h4>💬 经典名言</h4>
+            <div class="highlight-quote">${info.famousQuote || s.quote}</div>
+        </div>
+        ${info.story ? `
+        <div class="modal-section">
+            <h4>📖 逸闻趣事</h4>
+            <div class="story">${info.story}</div>
+        </div>` : ''}
+        ${honorsHtml ? `
+        <div class="modal-section">
+            <h4>🎖️ 荣誉角</h4>
+            <div style="margin-top:0.2rem;">${honorsHtml}</div>
+        </div>` : ''}
+        <div style="margin-top:1.5rem;text-align:right;font-size:0.8rem;color:#4a5368;border-top:1px solid rgba(255,255,255,0.04);padding-top:1rem;">
+            北京科技大学 · 钢铁摇篮
+        </div>
+    `;
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+}
+closeBtn.addEventListener('click', closeModal);
+overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+</script>
+</body>
+</html>

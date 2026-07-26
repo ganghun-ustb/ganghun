@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>钢魂实践团 · 我的成长档案</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+      body {
+    font-family: 'Segoe UI', 'PingFang SC', Roboto, sans-serif;
+    background: #0b0e14;
+    color: #e8edf3;
+    min-height: 100vh;
+    padding: 0;
+}
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem 2rem; }
+
+        .navbar {
+            background: rgba(20, 26, 36, 0.92);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            padding: 0.8rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .navbar .logo {
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #f6d365, #fda085);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+        .navbar .nav-links {
+            display: flex;
+            gap: 1.8rem;
+            flex-wrap: wrap;
+            list-style: none;
+        }
+        .navbar .nav-links a {
+            color: #a8b2c9;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+            letter-spacing: 0.5px;
+        }
+        .navbar .nav-links a:hover { color: #f6d365; }
+        .navbar .nav-links a.active {
+            color: #f6d365;
+            border-bottom: 2px solid #f6d365;
+            padding-bottom: 2px;
+        }
+        @media (max-width: 640px) {
+            .navbar { flex-direction: column; gap: 0.5rem; align-items: stretch; }
+            .navbar .nav-links { justify-content: center; gap: 1rem; }
+            .navbar .nav-links a { font-size: 0.85rem; }
+        }
+
+        .header {
+            text-align: center;
+            padding: 2.5rem 0 2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            margin-bottom: 2rem;
+        }
+        .header h1 {
+            font-size: 2.4rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #f6d365, #fda085);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 4px;
+        }
+        .header p { color: #8892a8; margin-top: 0.3rem; font-size: 1.05rem; }
+
+        .card {
+            background: rgba(255,255,255,0.04);
+            backdrop-filter: blur(4px);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.06);
+            padding: 1.8rem 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+        }
+        .card h2 {
+            color: #f6d365;
+            font-size: 1.2rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        .card h2 .emoji { font-size: 1.4rem; }
+
+        .profile-row {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        .profile-avatar {
+            font-size: 4rem;
+            background: linear-gradient(145deg, #2a2f3a, #1a1e26);
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(255,255,255,0.08);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+            flex-shrink: 0;
+        }
+        .profile-info { flex: 1; }
+        .profile-info .name-area {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+        .profile-info .name-area .display-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #f0f4fa;
+        }
+        .profile-info .name-area .edit-btn {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.12);
+            color: #a8b2c9;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: 0.2s;
+        }
+        .profile-info .name-area .edit-btn:hover {
+            background: rgba(255,255,255,0.12);
+            color: #fff;
+        }
+        .profile-info .current-stage {
+            margin-top: 0.5rem;
+            color: #a8b2c9;
+            font-size: 1rem;
+        }
+        .profile-info .current-stage strong { color: #f6d365; }
+
+        .progress-bar {
+            background: rgba(255,255,255,0.08);
+            border-radius: 40px;
+            height: 12px;
+            overflow: hidden;
+            margin: 1.2rem 0 0.5rem;
+        }
+        .progress-bar .fill {
+            height: 100%;
+            background: linear-gradient(90deg, #f6d365, #fda085);
+            border-radius: 40px;
+            transition: width 0.6s ease;
+            width: 0%;
+        }
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: #8892a8;
+        }
+
+        .medal-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+        .medal-item {
+            background: rgba(246,211,101,0.08);
+            border: 1px solid rgba(246,211,101,0.2);
+            border-radius: 40px;
+            padding: 0.4rem 1.2rem 0.4rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+            color: #f6d365;
+        }
+        .medal-item .icon { font-size: 1.2rem; }
+        .no-medal { color: #4a5368; font-size: 0.95rem; }
+
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            padding-left: 0.5rem;
+        }
+        .timeline-item {
+            display: flex;
+            align-items: baseline;
+            gap: 1rem;
+            font-size: 1rem;
+            color: #c8d0e0;
+            padding: 0.3rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+        }
+        .timeline-item .step {
+            color: #f6d365;
+            font-weight: 600;
+            min-width: 2.2rem;
+            font-size: 0.9rem;
+        }
+        .timeline-item .node-name { color: #e0e6f0; }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #8892a8;
+        }
+        .empty-state .big-icon { font-size: 4rem; margin-bottom: 1rem; }
+        .empty-state .btn-start {
+            display: inline-block;
+            margin-top: 1.5rem;
+            background: linear-gradient(135deg, #f6d365, #fda085);
+            color: #0b0e14;
+            padding: 0.8rem 2.5rem;
+            border-radius: 40px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: transform 0.2s;
+        }
+        .empty-state .btn-start:hover { transform: scale(1.04); }
+
+        .reset-area { text-align: right; margin-top: 1.5rem; }
+        .reset-btn {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #a8b2c9;
+            padding: 0.4rem 1.2rem;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.85rem;
+        }
+        .reset-btn:hover {
+            background: rgba(255,70,70,0.15);
+            border-color: #ff6b6b;
+            color: #ff6b6b;
+        }
+
+        .nickname-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+            z-index: 999;
+            justify-content: center;
+            align-items: center;
+        }
+        .nickname-modal.active { display: flex; }
+        .nickname-modal .modal-box {
+            background: #1a1e2a;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 400px;
+            width: 90%;
+        }
+        .nickname-modal .modal-box h3 { color: #f6d365; margin-bottom: 1rem; }
+        .nickname-modal .modal-box input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+            font-size: 1rem;
+            margin-bottom: 1.2rem;
+        }
+        .nickname-modal .modal-box .actions {
+            display: flex;
+            gap: 0.8rem;
+            justify-content: flex-end;
+        }
+        .nickname-modal .modal-box .actions button {
+            padding: 0.5rem 1.8rem;
+            border-radius: 30px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+        .nickname-modal .modal-box .actions .save-btn {
+            background: linear-gradient(135deg, #f6d365, #fda085);
+            color: #0b0e14;
+        }
+        .nickname-modal .modal-box .actions .cancel-btn {
+            background: rgba(255,255,255,0.06);
+            color: #a8b2c9;
+        }
+        .nickname-modal .modal-box .actions button:hover { transform: scale(1.04); }
+
+        .footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.04);
+            color: #4a5368;
+            font-size: 0.85rem;
+        }
+        @media (max-width: 640px) {
+            .profile-row { flex-direction: column; align-items: center; text-align: center; }
+            .profile-info .name-area { justify-content: center; }
+            .profile-avatar { width: 80px; height: 80px; font-size: 3rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===== 导航栏 ===== -->
+<nav class="navbar">
+    <div class="logo">⚙️ 钢魂实践团</div>
+    <ul class="nav-links">
+        <li><a href="gamehomepage.html">游戏首页</a></li>
+        <li><a href="challengescript.html">闯关剧本</a></li>
+        <li><a href="illustratedhandbook.html">冶金科学家图鉴</a></li>
+        <li><a href="growth.html" class="active">我的成长档案</a></li>
+        <li><a href="ganghun.html">关于北科大钢魂实践团</a></li>
+    </ul>
+</nav>
+
+<!-- ===== 主体 ===== -->
+<div class="container">
+    <header class="header">
+        <h1>📁 我的成长档案</h1>
+        <p>记录你一路走来的足迹与荣耀</p>
+    </header>
+
+    <div id="profileContent"></div>
+
+    <div class="footer">❖ 传承钢铁精神 · 探索未至之境 ❖</div>
+</div>
+
+<!-- ===== 编辑昵称弹窗 ===== -->
+<div class="nickname-modal" id="nicknameModal">
+    <div class="modal-box">
+        <h3>✏️ 修改昵称</h3>
+        <input type="text" id="nicknameInput" placeholder="输入你的新昵称" maxlength="12">
+        <div class="actions">
+            <button class="cancel-btn" onclick="closeNicknameModal()">取消</button>
+            <button class="save-btn" onclick="saveNickname()">保存</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// ============================================================
+// 1. 完整节点标签映射（包含所有剧情节点）
+// ============================================================
+const nodeLabels = {
+    start: '起始',
+    learn_metallurgy: '了解冶金',
+    consider_transfer: '转专业',
+    cs_ending: '转行',
+    course_choice: '课程选择',
+    course_physchem: '物理化学',
+    course_materials: '材料科学',
+    course_metallurgy: '冶金原理',
+    lab_experience: '实验室',
+    research_project: '科研项目',
+    publish_paper: '发表论文',
+    apply_patent: '申请专利',
+    grad_school_choice: '深造选择',
+    phd_path: '读博',
+    master_path: '读硕',
+    academia_ending: '教授',
+    research_inst_ending: '研究院',
+    engineer_ending: '工程师',
+    manager_ending: '管理岗',
+    work_choice: '就业选择',
+    technical_route: '技术岗',
+    sales_route: '销售岗',
+    entrepreneur_ending: '创业',
+    big_company_ending: '大企业',
+    industry_visit: '企业参观',
+    internship_choice: '实习',
+    exchange_choice: '交换生',
+    return_home_ending: '回国',
+    international_ending: '国际组织',
+    advanced_materials: '先进材料',
+    nanomaterials: '纳米材料',
+    aerospace_ending: '航空航天',
+    automotive_ending: '汽车轻量化',
+    biomedical_ending: '生物医学',
+    electronics_ending: '电子器件',
+    process_optimization: '工艺优化',
+    numerical_simulation: '数值模拟',
+    energy_saving_ending: '节能减排',
+    quality_control_ending: '质量控制',
+    digital_twin_ending: '数字孪生',
+    ai_control_ending: 'AI控制',
+    // ---------- 四大方向新增节点 ----------
+    green_lowcarbon: '绿色低碳',
+    new_materials: '冶金新材料',
+    smart_metallurgy: '智慧冶金',
+    strategic_metal: '战略金属',
+    green_hydrogen: '氢冶金',
+    green_recycle: '固废资源化',
+    green_carbon: '碳交易',
+    green_hydrogen_rd: '氢技术研发',
+    green_hydrogen_policy: '氢政策研究',
+    green_hydrogen_ending1: '绿氢先锋',
+    green_hydrogen_ending2: '氢冶金学者',
+    green_hydrogen_policy_ending: '政策推动者',
+    green_hydrogen_global_ending: '国际氢能',
+    green_recycle_tech: '固废技术研发',
+    green_recycle_industry: '固废产业应用',
+    green_recycle_ending1: '固废魔术师',
+    green_recycle_ending3: '固废科学家',
+    green_recycle_ending2: '循环经济践行者',
+    green_recycle_consulting_ending: '固废总设计师',
+    green_carbon_trader: '碳交易员',
+    green_carbon_policy2: '碳政策研究',
+    green_carbon_ending1: '碳市场专家',
+    green_carbon_entrepreneur_ending: '碳金融先锋',
+    green_carbon_ending2: '政策制定者',
+    green_carbon_academic_ending: '碳管理学者',
+    newmaterials_high_temp: '高温合金',
+    newmaterials_ultra_high: '超高强度钢',
+    newmaterials_nano: '纳米材料',
+    newmaterials_high_rd: '高温合金研发',
+    newmaterials_high_industry: '高温合金产业',
+    newmaterials_high_ending1: '逐梦蓝天',
+    newmaterials_high_ending2: '学术传承',
+    newmaterials_high_industry_ending: '产业报国',
+    newmaterials_high_consult_ending: '材料军师',
+    newmaterials_auto_rd: '汽车钢研发',
+    newmaterials_auto_industry2: '汽车钢产业',
+    newmaterials_auto_ending1: '轻量化先锋',
+    newmaterials_auto_ending2: '钢铁脊梁',
+    newmaterials_auto_consult_ending: '轻量化军师',
+    newmaterials_auto_solution_ending: '科创先锋',
+    newmaterials_nano_academic: '纳米学术',
+    newmaterials_nano_business: '纳米创业',
+    newmaterials_nano_ending1: '纳米先锋',
+    newmaterials_nano_ending3: '纳米育人',
+    newmaterials_nano_ending2: '纳米产业化',
+    newmaterials_nano_consult_ending: '纳米企业家',
+    smart_ai_control: 'AI控制',
+    smart_digital_twin: '数字孪生',
+    smart_big_data: '工业大数据',
+    smart_ai_onsite: 'AI现场验证',
+    smart_ai_optimize: 'AI模型优化',
+    smart_ai_ending1: '智造先锋',
+    smart_ai_ending2: '工业互联网',
+    smart_ai_startup_ending: 'AI创业',
+    smart_ai_partner_ending: '首席AI科学家',
+    smart_digital_rd: '数字孪生研发',
+    smart_digital_industry: '数字孪生应用',
+    smart_digital_ending1: '全球领跑',
+    smart_digital_ending2: '智能工厂',
+    smart_digital_software_ending: '工业软件',
+    smart_digital_entrepreneur_ending: '数字孪生企业家',
+    smart_big_data_tech: '数据技术',
+    smart_big_data_apply: '数据应用',
+    smart_data_ending1: '数据医生',
+    smart_data_ending2: '首席数据官',
+    smart_big_data_global_ending: '全球数字化顾问',
+    smart_big_data_startup_ending: '数据企业家',
+    strategic_rare_earth: '稀土',
+    strategic_lithium: '锂电材料',
+    strategic_defense: '国防合金',
+    strategic_rare_tech: '稀土技术',
+    strategic_rare_industry2: '稀土产业',
+    strategic_rare_ending1: '稀土脊梁',
+    strategic_rare_ending2: '稀土材料创新',
+    strategic_rare_policy_ending: '稀土战略家',
+    strategic_rare_thinktank_ending: '稀土智库',
+    strategic_lithium_tech: '提锂技术',
+    strategic_lithium_strategy: '锂战略',
+    strategic_lithium_ending1: '锂电先锋',
+    strategic_lithium_ending2: '锂资源战略家',
+    strategic_lithium_global_ending: '全球锂资源拓荒者',
+    strategic_lithium_government_ending: '资源战略家',
+    strategic_defense_industry: '国防一线',
+    strategic_defense_academic: '国防基础研究',
+    strategic_defense_ending1: '国防脊梁',
+    strategic_defense_ending3: '国防育人',
+    strategic_defense_abroad_ending: '学成归国',
+    strategic_defense_home_ending: '国防坚守'
+};
+
+// ============================================================
+// 2. 存储键名
+// ============================================================
+const STORAGE_KEY = 'metallurgy_task_progress';   // 与闯关剧本共用
+const NICKNAME_KEY = 'metallurgy_player_nickname';
+
+// ============================================================
+// 3. 数据读取
+// ============================================================
+function loadProgress() {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+        try {
+            return JSON.parse(saved);
+        } catch (e) {
+            return null;
+        }
+    }
+    return null;
+}
+
+function getNickname() {
+    return localStorage.getItem(NICKNAME_KEY) || '冶金少年';
+}
+
+function setNickname(name) {
+    localStorage.setItem(NICKNAME_KEY, name);
+}
+
+// ============================================================
+// 4. 渲染档案
+// ============================================================
+function renderProfile() {
+    const container = document.getElementById('profileContent');
+    const data = loadProgress();
+    const nickname = getNickname();
+
+    if (!data || !data.completed || data.completed.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <div class="big-icon">🌱</div>
+                <h2 style="color:#f0f4fa;margin-bottom:0.5rem;">还没有完成任务</h2>
+                <p>前往「闯关剧本」领取你的第一枚冶金勋章吧！</p>
+                <a href="challengescript.html" class="btn-start">📖 前往闯关剧本</a>
+            </div>
+        `;
+        return;
+    }
+
+    const completed = data.completed || [];
+    const medalCount = data.medalCount || 0;
+    const currentId = completed.length > 0 ? completed[completed.length - 1] : 'start';
+    const currentStageName = nodeLabels[currentId] || currentId;
+
+    // 总节点数 = nodeLabels 中所有键的数量（自动适应新增节点）
+    const totalNodes = 93;
+    const progress = Math.min(100, Math.round((completed.length / totalNodes) * 100));
+
+    // 生成时间线
+    let timelineHtml = '';
+    completed.forEach((id, index) => {
+        const label = nodeLabels[id] || id;
+        timelineHtml += `
+            <div class="timeline-item">
+                <span class="step">#${index + 1}</span>
+                <span class="node-name">${label}</span>
+            </div>
+        `;
+    });
+
+    // 生成勋章墙（去重）
+    const uniqueMedals = [...new Set(completed)];
+    let medalHtml = uniqueMedals.map(id => {
+        const name = nodeLabels[id] || id;
+        return `<div class="medal-item"><span class="icon">🏅</span> ${name}</div>`;
+    }).join('');
+
+    if (!medalHtml) medalHtml = `<span class="no-medal">暂无勋章</span>`;
+
+    container.innerHTML = `
+        <!-- 个人信息 -->
+        <div class="card">
+            <h2><span class="emoji">👤</span> 个人信息</h2>
+            <div class="profile-row">
+                <div class="profile-avatar">🧑</div>
+                <div class="profile-info">
+                    <div class="name-area">
+                        <span class="display-name" id="displayName">${nickname}</span>
+                        <button class="edit-btn" onclick="showNicknameModal()">✏️ 修改</button>
+                    </div>
+                    <div class="current-stage">
+                        📍 当前阶段：<strong>${currentStageName}</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 进度 -->
+        <div class="card">
+            <h2><span class="emoji">📊</span> 闯关进度</h2>
+            <div style="display:flex;justify-content:space-between;font-size:0.95rem;">
+                <span>已解锁节点：<strong style="color:#f6d365;">${completed.length}</strong></span>
+                <span>总节点数：<strong style="color:#a8b2c9;">${totalNodes}</strong></span>
+            </div>
+            <div class="progress-bar">
+                <div class="fill" style="width:${progress}%;"></div>
+            </div>
+            <div class="progress-stats">
+                <span>完成度</span>
+                <span>${progress}%</span>
+            </div>
+        </div>
+
+        <!-- 勋章墙 -->
+        <div class="card">
+            <h2><span class="emoji">🏅</span> 勋章墙（共 ${medalCount} 枚）</h2>
+            <div class="medal-grid">${medalHtml}</div>
+        </div>
+
+        <!-- 成长时间线 -->
+        <div class="card">
+            <h2><span class="emoji">📜</span> 成长足迹</h2>
+            <div class="timeline">${timelineHtml}</div>
+        </div>
+
+        <!-- 重置 -->
+        <div class="reset-area">
+            <button class="reset-btn" onclick="resetProgress()">🗑️ 重置所有进度</button>
+        </div>
+    `;
+}
+
+// ============================================================
+// 5. 昵称编辑（不变）
+// ============================================================
+function showNicknameModal() {
+    const modal = document.getElementById('nicknameModal');
+    const input = document.getElementById('nicknameInput');
+    input.value = getNickname();
+    modal.classList.add('active');
+    input.focus();
+}
+
+function closeNicknameModal() {
+    document.getElementById('nicknameModal').classList.remove('active');
+}
+
+function saveNickname() {
+    const input = document.getElementById('nicknameInput');
+    const newName = input.value.trim();
+    if (newName) {
+        setNickname(newName);
+        const display = document.getElementById('displayName');
+        if (display) display.textContent = newName;
+        closeNicknameModal();
+    } else {
+        alert('昵称不能为空！');
+    }
+}
+
+document.getElementById('nicknameModal').addEventListener('click', function(e) {
+    if (e.target === this) closeNicknameModal();
+});
+
+// ============================================================
+// 6. 重置进度
+// ============================================================
+function resetProgress() {
+    if (confirm('确定要重置所有闯关进度吗？此操作不可撤销！')) {
+        localStorage.removeItem(STORAGE_KEY);
+        renderProfile();
+    }
+}
+
+// ============================================================
+// 7. 初始化
+// ============================================================
+renderProfile();
+</script>
+</body>
+</html>
